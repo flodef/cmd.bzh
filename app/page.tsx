@@ -1,7 +1,7 @@
 'use client';
 
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
-import { ConfigProvider, Tabs, theme, Typography } from 'antd';
+import { ConfigProvider, Tabs, theme } from 'antd';
 import Image from 'next/image';
 import { ReactNode, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -11,7 +11,6 @@ import Contact from './contact';
 import Home from './home';
 import { useWindowParam } from './hooks/useWindowParam';
 
-const { Title } = Typography;
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 const items = [
@@ -56,9 +55,17 @@ export default function Page() {
       }}
     >
       <div className="flex flex-col min-h-screen overflow-x-hidden">
-        <header className="bg-white dark:bg-[#001529] shadow-sm sticky top-0 z-10">
+        <header className="bg-white dark:bg-[#001529] shadow-sm absolute top-0 w-full z-10">
           <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <Image className="self-start" src="/logo.png" alt="CMD Logo" width={100} height={100} priority />
+            <Image
+              className="self-start z-10"
+              src="/logo.png"
+              alt="CMD Logo"
+              width={100}
+              height={100}
+              priority
+              onClick={() => alert('click')}
+            />
             <div className={twMerge('flex space-x-4 z-10', isMobile ? 'self-start w-full justify-end' : '')}>
               <div
                 className={twMerge(
@@ -84,7 +91,7 @@ export default function Page() {
                   !isOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                 )}
               >
-                <Title level={4}>{title}</Title>
+                <h1 className="text-2xl font-bold text-center mb-8">{title}</h1>
               </div>
             )}
           </nav>
