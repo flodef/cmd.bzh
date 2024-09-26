@@ -21,9 +21,9 @@ export function useWindowParam() {
     top: -1,
     left: -1,
   });
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  const [colorScheme, setColorScheme] = useState(mediaQuery.matches ? ColorScheme.Dark : ColorScheme.Light);
-  const [isOnline, setIsOnline] = useState(window.navigator.onLine);
+  const mediaQuery = isWindowReady ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  const [colorScheme, setColorScheme] = useState(mediaQuery?.matches ? ColorScheme.Dark : ColorScheme.Light);
+  const [isOnline, setIsOnline] = useState(isWindowReady ? window.navigator.onLine : true);
   const isReady = useMemo(() => windowSize.width > 0 && !isLoading, [windowSize.width, isLoading]);
 
   useEffect(() => {
@@ -42,6 +42,7 @@ export function useWindowParam() {
     const handleColorScheme = (event: MediaQueryListEvent) => {
       setColorScheme(event.matches ? ColorScheme.Dark : ColorScheme.Light);
     };
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     // Add event listener
     mediaQuery.addEventListener('change', handleColorScheme);
@@ -51,6 +52,8 @@ export function useWindowParam() {
 
     // Call handler right away so state gets updated with initial window size
     handleResize();
+    setColorScheme(mediaQuery.matches ? ColorScheme.Dark : ColorScheme.Light);
+    setIsOnline(window.navigator.onLine);
 
     // Remove event listener on cleanup
     return () => {
