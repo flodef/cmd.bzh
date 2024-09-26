@@ -7,6 +7,12 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    transitionProperty: {
+      DEFAULT: 'all',
+    },
+    transitionTimingFunction: {
+      DEFAULT: 'ease-in-out',
+    },
     transitionDuration: {
       DEFAULT: '300ms',
     },
