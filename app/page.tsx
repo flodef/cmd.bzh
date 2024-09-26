@@ -1,7 +1,7 @@
 'use client';
 
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
-import { ConfigProvider, Tabs, theme } from 'antd';
+import { ConfigProvider, Modal, Tabs, theme } from 'antd';
 import Image from 'next/image';
 import { ReactNode, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -31,7 +31,8 @@ const items = [
 export default function Page() {
   const { colorScheme, width } = useWindowParam();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [Content, setContent] = useState<ReactNode>(<Home />);
   const [title, setTitle] = useState(items[0].label);
 
@@ -41,7 +42,7 @@ export default function Page() {
   const onChange = (key: string) => {
     setTitle(items.find(item => item.key === key)?.label || '');
     setContent({ Home: <Home />, About: <About />, Contact: <Contact /> }[key]);
-    setIsOpen(false);
+    setIsMenuOpen(false);
     window.scrollTo({
       top: 0,
       behavior: 'instant',
@@ -54,8 +55,19 @@ export default function Page() {
         algorithm: isDark ? darkAlgorithm : defaultAlgorithm,
       }}
     >
+      <Modal
+        title="Conciergerie MultiService Debieux"
+        centered
+        open={isPopupOpen}
+        footer={null}
+        onCancel={() => setIsPopupOpen(false)}
+      >
+        <p>blabla</p>
+        <p>blabla</p>
+        <p>blabla</p>
+      </Modal>
       <div className="flex flex-col min-h-screen overflow-x-hidden">
-        <header className="bg-white dark:bg-[#001529] shadow-sm absolute top-0 w-full z-10">
+        <header className="bg-white dark:bg-[#001529] shadow-sm fixed top-0 left-0 right-0 z-10">
           <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
             <Image
               className="self-start z-10"
@@ -64,13 +76,13 @@ export default function Page() {
               width={100}
               height={100}
               priority
-              onClick={() => alert('click')}
+              onClick={() => setIsPopupOpen(true)}
             />
             <div className={twMerge('flex space-x-4 z-10', isMobile ? 'self-start w-full justify-end' : '')}>
               <div
                 className={twMerge(
-                  isMobile ? 'transition-all ease-in-out transform' : 'visible max-h-28 flex items-center',
-                  isOpen || !isMobile ? 'opacity-100 scale-y-100 h-40' : 'opacity-0 scale-y-0 h-0',
+                  isMobile ? 'transition transform' : 'visible max-h-28 flex items-center',
+                  isMenuOpen || !isMobile ? 'opacity-100 scale-y-100 h-40' : 'opacity-0 scale-y-0 h-0',
                 )}
               >
                 <Tabs
@@ -82,13 +94,13 @@ export default function Page() {
                 />
               </div>
 
-              <MenuButton className="md:hidden" isOpen={isOpen} setIsOpen={setIsOpen} />
+              <MenuButton className="md:hidden" isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
             </div>
             {isMobile && (
               <div
                 className={twMerge(
                   'absolute top-7 text-center w-full self-end',
-                  !isOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
+                  !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                 )}
               >
                 <h1 className="text-2xl font-bold text-center mb-8">{title}</h1>
@@ -96,7 +108,12 @@ export default function Page() {
             )}
           </nav>
         </header>
-        <div className="flex flex-col min-h-screen">
+        <div
+          className={twMerge(
+            'flex flex-col min-h-screen transition transform',
+            isMenuOpen || !isMobile ? 'pt-40' : 'pt-28',
+          )}
+        >
           <main className="flex-grow">{Content}</main>
         </div>
         <footer className="bg-gray-800 text-white py-8">
