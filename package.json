@@ -1,0 +1,48 @@
+{
+  "name": "cmd",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@ant-design/nextjs-registry": "latest",
+    "@tabler/icons-react": "latest",
+    "antd": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "tailwind-merge": "latest"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "@types/node": "^20.16.8",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "latest",
+    "husky": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  },
+  "prettier": {
+    "useTabs": false,
+    "tabWidth": 2,
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "printWidth": 120,
+    "trailingComma": "all",
+    "semi": true
+  },
+  "lint-staged": {
+    "*.ts*": "eslint"
+  },
+  "module": "index.ts",
+  "type": "commonjs"
+}
