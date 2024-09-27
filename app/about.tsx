@@ -1,36 +1,95 @@
 import { IconMapPin } from '@tabler/icons-react';
 import { Image } from 'antd';
+import Link from 'next/link';
+import { info } from './page';
+
+const t = {
+  fr: {
+    OurLocation: 'Notre localisation',
+    WorkingArea: 'Zone de travail',
+    Address: 'Adresse',
+    Phone: 'Téléphone',
+    Email: 'Email',
+    OurStory: 'Notre histoire',
+    Founder: 'Fondateur',
+    OurStoryDescription:
+      "Brice Debieu a fondé CMD Breizh avec pour vision de fournir des services de nettoyage, de jardinage et de gestion immobilière de qualité supérieure tout en privilégiant la responsabilité environnementale. Avec son expérience dans le secteur, Brice a constitué une équipe de professionnels dévoués qui partagent sa passion pour l'excellence et la durabilité.",
+    OurStoryDescription2:
+      "Sous la direction de Brice, CMD Breizh est devenu un partenaire de confiance pour les propriétaires, les gestionnaires immobiliers et les hôtes Airbnb de toute la région. Notre engagement envers des pratiques respectueuses de l'environnement et un service exceptionnel nous a valu la réputation d'être le choix incontournable pour ceux qui accordent de l'importance à la propreté et à la gestion environnementale.",
+    ReadyToExperience: 'Prêt à expérimenter notre service ?',
+    ContactUs: 'Contactez-nous dès maintenant',
+    EcoFriendlyCommitment: 'Nos engagements écologiques',
+    EcoFriendlyCommitmentDescription:
+      'Nous nous engageons à utiliser des pratiques écologiques et éthiques pour minimiser nos impacts sur l’environnement. Nous mettons en place des systèmes de collecte et de traitement de déchets, nous utilisons des équipements écologiques lors de nos prestations.',
+    EcoFriendlyCommitmentDescription2:
+      'En choisissant CMD Breizh, vous êtes en mesure de garantir la protection de l’environnement et de respecter les normes environnementales. Nous sommes une entreprise qui met en œuvre des pratiques écologiques et éthiques pour garantir un service exceptionnel et également pour promouvoir la protection de l’environnement.',
+  },
+  en: {
+    OurLocation: 'Our Location',
+    WorkingArea: 'Working Area',
+    Address: 'Address',
+    Phone: 'Phone',
+    Email: 'Email',
+    OurStory: 'Our Story',
+    Founder: 'Founder',
+    OurStoryDescription:
+      'Brice Debieu founded CMD Breizh with a vision to provide top-quality cleaning, gardening, and property management services while prioritizing environmental responsibility. With over 15 years of experience in the industry, Jane has built a team of dedicated professionals who share her passion for excellence and sustainability.',
+    OurStoryDescription2:
+      'Under Brice&apos;s leadership, CMD Breizh has become a trusted partner for homeowners, property managers, and Airbnb hosts throughout the region. Our commitment to eco-friendly practices and exceptional service has earned us a reputation as the go-to choice for those who value both cleanliness and environmental stewardship.',
+    ReadyToExperience: 'Ready to experience our service?',
+    ContactUs: 'Contact Us Today',
+    EcoFriendlyCommitment: 'Our Eco-Friendly Commitment',
+    EcoFriendlyCommitmentDescription:
+      'We are committed to using environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
+    EcoFriendlyCommitmentDescription2:
+      'By choosing CMD Breizh, you are able to guarantee the protection of the environment and respect the environmental standards. We are a company that implements eco-friendly and ethical practices to guarantee an exceptional service and also to promote the protection of the environment.',
+  },
+};
+
+const workingCities = [
+  'Saint-Nic',
+  'Crozon',
+  'Plomodiern',
+  'Plonevez-Porzay',
+  'Ploeven',
+  'Landevennec',
+  'Telgruc-sur-Mer',
+  'Argol',
+  'Dinéault',
+  'Chateaulin',
+];
 
 export default function About() {
   return (
     <>
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold text-center mb-8">About Us</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <Image
-                src="/placeholder.svg?height=400&width=400&text=Manager+Photo"
-                alt="Manager"
-                className="rounded-full w-64 h-64 mx-auto mb-4"
-              />
-              <h2 className="text-2xl font-semibold text-center mb-2">Jane Doe</h2>
-              <p className="text-center text-gray-600 mb-4">Founder & CEO</p>
+          <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].OurLocation}</h2>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+            <div className="w-full md:w-1/2 h-64 bg-gray-300 rounded-lg overflow-hidden">
+              {/* TODO: Replace this with an actual map component or embed */}
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <IconMapPin className="text-gray-400" size={48} />
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Our Story</h3>
-              <p className="text-gray-600 mb-4">
-                Jane Doe founded CleanGreen Services with a vision to provide top-quality cleaning, gardening, and
-                property management services while prioritizing environmental responsibility. With over 15 years of
-                experience in the industry, Jane has built a team of dedicated professionals who share her passion for
-                excellence and sustainability.
+            <div className="w-full md:w-1/2 text-center">
+              <h3 className="text-xl font-semibold mb-2">{info.companyName}</h3>
+              <p className="text-gray-600 mb-2">{info.address}</p>
+              <p className="text-gray-600 mb-2">
+                <Link href={`tel:${info.phone.replaceAll(' ', '')}`}>{info.phone}</Link>
               </p>
               <p className="text-gray-600">
-                Under Jane&apos;s leadership, CleanGreen Services has become a trusted partner for homeowners, property
-                managers, and Airbnb hosts throughout the region. Our commitment to eco-friendly practices and
-                exceptional service has earned us a reputation as the go-to choice for those who value both cleanliness
-                and environmental stewardship.
+                <Link href={`mailto:${info.email}`}>{info.email}</Link>
               </p>
+              <hr style={{ marginTop: 16, marginBottom: 16 }} />
+              <h3 className="text-xl font-semibold mb-2">{t['fr'].WorkingArea}</h3>
+              <ul className="ml-4 mb-2 flex flex-wrap">
+                {workingCities.map((city, index) => (
+                  <li key={index} className="text-gray-600 mb-2 w-1/2">
+                    {city}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -38,7 +97,7 @@ export default function About() {
 
       <section className="bg-green-50 py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Our Eco-Friendly Commitment</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].EcoFriendlyCommitment}</h2>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
             <Image
               src="/placeholder.svg?height=150&width=150&text=Eco+Label"
@@ -46,36 +105,29 @@ export default function About() {
               className="w-32 h-32"
             />
             <div className="max-w-2xl">
-              <p className="text-gray-600 mb-4">
-                At CleanGreen Services, we&apos;re proud to be certified as an eco-responsible company. Our commitment
-                to sustainability goes beyond just using green cleaning products. We implement water-saving techniques,
-                minimize waste, and use energy-efficient equipment in all our operations.
-              </p>
-              <p className="text-gray-600">
-                By choosing CleanGreen Services, you&apos;re not just getting a clean space – you&apos;re contributing
-                to a healthier planet. We believe that every small action counts, and we&apos;re dedicated to making a
-                positive impact on the environment with every service we provide.
-              </p>
+              <p className="text-gray-600 mb-4">{t['fr'].EcoFriendlyCommitmentDescription}</p>
+              <p className="text-gray-600">{t['fr'].EcoFriendlyCommitmentDescription2}</p>
             </div>
           </div>
         </div>
       </section>
-
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Our Location</h2>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-            <div className="w-full md:w-1/2 h-64 bg-gray-300 rounded-lg overflow-hidden">
-              {/* Replace this with an actual map component or embed */}
-              <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <IconMapPin className="text-gray-400" size={48} />
-              </div>
+          <h1 className="text-3xl font-bold text-center mb-8">About Us</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-2xl font-semibold text-center mb-2">{info.founder}</h2>
+              <p className="text-center text-gray-600 mb-4">{t['fr'].Founder}</p>
+              <Image
+                src="/placeholder.svg?height=400&width=400&text=Manager+Photo"
+                alt="Manager"
+                className="rounded-full w-64 h-64 mx-auto mb-4 self-center"
+              />
             </div>
-            <div className="w-full md:w-1/2">
-              <h3 className="text-xl font-semibold mb-2">CleanGreen Services Headquarters</h3>
-              <p className="text-gray-600 mb-2">123 Green Street</p>
-              <p className="text-gray-600 mb-2">Eco City, EC 12345</p>
-              <p className="text-gray-600">United States</p>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">{t['fr'].OurStory}</h3>
+              <p className="text-gray-600 mb-4">{t['fr'].OurStoryDescription}</p>
+              <p className="text-gray-600">{t['fr'].OurStoryDescription2}</p>
             </div>
           </div>
         </div>

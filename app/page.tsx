@@ -10,21 +10,42 @@ import { MenuButton } from './components/menuButton';
 import Contact from './contact';
 import Home from './home';
 import { useWindowParam } from './hooks/useWindowParam';
+import Link from 'next/link';
+
+export const info = {
+  companyName: 'Conciergerie MultiService Debieu Breizh',
+  founder: 'Brice Debieu',
+  address: "11 rue de l'église, 29550 Saint-Nic",
+  phone: '06 18 49 92 69',
+  email: 'contact@cmd.bzh',
+};
+
+const t = {
+  fr: {
+    home: 'Accueil',
+    about: 'A propos de nous',
+    contact: 'Nous contacter',
+    footer: 'Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.',
+  },
+  en: {
+    footer: 'Your trusted partner for cleaning, gardening, and property management.',
+  },
+};
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 const items = [
   {
     key: 'Home',
-    label: 'Accueil',
+    label: t['fr'].home,
   },
   {
     key: 'About',
-    label: 'Qui suis-je',
+    label: t['fr'].about,
   },
   {
     key: 'Contact',
-    label: 'Contact',
+    label: t['fr'].contact,
   },
 ];
 
@@ -56,7 +77,9 @@ export default function Page() {
       }}
     >
       <Modal
-        title="Conciergerie MultiService Debieux"
+        className="bg-yellow-200"
+        style={{ backgroundColor: '#a4bcde' }}
+        title={info.companyName}
         centered
         open={isPopupOpen}
         footer={null}
@@ -70,7 +93,7 @@ export default function Page() {
         <header className="bg-white dark:bg-[#001529] shadow-sm fixed top-0 left-0 right-0 z-10">
           <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
             <Image
-              className="self-start z-10"
+              className="self-start z-10 cursor-pointer"
               src="/logo.png"
               alt="CMD Logo"
               width={100}
@@ -111,30 +134,32 @@ export default function Page() {
         <div
           className={twMerge(
             'flex flex-col min-h-screen transition transform',
-            isMenuOpen || !isMobile ? 'pt-40' : 'pt-28',
+            isMenuOpen && isMobile ? 'pt-40' : 'pt-28',
           )}
         >
           <main className="flex-grow">{Content}</main>
         </div>
-        <footer className="bg-gray-800 text-white py-8">
+        <footer className="bg-[#aaa27d] text-white py-8">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-4 md:mb-0">
-                <h3 className="text-xl font-semibold mb-2">CleanGreen Services</h3>
-                <p className="text-sm">Your trusted partner for cleaning, gardening, and property management.</p>
+                <h3 className="text-xl font-semibold mb-2">{info.companyName}</h3>
+                <p className="text-sm">{t['fr'].footer}</p>
               </div>
               <div className="flex flex-col items-center md:items-end">
                 <div className="flex items-center mb-2">
                   <IconMapPin className="mr-2" size={18} />
-                  <span>123 Green Street, Eco City, EC 12345</span>
+                  <span className="cursor-pointer" onClick={() => onChange('About')}>
+                    {info.address}
+                  </span>
                 </div>
                 <div className="flex items-center mb-2">
                   <IconPhone className="mr-2" size={18} />
-                  <span>(555) 123-4567</span>
+                  <Link href={`tel:${info.phone.replaceAll(' ', '')}`}>{info.phone}</Link>
                 </div>
                 <div className="flex items-center">
                   <IconMail className="mr-2" size={18} />
-                  <span>info@cleangreenservices.com</span>
+                  <Link href={`mailto:${info.email}`}>{info.email}</Link>
                 </div>
               </div>
             </div>

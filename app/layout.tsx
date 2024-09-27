@@ -16,7 +16,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: 'CMD',
-  description: "Conciergerie presqu'ile de Crozon",
+  description: "Conciergerie MultiService Debieu presqu'ile de Crozon",
 };
 
 export default function RootLayout({
