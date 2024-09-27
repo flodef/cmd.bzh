@@ -1,7 +1,7 @@
 import { IconMapPin } from '@tabler/icons-react';
 import { Image } from 'antd';
 import Link from 'next/link';
-import { info } from './page';
+import { companyInfo } from '../constants';
 
 const t = {
   fr: {
@@ -73,13 +73,13 @@ export default function About() {
               </div>
             </div>
             <div className="w-full md:w-1/2 text-center">
-              <h3 className="text-xl font-semibold mb-2">{info.companyName}</h3>
-              <p className="text-gray-600 mb-2">{info.address}</p>
+              <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
+              <p className="text-gray-600 mb-2">{companyInfo.address}</p>
               <p className="text-gray-600 mb-2">
-                <Link href={`tel:${info.phone.replaceAll(' ', '')}`}>{info.phone}</Link>
+                <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
               </p>
               <p className="text-gray-600">
-                <Link href={`mailto:${info.email}`}>{info.email}</Link>
+                <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
               </p>
               <hr style={{ marginTop: 16, marginBottom: 16 }} />
               <h3 className="text-xl font-semibold mb-2">{t['fr'].WorkingArea}</h3>
@@ -116,7 +116,7 @@ export default function About() {
           <h1 className="text-3xl font-bold text-center mb-8">About Us</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
-              <h2 className="text-2xl font-semibold text-center mb-2">{info.founder}</h2>
+              <h2 className="text-2xl font-semibold text-center mb-2">{companyInfo.founder}</h2>
               <p className="text-center text-gray-600 mb-4">{t['fr'].Founder}</p>
               <Image
                 src="/placeholder.svg?height=400&width=400&text=Manager+Photo"

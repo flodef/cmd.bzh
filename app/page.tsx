@@ -3,22 +3,15 @@
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { ConfigProvider, Modal, Tabs, theme } from 'antd';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ReactNode, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import About from './about';
 import { MenuButton } from './components/menuButton';
-import Contact from './contact';
-import Home from './home';
+import { companyInfo } from './constants';
 import { useWindowParam } from './hooks/useWindowParam';
-import Link from 'next/link';
-
-export const info = {
-  companyName: 'Conciergerie MultiService Debieu Breizh',
-  founder: 'Brice Debieu',
-  address: "11 rue de l'église, 29550 Saint-Nic",
-  phone: '06 18 49 92 69',
-  email: 'contact@cmd.bzh',
-};
+import About from './pages/about';
+import Contact from './pages/contact';
+import Home from './pages/home';
 
 const t = {
   fr: {
@@ -79,7 +72,7 @@ export default function Page() {
       <Modal
         className="bg-yellow-200"
         style={{ backgroundColor: '#a4bcde' }}
-        title={info.companyName}
+        title={companyInfo.companyName}
         centered
         open={isPopupOpen}
         footer={null}
@@ -143,23 +136,23 @@ export default function Page() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-4 md:mb-0">
-                <h3 className="text-xl font-semibold mb-2">{info.companyName}</h3>
+                <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
                 <p className="text-sm">{t['fr'].footer}</p>
               </div>
               <div className="flex flex-col items-center md:items-end">
                 <div className="flex items-center mb-2">
                   <IconMapPin className="mr-2" size={18} />
                   <span className="cursor-pointer" onClick={() => onChange('About')}>
-                    {info.address}
+                    {companyInfo.address}
                   </span>
                 </div>
                 <div className="flex items-center mb-2">
                   <IconPhone className="mr-2" size={18} />
-                  <Link href={`tel:${info.phone.replaceAll(' ', '')}`}>{info.phone}</Link>
+                  <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
                 </div>
                 <div className="flex items-center">
                   <IconMail className="mr-2" size={18} />
-                  <Link href={`mailto:${info.email}`}>{info.email}</Link>
+                  <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
                 </div>
               </div>
             </div>

@@ -2,8 +2,8 @@
 
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { Button, Input } from 'antd';
-import { info } from './page';
 import Link from 'next/link';
+import { companyInfo } from '../constants';
 
 const { TextArea } = Input;
 
@@ -82,7 +82,7 @@ export default function Contact() {
                   <IconMapPin className="mr-2 mt-1" size={18} />
                   <div>
                     <p className="font-semibold">{t['fr'].Address}:</p>
-                    {info.address.split(',').map((item, index) => (
+                    {companyInfo.address.split(',').map((item, index) => (
                       <p key={index}>{item}</p>
                     ))}
                   </div>
@@ -92,7 +92,7 @@ export default function Contact() {
                   <div>
                     <p className="font-semibold">{t['fr'].Phone}:</p>
                     <p>
-                      <Link href={`tel:${info.phone.replaceAll(' ', '')}`}>{info.phone}</Link>
+                      <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
                     </p>
                   </div>
                 </div>
@@ -101,7 +101,7 @@ export default function Contact() {
                   <div>
                     <p className="font-semibold">{t['fr'].Email}:</p>
                     <p>
-                      <Link href={`mailto:${info.email}`}>{info.email}</Link>
+                      <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
                     </p>
                   </div>
                 </div>
