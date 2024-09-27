@@ -13,7 +13,7 @@ export const MenuButton = ({
     setIsOpen(!isOpen);
   };
 
-  const genericHamburgerLine = `h-1 w-6 my-1 rounded-full bg-black dark:bg-white transition ease transform`;
+  const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-black dark:bg-white transition ease transform`;
 
   return (
     <button
@@ -27,7 +27,7 @@ export const MenuButton = ({
         className={twMerge(
           genericHamburgerLine,
           isOpen
-            ? 'rotate-45 translate-y-3 opacity-100 group-hover:opacity-100'
+            ? 'rotate-45 translate-y-[10px] opacity-100 group-hover:opacity-100'
             : 'opacity-100 group-hover:opacity-100',
         )}
       />
@@ -36,7 +36,7 @@ export const MenuButton = ({
         className={twMerge(
           genericHamburgerLine,
           isOpen
-            ? '-rotate-45 -translate-y-3 opacity-100 group-hover:opacity-100'
+            ? '-rotate-45 -translate-y-[10px] opacity-100 group-hover:opacity-100'
             : 'opacity-100 group-hover:opacity-100',
         )}
       />
