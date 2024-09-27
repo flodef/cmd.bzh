@@ -115,7 +115,7 @@ export default function Page() {
             {isMobile && (
               <div
                 className={twMerge(
-                  'absolute top-7 text-center w-full self-end',
+                  'absolute top-7 text-center w-full pl-28 pr-20 self-end',
                   !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                 )}
               >
