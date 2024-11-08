@@ -1,7 +1,7 @@
 'use client';
 
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
-import { ConfigProvider, Modal, Tabs, theme } from 'antd';
+import { ConfigProvider, Tabs, theme } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode, useMemo, useState } from 'react';
@@ -27,7 +27,7 @@ const t = {
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
-const items = [
+const tabItems = [
   {
     key: 'Home',
     label: t['fr'].home,
@@ -46,15 +46,16 @@ export default function Page() {
   const { colorScheme, width } = useWindowParam();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('Home');
   const [Content, setContent] = useState<ReactNode>(<Home />);
-  const [title, setTitle] = useState(items[0].label);
+  const [title, setTitle] = useState(tabItems[0].label);
 
   const isDark = useMemo(() => colorScheme === 'dark', [colorScheme]);
   const isMobile = useMemo(() => width < 768, [width]);
 
-  const onChange = (key: string) => {
-    setTitle(items.find(item => item.key === key)?.label || '');
+  const onTabChange = (key = 'Home') => {
+    setTitle(tabItems.find(item => item.key === key)?.label || '');
+    setActiveTab(key);
     setContent({ Home: <Home />, About: <About />, Contact: <Contact /> }[key]);
     setIsMenuOpen(false);
     window.scrollTo({
@@ -69,19 +70,6 @@ export default function Page() {
         algorithm: isDark ? darkAlgorithm : defaultAlgorithm,
       }}
     >
-      <Modal
-        className="bg-yellow-200"
-        style={{ backgroundColor: '#a4bcde' }}
-        title={companyInfo.companyName}
-        centered
-        open={isPopupOpen}
-        footer={null}
-        onCancel={() => setIsPopupOpen(false)}
-      >
-        <p>blabla</p>
-        <p>blabla</p>
-        <p>blabla</p>
-      </Modal>
       <div className="flex flex-col min-h-screen overflow-x-hidden">
         <header className="bg-white dark:bg-[#001529] shadow-sm fixed top-0 left-0 right-0 z-10">
           <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -92,7 +80,7 @@ export default function Page() {
               width={100}
               height={100}
               priority
-              onClick={() => setIsPopupOpen(true)}
+              onClick={() => onTabChange()}
             />
             <div className={twMerge('flex space-x-4 z-10', isMobile ? 'self-start w-full justify-end' : '')}>
               <div
@@ -102,9 +90,9 @@ export default function Page() {
                 )}
               >
                 <Tabs
-                  defaultActiveKey="1"
-                  items={items}
-                  onChange={onChange}
+                  activeKey={activeTab}
+                  items={tabItems}
+                  onChange={onTabChange}
                   size="large"
                   tabPosition={isMobile ? 'right' : 'top'}
                 />
@@ -142,7 +130,7 @@ export default function Page() {
               <div className="flex flex-col items-center md:items-end">
                 <div className="flex items-center mb-2">
                   <IconMapPin className="mr-2" size={18} />
-                  <span className="cursor-pointer" onClick={() => onChange('About')}>
+                  <span className="cursor-pointer" onClick={() => onTabChange('About')}>
                     {companyInfo.address}
                   </span>
                 </div>
