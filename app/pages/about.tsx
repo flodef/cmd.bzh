@@ -10,6 +10,7 @@ const t = {
     Address: 'Adresse',
     Phone: 'Téléphone',
     Email: 'Email',
+    AboutUs: 'À propos de nous',
     OurStory: 'Notre histoire',
     Founder: 'Fondateur',
     OurStoryDescription:
@@ -30,6 +31,7 @@ const t = {
     Address: 'Address',
     Phone: 'Phone',
     Email: 'Email',
+    AboutUs: 'About Us',
     OurStory: 'Our Story',
     Founder: 'Founder',
     OurStoryDescription:
@@ -113,7 +115,7 @@ export default function About() {
       </section>
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-center mb-8">About Us</h1>
+          <h1 className="text-3xl font-bold text-center mb-8">{t['fr'].AboutUs}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="text-2xl font-semibold text-center mb-2">{companyInfo.founder}</h2>
