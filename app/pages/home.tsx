@@ -1,4 +1,8 @@
-import { Button, Card, Carousel, Image } from 'antd';
+import { Button, Card, Carousel } from 'antd';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { useMenuContext } from '../contexts/menuProvider';
+import { useWindowParam } from '../hooks/useWindowParam';
 
 const t = {
   fr: {
@@ -43,7 +47,25 @@ const t = {
   },
 };
 
+const cardStyle = { header: 'text-center', body: 'text-center text-gray-900 dark:text-gray-400 text-lg' };
+const cardContent = [
+  { title: t['fr'].Cleaning, description: t['fr'].CleaningDescription },
+  { title: t['fr'].Gardening, description: t['fr'].GardeningDescription },
+  { title: t['fr'].CheckInOut, description: t['fr'].CheckInOutDescription },
+  { title: t['fr'].ClothesHandling, description: t['fr'].ClothesHandlingDescription },
+  { title: t['fr'].WelcomeBasket, description: t['fr'].WelcomeBasketDescription },
+  { title: t['fr'].MultiService, description: t['fr'].MultiServiceDescription },
+];
+
 export default function Home() {
+  const { colorScheme } = useWindowParam();
+  const { onMenuChange } = useMenuContext();
+
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    setIsDark(colorScheme === 'dark');
+  }, [colorScheme]);
+
   return (
     <>
       <section className="bg-gray-100 py-12">
@@ -54,6 +76,8 @@ export default function Home() {
                 <Card>
                   <div className="flex aspect-square items-center justify-center p-6">
                     <Image
+                      width={600}
+                      height={400}
                       src={`/placeholder.svg?height=400&width=600&text=Service+Image+${index}`}
                       alt={`Service ${index}`}
                       className="w-full h-full object-cover rounded-lg"
@@ -70,42 +94,16 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].Services}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{t['fr'].Cleaning}</h3>
-                <p className="text-gray-600">{t['fr'].CleaningDescription}</p>
-              </div>
-            </Card>
-            <Card>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{t['fr'].Gardening}</h3>
-                <p className="text-gray-600">{t['fr'].GardeningDescription}</p>
-              </div>
-            </Card>
-            <Card>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{t['fr'].CheckInOut}</h3>
-                <p className="text-gray-600">{t['fr'].CheckInOutDescription}</p>
-              </div>
-            </Card>
-            <Card>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{t['fr'].ClothesHandling}</h3>
-                <p className="text-gray-600">{t['fr'].ClothesHandlingDescription}</p>
-              </div>
-            </Card>
-            <Card>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{t['fr'].WelcomeBasket}</h3>
-                <p className="text-gray-600">{t['fr'].WelcomeBasketDescription}</p>
-              </div>
-            </Card>
-            <Card>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{t['fr'].MultiService}</h3>
-                <p className="text-gray-600">{t['fr'].MultiServiceDescription}</p>
-              </div>
-            </Card>
+            {cardContent.map((item, index) => (
+              <Card
+                key={index}
+                style={{ backgroundColor: !isDark ? '#f0f0f0' : '#141414' }}
+                classNames={cardStyle}
+                title={item.title}
+              >
+                {item.description}
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -116,6 +114,8 @@ export default function Home() {
           <p className="text-center text-gray-600 max-w-2xl mx-auto">{t['fr'].EcoFriendlyDescription}</p>
           <div className="mt-8 text-center">
             <Image
+              width={100}
+              height={100}
               src="/placeholder.svg?height=100&width=100&text=Eco+Label"
               alt="Eco-Friendly Label"
               className="inline-block"
@@ -127,7 +127,10 @@ export default function Home() {
       <section className="py-12 bg-primary">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">{t['fr'].ReadyToExperience}</h2>
-          <Button href="/contact" target="_blank">
+          <Button
+            style={{ backgroundColor: !isDark ? '#f0f0f0' : '#141414', color: !isDark ? '#141414' : '#f0f0f0' }}
+            onClick={() => onMenuChange('Contact')}
+          >
             {t['fr'].ContactUs}
           </Button>
         </div>
