@@ -4,20 +4,15 @@ import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { ConfigProvider, Tabs, theme } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ReactNode, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { MenuButton } from './components/menuButton';
 import { companyInfo } from './constants';
 import { useWindowParam } from './hooks/useWindowParam';
-import About from './pages/about';
-import Contact from './pages/contact';
-import Home from './pages/home';
+import { menuItems, useMenuContext } from './contexts/menuProvider';
+import { useMemo } from 'react';
 
 const t = {
   fr: {
-    home: 'Accueil',
-    about: 'A propos de nous',
-    contact: 'Nous contacter',
     footer: 'Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.',
   },
   en: {
@@ -27,47 +22,23 @@ const t = {
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
-const tabItems = [
-  {
-    key: 'Home',
-    label: t['fr'].home,
-  },
-  {
-    key: 'About',
-    label: t['fr'].about,
-  },
-  {
-    key: 'Contact',
-    label: t['fr'].contact,
-  },
-];
-
 export default function Page() {
   const { colorScheme, width } = useWindowParam();
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Home');
-  const [Content, setContent] = useState<ReactNode>(<Home />);
-  const [title, setTitle] = useState(tabItems[0].label);
+  const { onMenuChange, isMenuOpen, activeTab, content, title } = useMenuContext();
 
   const isDark = useMemo(() => colorScheme === 'dark', [colorScheme]);
   const isMobile = useMemo(() => width < 768, [width]);
-
-  const onTabChange = (key = 'Home') => {
-    setTitle(tabItems.find(item => item.key === key)?.label || '');
-    setActiveTab(key);
-    setContent({ Home: <Home />, About: <About />, Contact: <Contact /> }[key]);
-    setIsMenuOpen(false);
-    window.scrollTo({
-      top: 0,
-      behavior: 'instant',
-    });
-  };
 
   return (
     <ConfigProvider
       theme={{
         algorithm: isDark ? darkAlgorithm : defaultAlgorithm,
+        components: {
+          Card: {
+            headerFontSize: 20,
+            headerHeight: 80,
+          },
+        },
       }}
     >
       <div className="flex flex-col min-h-screen overflow-x-hidden">
@@ -80,7 +51,7 @@ export default function Page() {
               width={100}
               height={100}
               priority
-              onClick={() => onTabChange()}
+              onClick={() => onMenuChange()}
             />
             <div className={twMerge('flex space-x-4 z-10', isMobile ? 'self-start w-full justify-end' : '')}>
               <div
@@ -91,14 +62,14 @@ export default function Page() {
               >
                 <Tabs
                   activeKey={activeTab}
-                  items={tabItems}
-                  onChange={onTabChange}
+                  items={menuItems}
+                  onChange={onMenuChange}
                   size="large"
                   tabPosition={isMobile ? 'right' : 'top'}
                 />
               </div>
 
-              <MenuButton className="md:hidden" isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+              <MenuButton className="md:hidden" />
             </div>
             {isMobile && (
               <div
@@ -118,7 +89,7 @@ export default function Page() {
             isMenuOpen && isMobile ? 'pt-40' : 'pt-28',
           )}
         >
-          <main className="flex-grow">{Content}</main>
+          <main className="flex-grow">{content}</main>
         </div>
         <footer className="bg-[#aaa27d] text-white py-8">
           <div className="container mx-auto px-4">
@@ -130,7 +101,7 @@ export default function Page() {
               <div className="flex flex-col items-center md:items-end">
                 <div className="flex items-center mb-2">
                   <IconMapPin className="mr-2" size={18} />
-                  <span className="cursor-pointer" onClick={() => onTabChange('About')}>
+                  <span className="cursor-pointer" onClick={() => onMenuChange('About')}>
                     {companyInfo.address}
                   </span>
                 </div>

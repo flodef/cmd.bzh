@@ -1,16 +1,10 @@
 import { twMerge } from 'tailwind-merge';
+import { useMenuContext } from '../contexts/menuProvider';
 
-export const MenuButton = ({
-  className,
-  isOpen,
-  setIsOpen,
-}: {
-  className?: string;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const MenuButton = ({ className }: { className?: string }) => {
+  const { isMenuOpen, setIsMenuOpen } = useMenuContext();
   const handleClick = () => {
-    setIsOpen(!isOpen);
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-black dark:bg-white transition ease transform`;
@@ -26,16 +20,18 @@ export const MenuButton = ({
       <div
         className={twMerge(
           genericHamburgerLine,
-          isOpen
+          isMenuOpen
             ? 'rotate-45 translate-y-[10px] opacity-100 group-hover:opacity-100'
             : 'opacity-100 group-hover:opacity-100',
         )}
       />
-      <div className={twMerge(genericHamburgerLine, isOpen ? 'opacity-0' : 'opacity-100 group-hover:opacity-100')} />
+      <div
+        className={twMerge(genericHamburgerLine, isMenuOpen ? 'opacity-0' : 'opacity-100 group-hover:opacity-100')}
+      />
       <div
         className={twMerge(
           genericHamburgerLine,
-          isOpen
+          isMenuOpen
             ? '-rotate-45 -translate-y-[10px] opacity-100 group-hover:opacity-100'
             : 'opacity-100 group-hover:opacity-100',
         )}
