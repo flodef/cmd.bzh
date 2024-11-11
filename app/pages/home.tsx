@@ -24,6 +24,7 @@ const t = {
       'À CMD Breizh, nous sommes engagés à utiliser des produits de nettoyage écoresponsables et des pratiques durables pour minimiser notre empreinte écologique tout en livrant un service exceptionnel.',
     ReadyToExperience: 'Prêt à expérimenter notre service ?',
     ContactUs: 'Contactez-nous dès maintenant',
+    EcoFriendlyLabel: 'Label écoresponsable',
   },
   en: {
     Services: 'Our Services',
@@ -44,10 +45,15 @@ const t = {
       'At CMD Breizh, we&apos;re committed to using environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
     ReadyToExperience: 'Ready to experience our top-notch services?',
     ContactUs: 'Contact Us Today',
+    EcoFriendlyLabel: 'Eco-Friendly Label',
   },
 };
 
-const cardStyle = { header: 'text-center', body: 'text-center text-gray-900 dark:text-gray-400 text-lg' };
+const cardStyle = {
+  header: 'text-center',
+  title: 'text-center text-black dark:text-white',
+  body: 'text-center text-gray-900 dark:text-gray-400 text-lg',
+};
 const cardContent = [
   { title: t['fr'].Cleaning, description: t['fr'].CleaningDescription },
   { title: t['fr'].Gardening, description: t['fr'].GardeningDescription },
@@ -68,7 +74,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="bg-gray-100 py-12">
+      <section className="bg-green-50 dark:bg-gray-900 py-12">
         <div className="container mx-auto px-4">
           <Carousel className="w-full max-w-4xl mx-auto" autoplay>
             {[1, 2, 3, 4, 5].map(index => (
@@ -108,16 +114,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-green-50 py-12">
+      <section className="bg-green-50 dark:bg-gray-900 py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].EcoFriendly}</h2>
-          <p className="text-center text-gray-600 max-w-2xl mx-auto">{t['fr'].EcoFriendlyDescription}</p>
+          <p className="text-center text-gray-900 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+            {t['fr'].EcoFriendlyDescription}
+          </p>
           <div className="mt-8 text-center">
             <Image
-              width={100}
-              height={100}
-              src="/placeholder.svg?height=100&width=100&text=Eco+Label"
-              alt="Eco-Friendly Label"
+              width={150}
+              height={150}
+              src="/EcoLabel.png"
+              alt={t['fr'].EcoFriendlyLabel}
               className="inline-block"
             />
           </div>
@@ -128,6 +136,7 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">{t['fr'].ReadyToExperience}</h2>
           <Button
+            size="large"
             style={{ backgroundColor: !isDark ? '#f0f0f0' : '#141414', color: !isDark ? '#141414' : '#f0f0f0' }}
             onClick={() => onMenuChange('Contact')}
           >

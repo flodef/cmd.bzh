@@ -24,6 +24,7 @@ const t = {
       'Nous nous engageons à utiliser des pratiques écologiques et éthiques pour minimiser nos impacts sur l’environnement. Nous mettons en place des systèmes de collecte et de traitement de déchets, nous utilisons des équipements écologiques lors de nos prestations.',
     EcoFriendlyCommitmentDescription2:
       'En choisissant CMD Breizh, vous êtes en mesure de garantir la protection de l’environnement et de respecter les normes environnementales. Nous sommes une entreprise qui met en œuvre des pratiques écologiques et éthiques pour garantir un service exceptionnel et également pour promouvoir la protection de l’environnement.',
+    EcoFriendlyLabel: 'Label écoresponsable',
   },
   en: {
     OurLocation: 'Our Location',
@@ -45,6 +46,7 @@ const t = {
       'We are committed to using environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
     EcoFriendlyCommitmentDescription2:
       'By choosing CMD Breizh, you are able to guarantee the protection of the environment and respect the environmental standards. We are a company that implements eco-friendly and ethical practices to guarantee an exceptional service and also to promote the protection of the environment.',
+    EcoFriendlyLabel: 'Eco-Friendly Label',
   },
 };
 
@@ -76,18 +78,18 @@ export default function About() {
             </div>
             <div className="w-full md:w-1/2 text-center">
               <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
-              <p className="text-gray-600 mb-2">{companyInfo.address}</p>
-              <p className="text-gray-600 mb-2">
+              <p className="text-gray-900 dark:text-gray-400 mb-2">{companyInfo.address}</p>
+              <p className="text-gray-900 dark:text-gray-400 mb-2">
                 <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
               </p>
-              <p className="text-gray-600">
+              <p className="text-gray-900 dark:text-gray-400">
                 <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
               </p>
               <hr style={{ marginTop: 16, marginBottom: 16 }} />
               <h3 className="text-xl font-semibold mb-2">{t['fr'].WorkingArea}</h3>
               <ul className="ml-4 mb-2 flex flex-wrap">
                 {workingCities.map((city, index) => (
-                  <li key={index} className="text-gray-600 mb-2 w-1/2">
+                  <li key={index} className="text-gray-900 dark:text-gray-400 mb-2 w-1/2">
                     {city}
                   </li>
                 ))}
@@ -97,29 +99,26 @@ export default function About() {
         </div>
       </section>
 
-      <section className="bg-green-50 py-12">
+      <section className="bg-green-50 dark:bg-gray-900 py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].EcoFriendlyCommitment}</h2>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-            <Image
-              src="/placeholder.svg?height=150&width=150&text=Eco+Label"
-              alt="Eco-Friendly Label"
-              className="w-32 h-32"
-            />
+            <Image width={150} height={150} src="/EcoLabel.png" alt={t['fr'].EcoFriendlyLabel} className="w-32 h-32" />
             <div className="max-w-2xl">
-              <p className="text-gray-600 mb-4">{t['fr'].EcoFriendlyCommitmentDescription}</p>
-              <p className="text-gray-600">{t['fr'].EcoFriendlyCommitmentDescription2}</p>
+              <p className="text-gray-900 dark:text-gray-400 mb-4">{t['fr'].EcoFriendlyCommitmentDescription}</p>
+              <p className="text-gray-900 dark:text-gray-400">{t['fr'].EcoFriendlyCommitmentDescription2}</p>
             </div>
           </div>
         </div>
       </section>
+
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold text-center mb-8">{t['fr'].AboutUs}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="text-2xl font-semibold text-center mb-2">{companyInfo.founder}</h2>
-              <p className="text-center text-gray-600 mb-4">{t['fr'].Founder}</p>
+              <p className="text-center text-gray-900 dark:text-gray-400 mb-4">{t['fr'].Founder}</p>
               <Image
                 src="/placeholder.svg?height=400&width=400&text=Manager+Photo"
                 alt="Manager"
@@ -128,8 +127,8 @@ export default function About() {
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-4">{t['fr'].OurStory}</h3>
-              <p className="text-gray-600 mb-4">{t['fr'].OurStoryDescription}</p>
-              <p className="text-gray-600">{t['fr'].OurStoryDescription2}</p>
+              <p className="text-gray-900 dark:text-gray-400 mb-4">{t['fr'].OurStoryDescription}</p>
+              <p className="text-gray-900 dark:text-gray-400">{t['fr'].OurStoryDescription2}</p>
             </div>
           </div>
         </div>
