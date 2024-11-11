@@ -38,6 +38,9 @@ export default function Page() {
             headerFontSize: 20,
             headerHeight: 80,
           },
+          Form: {
+            labelFontSize: 16,
+          },
         },
       }}
     >
@@ -46,10 +49,10 @@ export default function Page() {
           <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
             <Image
               className="self-start z-10 cursor-pointer"
-              src="/logo.png"
+              src="/Logo.png"
               alt="CMD Logo"
-              width={100}
-              height={100}
+              width={!isMobile ? 112 : 100}
+              height={!isMobile ? 112 : 100}
               priority
               onClick={() => onMenuChange()}
             />
@@ -90,33 +93,33 @@ export default function Page() {
           )}
         >
           <main className="flex-grow">{content}</main>
-        </div>
-        <footer className="bg-[#aaa27d] text-white py-8">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="mb-4 md:mb-0">
-                <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
-                <p className="text-sm">{t['fr'].footer}</p>
-              </div>
-              <div className="flex flex-col items-center md:items-end">
-                <div className="flex items-center mb-2">
-                  <IconMapPin className="mr-2" size={18} />
-                  <span className="cursor-pointer" onClick={() => onMenuChange('About')}>
-                    {companyInfo.address}
-                  </span>
+          <footer className="bg-[#aaa27d] text-white py-8">
+            <div className="container mx-auto px-4">
+              <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="mb-4 md:mb-0">
+                  <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
+                  <p className="text-sm">{t['fr'].footer}</p>
                 </div>
-                <div className="flex items-center mb-2">
-                  <IconPhone className="mr-2" size={18} />
-                  <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
-                </div>
-                <div className="flex items-center">
-                  <IconMail className="mr-2" size={18} />
-                  <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
+                <div className="flex flex-col items-center md:items-end">
+                  <div className="flex items-center mb-2">
+                    <IconMapPin className="mr-2" size={18} />
+                    <span className="cursor-pointer" onClick={() => onMenuChange('About')}>
+                      {companyInfo.address}
+                    </span>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <IconPhone className="mr-2" size={18} />
+                    <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
+                  </div>
+                  <div className="flex items-center">
+                    <IconMail className="mr-2" size={18} />
+                    <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </footer>
+          </footer>
+        </div>
       </div>
     </ConfigProvider>
   );
