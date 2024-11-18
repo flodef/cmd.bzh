@@ -27,7 +27,8 @@ export default function Page() {
   const { onMenuChange, isMenuOpen, activeTab, content, title } = useMenuContext();
 
   const isDark = useMemo(() => colorScheme === 'dark', [colorScheme]);
-  const isMobile = useMemo(() => width < 768, [width]);
+  const isMobile = useMemo(() => width < 640, [width]);
+  const isTinyMobile = useMemo(() => width < 320, [width]);
 
   return (
     <ConfigProvider
@@ -56,14 +57,20 @@ export default function Page() {
               priority
               onClick={() => onMenuChange()}
             />
-            <div className={twMerge('flex space-x-4 z-10', isMobile ? 'self-start w-full justify-end' : '')}>
+            <div className={twMerge('flex z-10', isMobile ? 'self-start w-full justify-end' : '')}>
               <div
                 className={twMerge(
                   isMobile ? 'transition transform' : 'visible max-h-28 flex items-center',
                   isMenuOpen || !isMobile ? 'opacity-100 scale-y-100 h-40' : 'opacity-0 scale-y-0 h-0',
+                  isTinyMobile ? (isMenuOpen ? 'h-[280px]' : 'h-36') : '',
                 )}
               >
                 <Tabs
+                  style={{
+                    width: isMobile ? width - 210 : 'auto',
+                    marginLeft: isTinyMobile ? 80 - width : 0,
+                    marginTop: isTinyMobile ? 120 : 0,
+                  }}
                   activeKey={activeTab}
                   items={menuItems}
                   onChange={onMenuChange}
@@ -72,12 +79,13 @@ export default function Page() {
                 />
               </div>
 
-              <MenuButton className="md:hidden" />
+              {isMobile && <MenuButton />}
             </div>
             {isMobile && (
               <div
                 className={twMerge(
-                  'absolute top-7 text-center w-full pl-28 pr-20 self-end',
+                  'absolute text-center w-full self-end',
+                  isTinyMobile ? 'top-32 left-0' : 'top-7 pl-28 pr-20',
                   !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                 )}
               >
@@ -89,7 +97,8 @@ export default function Page() {
         <div
           className={twMerge(
             'flex flex-col min-h-screen transition transform',
-            isMenuOpen && isMobile ? 'pt-40' : 'pt-28',
+            isMenuOpen && isMobile ? 'pt-40' : isTinyMobile ? 'pt-36' : 'pt-28',
+            isMenuOpen && isTinyMobile ? 'pt-[280px]' : '',
           )}
         >
           <main className="flex-grow">{content}</main>
