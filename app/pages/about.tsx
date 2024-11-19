@@ -1,4 +1,4 @@
-import { IconMapPin } from '@tabler/icons-react';
+import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { Image } from 'antd';
 import Link from 'next/link';
 import { companyInfo } from '../constants';
@@ -52,15 +52,13 @@ const t = {
 
 const workingCities = [
   'Saint-Nic',
-  'Crozon',
   'Plomodiern',
   'Plonevez-Porzay',
   'Ploeven',
-  'Landevennec',
-  'Telgruc-sur-Mer',
-  'Argol',
   'Dinéault',
   'Chateaulin',
+  'Cast',
+  'Trégarvan',
 ];
 
 export default function About() {
@@ -78,13 +76,18 @@ export default function About() {
             </div>
             <div className="w-full md:w-1/2 text-center">
               <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
-              <p className="text-gray-900 dark:text-gray-400 mb-2">{companyInfo.address}</p>
-              <p className="text-gray-900 dark:text-gray-400 mb-2">
+              <div className="text-gray-900 dark:text-gray-400 mb-2 flex items-center justify-center">
+                <IconMapPin className="mr-2" size={18} />
+                {companyInfo.address}
+              </div>
+              <div className="text-gray-900 dark:text-gray-400 mb-2 flex items-center justify-center">
+                <IconPhone className="mr-2" size={18} />
                 <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
-              </p>
-              <p className="text-gray-900 dark:text-gray-400">
+              </div>
+              <div className="text-gray-900 dark:text-gray-400 mb-2 flex items-center justify-center">
+                <IconMail className="mr-2" size={18} />
                 <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
-              </p>
+              </div>
               <hr style={{ marginTop: 16, marginBottom: 16 }} />
               <h3 className="text-xl font-semibold mb-2">{t['fr'].WorkingArea}</h3>
               <ul className="ml-4 mb-2 flex flex-wrap">
