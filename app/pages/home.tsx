@@ -1,10 +1,10 @@
 import { Button, Card, Carousel } from 'antd';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { bgColor, textColor } from '../constants';
 import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
-import { twMerge } from 'tailwind-merge';
-import { bgColor, textColor } from '../page';
 
 const t = {
   fr: {

@@ -11,9 +11,6 @@ import { useWindowParam } from './hooks/useWindowParam';
 import { menuItems, useMenuContext } from './contexts/menuProvider';
 import { useMemo } from 'react';
 
-export const bgColor = 'bg-green-50 dark:bg-gray-900';
-export const textColor = 'text-gray-900 dark:text-gray-400';
-
 const t = {
   fr: {
     footer: 'Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.',

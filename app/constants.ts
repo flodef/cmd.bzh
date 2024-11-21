@@ -5,3 +5,5 @@ export const companyInfo = {
   phone: '06 18 49 92 69',
   email: 'contact@cmd.bzh',
 };
+export const bgColor = 'bg-green-50 dark:bg-gray-900';
+export const textColor = 'text-gray-900 dark:text-gray-400';

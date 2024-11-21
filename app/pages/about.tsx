@@ -1,9 +1,8 @@
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { Image } from 'antd';
 import Link from 'next/link';
-import { companyInfo } from '../constants';
-import { bgColor, textColor } from '../page';
 import { twMerge } from 'tailwind-merge';
+import { bgColor, companyInfo, textColor } from '../constants';
 
 const t = {
   fr: {
