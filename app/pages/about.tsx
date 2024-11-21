@@ -69,10 +69,10 @@ export default function About() {
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].OurLocation}</h2>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
             <div className="w-full md:w-1/2 h-64 bg-gray-300 rounded-lg overflow-hidden">
-              {/* TODO: Replace this with an actual map component or embed */}
-              <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <IconMapPin className="text-gray-400" size={48} />
-              </div>
+              <iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-4.312176704406739%2C48.18806693411636%2C-4.2569875717163095%2C48.2107219419585&amp;layer=mapnik&amp;marker=48.19939569036789%2C-4.284582138061523"
+                style={{ border: 0, width: '100%', height: '100%' }}
+              ></iframe>
             </div>
             <div className="w-full md:w-1/2 text-center">
               <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
