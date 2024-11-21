@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
+import { twMerge } from 'tailwind-merge';
+import { bgColor, textColor } from '../page';
 
 const t = {
   fr: {
@@ -72,26 +74,34 @@ export default function Home() {
     setIsDark(colorScheme === 'dark');
   }, [colorScheme]);
 
+  const style = {
+    backgroundColor: !isDark ? '#f0f0f0' : '#141414',
+    color: !isDark ? '#141414' : '#f0f0f0',
+    borderColor: !isDark ? '#141414' : '#303030',
+  };
+
   return (
     <>
-      <section className="bg-green-50 dark:bg-gray-900 py-12">
+      <section className={twMerge(bgColor, 'py-12')}>
         <div className="container mx-auto px-4">
-          <Carousel className="w-full max-w-4xl mx-auto" autoplay>
-            {[1, 2, 3, 4, 5].map(index => (
-              <div key={index}>
-                <Card>
-                  <div className="flex aspect-square items-center justify-center p-6">
-                    <Image
-                      width={600}
-                      height={400}
-                      src={`/placeholder.svg?height=400&width=600&text=Service+Image+${index}`}
-                      alt={`Service ${index}`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-                </Card>
-              </div>
-            ))}
+          <Carousel className={twMerge(bgColor, 'w-full max-w-4xl mx-auto')} autoplay>
+            {Array(7)
+              .fill(0)
+              .map((_, index) => (
+                <div key={index}>
+                  <Card style={style}>
+                    <div className="flex items-center justify-center p-6">
+                      <Image
+                        width={600}
+                        height={400}
+                        src={`/carousel/${index}.jpg`}
+                        alt={`Vue ${index}`}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                  </Card>
+                </div>
+              ))}
           </Carousel>
         </div>
       </section>
@@ -101,12 +111,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].Services}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cardContent.map((item, index) => (
-              <Card
-                key={index}
-                style={{ backgroundColor: !isDark ? '#f0f0f0' : '#141414' }}
-                classNames={cardStyle}
-                title={item.title}
-              >
+              <Card key={index} style={style} classNames={cardStyle} title={item.title}>
                 {item.description}
               </Card>
             ))}
@@ -114,10 +119,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-green-50 dark:bg-gray-900 py-12">
+      <section className={twMerge(bgColor, 'py-12')}>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].EcoFriendly}</h2>
-          <p className="text-center text-gray-900 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className={twMerge(textColor, 'text-center text-lg max-w-2xl mx-auto')}>
             {t['fr'].EcoFriendlyDescription}
           </p>
           <div className="mt-8 text-center">
@@ -135,11 +140,7 @@ export default function Home() {
       <section className="py-12 bg-primary">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">{t['fr'].ReadyToExperience}</h2>
-          <Button
-            size="large"
-            style={{ backgroundColor: !isDark ? '#f0f0f0' : '#141414', color: !isDark ? '#141414' : '#f0f0f0' }}
-            onClick={() => onMenuChange('Contact')}
-          >
+          <Button size="large" style={style} onClick={() => onMenuChange('Contact')}>
             {t['fr'].ContactUs}
           </Button>
         </div>
