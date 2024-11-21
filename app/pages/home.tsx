@@ -51,11 +51,6 @@ const t = {
   },
 };
 
-const cardStyle = {
-  header: 'text-center',
-  title: 'text-center text-black dark:text-white',
-  body: 'text-center text-gray-900 dark:text-gray-400 text-lg',
-};
 const cardContent = [
   { title: t['fr'].Cleaning, description: t['fr'].CleaningDescription },
   { title: t['fr'].Gardening, description: t['fr'].GardeningDescription },
@@ -74,10 +69,18 @@ export default function Home() {
     setIsDark(colorScheme === 'dark');
   }, [colorScheme]);
 
-  const style = {
+  const mainStyle = {
     backgroundColor: !isDark ? '#f0f0f0' : '#141414',
     color: !isDark ? '#141414' : '#f0f0f0',
     borderColor: !isDark ? '#141414' : '#303030',
+  };
+  const cardStyle = {
+    header: { borderColor: !isDark ? '#141414' : '#303030' },
+  };
+  const cardClass = {
+    header: 'text-center border-b-[#303030]',
+    title: 'text-center text-black dark:text-white',
+    body: twMerge(textColor, 'text-center text-lg'),
   };
 
   return (
@@ -89,7 +92,7 @@ export default function Home() {
               .fill(0)
               .map((_, index) => (
                 <div key={index}>
-                  <Card style={style}>
+                  <Card style={mainStyle}>
                     <div className="flex items-center justify-center p-6">
                       <Image
                         width={600}
@@ -111,7 +114,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].Services}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cardContent.map((item, index) => (
-              <Card key={index} style={style} classNames={cardStyle} title={item.title}>
+              <Card key={index} style={mainStyle} styles={cardStyle} classNames={cardClass} title={item.title}>
                 {item.description}
               </Card>
             ))}
@@ -140,7 +143,7 @@ export default function Home() {
       <section className="py-12 bg-primary">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">{t['fr'].ReadyToExperience}</h2>
-          <Button size="large" style={style} onClick={() => onMenuChange('Contact')}>
+          <Button size="large" style={mainStyle} onClick={() => onMenuChange('Contact')}>
             {t['fr'].ContactUs}
           </Button>
         </div>
