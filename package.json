@@ -21,7 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "@types/node": "^20.16.8",
+    "@types/node": "^20.17.6",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "eslint": "^8.57.1",
