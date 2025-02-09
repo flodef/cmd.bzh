@@ -73,7 +73,7 @@ export default function About() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold text-center mb-8">{t('AboutUs')}</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 gap-4 items-center">
             <div>
               <h2 className="text-2xl font-semibold text-center mb-2">{companyInfo.founder}</h2>
               <p className={twMerge(textColor, 'mb-4 text-center')}>{t('Founder')}</p>
@@ -85,10 +85,18 @@ export default function About() {
                 className="rounded-full mx-auto mb-4 self-center"
               /> */}
             </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">{t('OurStory')}</h3>
-              <p className={twMerge(textColor, 'mb-4')}>{t('OurStoryDescription')}</p>
-              <p className={textColor}>{t('OurStoryDescription2')}</p>
+            <div className="flex flex-col gap-4">
+              {/* <h3 className="text-xl font-semibold">{t('OurStory')}</h3> */}
+              <p className={textColor}>{t('OurStoryDescription0')}</p>
+              <ul>
+                <li className={`${textColor} pl-4`}>{t('OurStoryDescription1')}</li>
+                <li className={`${textColor} pl-4`}>{t('OurStoryDescription2')}</li>
+                <li className={`${textColor} pl-4`}>{t('OurStoryDescription3')}</li>
+                <li className={`${textColor} pl-4`}>{t('OurStoryDescription4')}</li>
+              </ul>
+              <p className={textColor}>{t('OurStoryDescription5')}</p>
+              <p className={textColor}>{t('OurStoryDescription6')}</p>
+              <p className={textColor}>{t('OurStoryDescription7')}</p>
             </div>
           </div>
         </div>
