@@ -101,18 +101,18 @@ export default function Page() {
                   <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
                   <p className="text-sm">{t('footer')}</p>
                 </div>
-                <div className="flex flex-col items-center md:items-end">
-                  <div className="flex items-center mb-2">
+                <div className="flex flex-col gap-2 items-center md:items-end">
+                  <div className="flex items-center">
                     <IconMapPin className="mr-2" size={18} />
-                    <span className="cursor-pointer" onClick={() => onMenuChange('About')}>
+                    <span className="cursor-pointer whitespace-nowrap" onClick={() => onMenuChange('About')}>
                       {companyInfo.address}
                     </span>
                   </div>
-                  <div className="flex items-center mb-2">
+                  <div className="flex items-center whitespace-nowrap">
                     <IconPhone className="mr-2" size={18} />
                     <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center whitespace-nowrap">
                     <IconMail className="mr-2" size={18} />
                     <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
                   </div>
