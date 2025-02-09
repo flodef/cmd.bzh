@@ -21,14 +21,14 @@
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "@types/node": "^20.17.6",
+    "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "eslint": "^8.57.1",
     "eslint-config-next": "latest",
     "husky": "latest",
     "postcss": "latest",
-    "tailwindcss": "latest",
+    "tailwindcss": "^3.4.17",
     "typescript": "latest"
   },
   "prettier": {
