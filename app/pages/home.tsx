@@ -5,59 +5,15 @@ import { twMerge } from 'tailwind-merge';
 import { bgColor, textColor } from '../constants';
 import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
-
-const t = {
-  fr: {
-    Services: 'Nos Services',
-    Cleaning: 'Nettoyage',
-    Gardening: 'Jardinage',
-    CheckInOut: 'Check-in / Check-out',
-    EcoFriendly: 'Eco Responsable',
-    ClothesHandling: 'Gestion du linge',
-    WelcomeBasket: 'Panier de bienvenue',
-    MultiService: 'Multi-Services',
-    CleaningDescription: 'Services de nettoyage professionnels pour tous types de propriétés.',
-    GardeningDescription: 'Compétences en jardinage pour garder vos espaces extérieurs beaux et attrayants.',
-    CheckInOutDescription: 'Services de check-in et check-out pour les propriétés louées.',
-    ClothesHandlingDescription: 'Nettoyage professionnel et changement du linge.',
-    WelcomeBasketDescription: "Offre d'un panier de bienvenue avec une sélection de produits locaux.",
-    MultiServiceDescription: 'Jardinage, ménage, taille de haies, petit bricolages, ...',
-    EcoFriendlyDescription:
-      'À CMD Breizh, nous sommes engagés à utiliser au maximum des produits de nettoyage écoresponsables et des pratiques durables pour minimiser notre empreinte écologique tout en livrant un service exceptionnel.',
-    ReadyToExperience: 'Prêt à expérimenter notre service ?',
-    ContactUs: 'Contactez-nous dès maintenant',
-    EcoFriendlyLabel: 'Label écoresponsable',
-  },
-  en: {
-    Services: 'Our Services',
-    Cleaning: 'Cleaning',
-    Gardening: 'Gardening',
-    CheckInOut: 'Check-in / Check-out',
-    EcoFriendly: 'Eco-Friendly',
-    ClothesHandling: 'Clothes Handling',
-    WelcomeBasket: 'Welcome Basket',
-    MultiService: 'Multi-Service',
-    CleaningDescription: 'Professional cleaning services for all types of properties.',
-    GardeningDescription: 'Expert gardening to keep your outdoor spaces beautiful and attractive.',
-    CheckInOutDescription: 'Seamless check-in and check-out services for rental properties.',
-    ClothesHandlingDescription: 'Professional cleaning and clothes handling services.',
-    WelcomeBasketDescription: 'A welcome basket with a selection of local products.',
-    MultiServiceDescription: 'Gardening, cleaning, lawn mowing, small repairs, ...',
-    EcoFriendlyDescription:
-      'At CMD Breizh, we&apos;re committed to using as much as possible environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
-    ReadyToExperience: 'Ready to experience our top-notch services?',
-    ContactUs: 'Contact Us Today',
-    EcoFriendlyLabel: 'Eco-Friendly Label',
-  },
-};
+import { t } from '../i18n';
 
 const cardContent = [
-  { title: t['fr'].Cleaning, description: t['fr'].CleaningDescription },
-  { title: t['fr'].Gardening, description: t['fr'].GardeningDescription },
-  { title: t['fr'].CheckInOut, description: t['fr'].CheckInOutDescription },
-  { title: t['fr'].ClothesHandling, description: t['fr'].ClothesHandlingDescription },
-  { title: t['fr'].WelcomeBasket, description: t['fr'].WelcomeBasketDescription },
-  { title: t['fr'].MultiService, description: t['fr'].MultiServiceDescription },
+  { title: t('Cleaning'), description: t('CleaningDescription') },
+  { title: t('Gardening'), description: t('GardeningDescription') },
+  { title: t('CheckInOut'), description: t('CheckInOutDescription') },
+  { title: t('ClothesHandling'), description: t('ClothesHandlingDescription') },
+  { title: t('WelcomeBasket'), description: t('WelcomeBasketDescription') },
+  { title: t('MultiService'), description: t('MultiServiceDescription') },
 ];
 
 export default function Home() {
@@ -109,7 +65,7 @@ export default function Home() {
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].Services}</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">{t('Services')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cardContent.map((item, index) => (
               <Card key={index} style={mainStyle} styles={cardStyle} classNames={cardClass} title={item.title}>
@@ -122,27 +78,19 @@ export default function Home() {
 
       <section className={twMerge(bgColor, 'py-12')}>
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">{t['fr'].EcoFriendly}</h2>
-          <p className={twMerge(textColor, 'text-center text-lg max-w-2xl mx-auto')}>
-            {t['fr'].EcoFriendlyDescription}
-          </p>
+          <h2 className="text-3xl font-bold text-center mb-8">{t('EcoFriendly')}</h2>
+          <p className={twMerge(textColor, 'text-center text-lg max-w-2xl mx-auto')}>{t('EcoFriendlyDescription')}</p>
           <div className="mt-8 text-center">
-            <Image
-              width={150}
-              height={150}
-              src="/EcoLabel.png"
-              alt={t['fr'].EcoFriendlyLabel}
-              className="inline-block"
-            />
+            <Image width={150} height={150} src="/EcoLabel.png" alt={t('EcoFriendlyLabel')} className="inline-block" />
           </div>
         </div>
       </section>
 
       <section className="py-12 bg-primary">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">{t['fr'].ReadyToExperience}</h2>
+          <h2 className="text-3xl font-bold mb-4">{t('ReadyToExperience')}</h2>
           <Button size="large" style={mainStyle} onClick={() => onMenuChange('Contact')}>
-            {t['fr'].ContactUs}
+            {t('ContactUs')}
           </Button>
         </div>
       </section>

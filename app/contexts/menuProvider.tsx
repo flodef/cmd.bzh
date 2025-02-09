@@ -1,34 +1,23 @@
 'use client';
 
 import { createContext, ReactNode, useContext, useState } from 'react';
+import { t } from '../i18n';
 import About from '../pages/about';
 import Contact from '../pages/contact';
 import Home from '../pages/home';
 
-const t = {
-  fr: {
-    home: 'Accueil',
-    about: 'A propos de nous',
-    contact: 'Nous contacter',
-    footer: 'Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.',
-  },
-  en: {
-    footer: 'Your trusted partner for cleaning, gardening, and property management.',
-  },
-};
-
 export const menuItems = [
   {
     key: 'Home',
-    label: t['fr'].home,
+    label: t('Home'),
   },
   {
     key: 'About',
-    label: t['fr'].about,
+    label: t('About'),
   },
   {
     key: 'Contact',
-    label: t['fr'].contact,
+    label: t('Contact'),
   },
 ];
 

@@ -4,21 +4,13 @@ import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import { ConfigProvider, Tabs, theme } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { MenuButton } from './components/menuButton';
 import { companyInfo } from './constants';
-import { useWindowParam } from './hooks/useWindowParam';
 import { menuItems, useMenuContext } from './contexts/menuProvider';
-import { useMemo } from 'react';
-
-const t = {
-  fr: {
-    footer: 'Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.',
-  },
-  en: {
-    footer: 'Your trusted partner for cleaning, gardening, and property management.',
-  },
-};
+import { useWindowParam } from './hooks/useWindowParam';
+import { t } from './i18n';
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
@@ -103,11 +95,11 @@ export default function Page() {
         >
           <main className="flex-grow">{content}</main>
           <footer className="bg-[#aaa27d] text-white py-8">
-            <div className="container mx-auto px-4">
+            <div className="container px-4 justify-self-center">
               <div className="flex flex-col md:flex-row justify-between items-center">
                 <div className="mb-4 md:mb-0">
                   <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
-                  <p className="text-sm">{t['fr'].footer}</p>
+                  <p className="text-sm">{t('footer')}</p>
                 </div>
                 <div className="flex flex-col items-center md:items-end">
                   <div className="flex items-center mb-2">
