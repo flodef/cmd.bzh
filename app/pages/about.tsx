@@ -22,9 +22,9 @@ const t = {
     ContactUs: 'Contactez-nous dès maintenant',
     EcoFriendlyCommitment: 'Nos engagements écologiques',
     EcoFriendlyCommitmentDescription:
-      'Nous nous engageons à utiliser des pratiques écologiques et éthiques pour minimiser nos impacts sur l’environnement. Nous mettons en place des systèmes de collecte et de traitement de déchets, nous utilisons des équipements écologiques lors de nos prestations.',
+      'Nous nous engageons à utiliser au maximum des pratiques écologiques et éthiques pour minimiser nos impacts sur l’environnement. Nous mettons en place des systèmes de collecte et de traitement de déchets, nous utilisons des équipements écologiques lors de nos prestations.',
     EcoFriendlyCommitmentDescription2:
-      'En choisissant CMD Breizh, vous êtes en mesure de garantir la protection de l’environnement et de respecter les normes environnementales. Nous sommes une entreprise qui met en œuvre des pratiques écologiques et éthiques pour garantir un service exceptionnel et également pour promouvoir la protection de l’environnement.',
+      'En choisissant CMD Breizh, vous êtes en mesure de garantir la protection de l’environnement et de respecter les normes environnementales.',
     EcoFriendlyLabel: 'Label écoresponsable',
   },
   en: {
@@ -44,9 +44,9 @@ const t = {
     ContactUs: 'Contact Us Today',
     EcoFriendlyCommitment: 'Our Eco-Friendly Commitment',
     EcoFriendlyCommitmentDescription:
-      'We are committed to using environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
+      'We are committed to using as much as possible environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
     EcoFriendlyCommitmentDescription2:
-      'By choosing CMD Breizh, you are able to guarantee the protection of the environment and respect the environmental standards. We are a company that implements eco-friendly and ethical practices to guarantee an exceptional service and also to promote the protection of the environment.',
+      'By choosing CMD Breizh, you are able to guarantee the protection of the environment and respect the environmental standards.',
     EcoFriendlyLabel: 'Eco-Friendly Label',
   },
 };

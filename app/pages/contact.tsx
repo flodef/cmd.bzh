@@ -28,7 +28,7 @@ const t: { [key: string]: Translation } = {
     ContactInformation: 'Informations de contact',
     BusinessHours: 'Horaires',
     BusinessHoursDescription: 'Ouvert tous les jours, de 9h à 18h.',
-    ReplyTime: 'Réponse en moins de 24 heures.',
+    ReplyTime: 'Réponse en moins de 48 heures.',
     FieldRequired: 'Veuillez renseigner votre {0} !',
     FieldMin: 'Votre {0} doit avoir plus de {1} caractères !',
     FieldMax: 'Votre {0} doit avoir moins de {1} caractères !',
@@ -51,7 +51,7 @@ const t: { [key: string]: Translation } = {
     ContactInformation: 'Contact Information',
     BusinessHours: 'Business Hours',
     BusinessHoursDescription: 'Open everyday, from 9 AM to 6 PM.',
-    ReplyTime: 'Reply within 24 hours.',
+    ReplyTime: 'Reply within 48 hours.',
     FieldRequired: 'Please input your {0} !',
     FieldMin: 'Your {0} should have more than {1} characters !',
     FieldMax: 'Your {0} should have less than {1} characters !',
@@ -123,21 +123,6 @@ export default function Contact() {
     }
   };
 
-  // const customizeRequiredMark = (label: React.ReactNode, { required }: { required: boolean }) => (
-  //   <>
-  //     {required ? (
-  //       <>
-  //         <div className="text-red-500 text-2xl">*&nbsp;</div>
-  //         <div>{label}</div>
-  //       </>
-  //     ) : (
-  //       label
-  //     )}
-  //   </>
-  // );
-
-  console.log(values);
-
   const [contactsInfo, setContactsInfo] = useState<{ value: string; type: ContactType; isValid: boolean }[]>([]);
   const onContactChange = (value: string, index: number) => {
     const isEmail = /[^0-9+-.\s]/.test(value);
@@ -174,7 +159,7 @@ export default function Contact() {
                 onFinishFailed={onFinishFailed}
                 requiredMark={false}
                 validateTrigger="onChange"
-                autoComplete="off"
+                autoComplete="on"
               >
                 <Form.Item<FieldType>
                   label={t['fr'].Name}

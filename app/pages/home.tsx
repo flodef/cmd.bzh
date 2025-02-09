@@ -17,13 +17,13 @@ const t = {
     WelcomeBasket: 'Panier de bienvenue',
     MultiService: 'Multi-Services',
     CleaningDescription: 'Services de nettoyage professionnels pour tous types de propriétés.',
-    GardeningDescription: 'Expertise en jardinage pour garder vos espaces extérieurs beaux et attrayants.',
+    GardeningDescription: 'Compétences en jardinage pour garder vos espaces extérieurs beaux et attrayants.',
     CheckInOutDescription: 'Services de check-in et check-out pour les propriétés louées.',
     ClothesHandlingDescription: 'Nettoyage professionnel et changement du linge.',
     WelcomeBasketDescription: "Offre d'un panier de bienvenue avec une sélection de produits locaux.",
-    MultiServiceDescription: 'Peinture, maçonnerie, toiture, plomberie, électricité, bricolages',
+    MultiServiceDescription: 'Jardinage, ménage, taille de haies, petit bricolages, ...',
     EcoFriendlyDescription:
-      'À CMD Breizh, nous sommes engagés à utiliser des produits de nettoyage écoresponsables et des pratiques durables pour minimiser notre empreinte écologique tout en livrant un service exceptionnel.',
+      'À CMD Breizh, nous sommes engagés à utiliser au maximum des produits de nettoyage écoresponsables et des pratiques durables pour minimiser notre empreinte écologique tout en livrant un service exceptionnel.',
     ReadyToExperience: 'Prêt à expérimenter notre service ?',
     ContactUs: 'Contactez-nous dès maintenant',
     EcoFriendlyLabel: 'Label écoresponsable',
@@ -42,9 +42,9 @@ const t = {
     CheckInOutDescription: 'Seamless check-in and check-out services for rental properties.',
     ClothesHandlingDescription: 'Professional cleaning and clothes handling services.',
     WelcomeBasketDescription: 'A welcome basket with a selection of local products.',
-    MultiServiceDescription: 'Painting, masonry, woodworking, etc',
+    MultiServiceDescription: 'Gardening, cleaning, lawn mowing, small repairs, ...',
     EcoFriendlyDescription:
-      'At CMD Breizh, we&apos;re committed to using environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
+      'At CMD Breizh, we&apos;re committed to using as much as possible environmentally friendly cleaning products and sustainable practices to minimize our ecological footprint while delivering exceptional service.',
     ReadyToExperience: 'Ready to experience our top-notch services?',
     ContactUs: 'Contact Us Today',
     EcoFriendlyLabel: 'Eco-Friendly Label',
@@ -92,17 +92,15 @@ export default function Home() {
               .fill(0)
               .map((_, index) => (
                 <div key={index}>
-                  <Card style={mainStyle}>
-                    <div className="flex items-center justify-center p-6">
-                      <Image
-                        width={600}
-                        height={400}
-                        src={`/carousel/${index}.jpg`}
-                        alt={`Vue ${index}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                  </Card>
+                  <div className="flex items-center justify-center p-6">
+                    <Image
+                      width={600}
+                      height={400}
+                      src={`/carousel/${index}.jpg`}
+                      alt={`Vue ${index}`}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
                 </div>
               ))}
           </Carousel>
