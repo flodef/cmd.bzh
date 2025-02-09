@@ -43,7 +43,7 @@ export default function Home() {
     <>
       <section className={twMerge(bgColor, 'py-12')}>
         <div className="container mx-auto px-4">
-          <Carousel className={twMerge(bgColor, 'w-full max-w-4xl mx-auto')} autoplay>
+          <Carousel className={twMerge(bgColor, 'w-full max-w-4xl mx-auto')} arrows autoplay>
             {Array(7)
               .fill(0)
               .map((_, index) => (
