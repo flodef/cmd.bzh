@@ -55,5 +55,9 @@
   "NameError": "Votre nom doit contenir uniquement des lettres et des espaces!",
   "EmailError": "Veuillez renseigner une adresse e-mail valide (exemple: john@doe.com)!",
   "PhoneError": "Veuillez renseigner un numéro de téléphone valide (exemple: +33612345678)!",
+  "MessageSending": "Envoi en cours...",
+  "MessageSent": "Message envoyé avec succès !",
+  "MessageError": "Echec lors du renvoi du message. Veuillez réessayer plus tard.",
+  "DuplicateContact": "Un contact avec cette adresse e-mail ou numéro de téléphone existe déjà !",
   "footer": "Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété."
 }

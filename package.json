@@ -12,8 +12,10 @@
   "dependencies": {
     "@ant-design/nextjs-registry": "latest",
     "@tabler/icons-react": "latest",
+    "@types/nodemailer": "latest",
     "antd": "latest",
     "next": "latest",
+    "nodemailer": "latest",
     "react": "latest",
     "react-dom": "latest",
     "tailwind-merge": "latest"

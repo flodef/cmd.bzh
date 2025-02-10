@@ -1,9 +1,10 @@
 'use client';
 
 import { IconMail, IconMapPin, IconPhone, IconSend, IconUser, IconX } from '@tabler/icons-react';
-import { Button, Form, FormProps, Input, InputRef, Space } from 'antd';
+import { Button, Form, FormProps, Input, InputRef, message, Space } from 'antd';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { companyInfo } from '../constants';
 import { t } from '../i18n';
 
@@ -12,15 +13,21 @@ const { TextArea } = Input;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
 
-const onFinish: FormProps<FieldType>['onFinish'] = values => {
-  console.log('Success:', values);
+type FieldType = {
+  Nom?: string;
+  Contacts?: { contact: string }[];
+  Message?: string;
 };
 
-const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = errorInfo => {
-  console.log('Failed:', errorInfo);
-};
+enum FieldError {
+  Min = 'min',
+  Max = 'max',
+  Required = 'required',
+}
 
 export default function Contact() {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const nameRef = useRef<InputRef>(null);
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -28,13 +35,45 @@ export default function Contact() {
   const [form] = Form.useForm();
   const values = Form.useWatch([], form);
 
+  const [hasContactError, setHasContactError] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const onFinish: FormProps<FieldType>['onFinish'] = async values => {
+    setSending(true);
+    try {
+      const transformedContacts = values.Contacts?.map(
+        ({ contact }, index) => `\n    ${index + 1}. ${t(getContactType(index))}: ${contact}`,
+      );
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...values,
+          Contacts: transformedContacts,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to send message');
+      form.resetFields();
+      messageApi.success(t('MessageSent'));
+    } catch {
+      messageApi.error(t('MessageError'));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = errorInfo => {
+    console.error('Failed:', errorInfo);
+    messageApi.error(t('MessageError'));
+  };
+
   useEffect(() => {
     form
       .validateFields({ validateOnly: true })
       .then(() => setIsFormValid(true))
       .catch(() => setIsFormValid(false));
-
-    console.log(values);
   }, [form, values]);
 
   useEffect(() => {
@@ -44,32 +83,22 @@ export default function Contact() {
   const getErrorMessage = (fieldName: string, fieldError?: FieldError, info?: string | number) => {
     switch (fieldError) {
       case FieldError.Min:
-        return t('FieldMin').replace('{0}', fieldName).replace('{1}', String(info));
+        return t('FieldMin').replace('{0}', t(fieldName)).replace('{1}', String(info));
       case FieldError.Max:
-        return t('FieldMax').replace('{0}', fieldName).replace('{1}', String(info));
+        return t('FieldMax').replace('{0}', t(fieldName)).replace('{1}', String(info));
       case FieldError.Required:
-        return t('FieldRequired').replace('{0}', fieldName);
+        return t('FieldRequired').replace('{0}', t(fieldName));
       default:
         return t(fieldName + 'Error');
     }
   };
 
-  const [contactsInfo, setContactsInfo] = useState<{ value: string; type: ContactType; isValid: boolean }[]>([]);
-  const onContactChange = (value: string, index: number) => {
-    const isEmail = /[^0-9+-.\s]/.test(value);
-    contactsInfo[index] = {
-      value: value,
-      type: isEmail ? ContactType.Email : ContactType.Phone,
-      isValid: isEmail ? emailRegex.test(value) : phoneRegex.test(value),
-    };
-
-    setContactsInfo([...contactsInfo]);
-  };
-
-  const isEmailContact = (index: number) => contactsInfo[index]?.type === ContactType.Email;
+  const isEmailContact = (index: number) => /[^0-9+-.\s]/.test(form.getFieldValue('Contacts').at(index)?.contact);
+  const getContactType = (index: number) => (isEmailContact(index) ? 'Email' : 'Phone');
 
   return (
     <>
+      {contextHolder}
       <section className="py-12">
         <div className="md:mx-4 px-4">
           <h1 className="text-4xl font-bold text-center mb-8">{t('ContactUs')}</h1>
@@ -81,11 +110,12 @@ export default function Contact() {
                 form={form}
                 layout={'horizontal'}
                 size="large"
+                disabled={sending}
                 scrollToFirstError={{ behavior: 'smooth', block: 'start' }}
                 style={{ maxWidth: 600 }}
                 labelCol={{ xs: 6, lg: 5 }}
                 wrapperCol={{ xs: 18, sm: 12, md: 18, lg: 14, xl: 12 }}
-                initialValues={{ name: '', contacts: [{ contact: '' }], message: '' }}
+                initialValues={{ Nom: '', Contacts: [{ contact: '' }], Message: '' }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 requiredMark={false}
@@ -94,7 +124,7 @@ export default function Contact() {
               >
                 <Form.Item<FieldType>
                   label={t('Name')}
-                  name="name"
+                  name="Nom"
                   hasFeedback
                   rules={[
                     { required: true, message: getErrorMessage('Name', FieldError.Required) },
@@ -103,10 +133,10 @@ export default function Contact() {
                     { pattern: /^[a-zA-Z\s]+$/, message: getErrorMessage('Name') },
                   ]}
                 >
-                  <Input prefix={<IconUser />} ref={nameRef} placeholder={t('Your') + ' ' + t('Name')} />
+                  <Input ref={nameRef} prefix={<IconUser />} placeholder={t('Your') + ' ' + t('Name')} />
                 </Form.Item>
                 <Form.Item label="Contact(s)">
-                  <Form.List name="contacts">
+                  <Form.List name="Contacts">
                     {(contactFields, { add, remove }) => (
                       <div className="flex flex-col gap-y-4">
                         {contactFields.map((contactField, index) => (
@@ -120,33 +150,47 @@ export default function Contact() {
                                 { required: true, message: getErrorMessage('Contact', FieldError.Required) },
                                 {
                                   min: 10,
-                                  message: getErrorMessage(contactsInfo[index]?.type ?? '', FieldError.Min, 10),
+                                  message: getErrorMessage(getContactType(index), FieldError.Min, 10),
                                 },
                                 {
                                   max: 50,
-                                  message: getErrorMessage(contactsInfo[index]?.type ?? '', FieldError.Max, 50),
+                                  message: getErrorMessage(getContactType(index), FieldError.Max, 50),
                                 },
                                 {
                                   pattern: isEmailContact(index) ? emailRegex : phoneRegex,
-                                  message: getErrorMessage(isEmailContact(index) ? 'Email' : 'Phone'),
+                                  message: getErrorMessage(getContactType(index)),
                                 },
+                                ({ getFieldValue }) => ({
+                                  validator(_, value) {
+                                    if (
+                                      !value ||
+                                      !getFieldValue('Contacts') ||
+                                      (getFieldValue('Contacts') as { contact: string }[]).reduce(
+                                        (c, contact) => (contact.contact === value ? c + 1 : c),
+                                        0,
+                                      ) === 1
+                                    ) {
+                                      setHasContactError(false);
+                                      return Promise.resolve();
+                                    }
+                                    setHasContactError(true);
+                                    return Promise.reject(new Error(t('DuplicateContact')));
+                                  },
+                                }),
                               ]}
                             >
                               <Input
                                 prefix={isEmailContact(index) ? <IconMail /> : <IconPhone />}
-                                onChange={e => onContactChange(e.target.value, index)}
                                 placeholder={t('Your') + ' ' + t('Email') + ' / ' + t('Phone')}
                               />
                             </Form.Item>
                             <IconX
-                              className="cursor-pointer"
+                              className={twMerge(
+                                form.getFieldValue('Contacts').at(0)?.contact ? 'cursor-pointer' : 'hidden',
+                              )}
                               onClick={() => {
-                                if (contactFields.length === 1) {
-                                  add();
-                                }
-
-                                remove(contactField.name);
-                                contactsInfo.splice(index, 1);
+                                if (contactFields.length === 1) form.resetFields(['Contacts']); // Just clear the field
+                                else remove(contactField.name); // Remove the selected field
                               }}
                             />
                           </Space>
@@ -154,11 +198,14 @@ export default function Contact() {
                         <Button
                           type="dashed"
                           disabled={
-                            contactsInfo.some(contact => !contact.isValid || contact.value === '') ||
-                            contactsInfo.length !== contactFields.length ||
-                            contactFields.length >= 5
+                            form.getFieldValue('Contacts').some((contact?: { contact: string }) => !contact?.contact) ||
+                            form.getFieldError('Contacts').length > 0 ||
+                            form.getFieldValue('Contacts').length !== contactFields.length ||
+                            contactFields.length >= 5 ||
+                            hasContactError ||
+                            sending
                           }
-                          onClick={add}
+                          onClick={() => add()}
                         >
                           + {t('AddContact')}
                         </Button>
@@ -168,7 +215,7 @@ export default function Contact() {
                 </Form.Item>
                 <Form.Item<FieldType>
                   label={t('Message')}
-                  name="message"
+                  name="Message"
                   hasFeedback
                   wrapperCol={{ xs: 18, sm: 20 }}
                   rules={[
@@ -186,7 +233,14 @@ export default function Contact() {
                   />
                 </Form.Item>
                 <Form.Item className="flex justify-end" style={{ paddingTop: 16 }}>
-                  <Button icon={<IconSend />} iconPosition="start" disabled={!isFormValid}>
+                  <Button
+                    icon={<IconSend />}
+                    iconPosition="start"
+                    disabled={!isFormValid}
+                    loading={sending}
+                    type="primary"
+                    htmlType="submit"
+                  >
                     {t('SendMessage')}
                   </Button>
                 </Form.Item>
@@ -234,21 +288,4 @@ export default function Contact() {
       </section>
     </>
   );
-}
-
-type FieldType = {
-  name?: string;
-  contacts?: string[];
-  message?: string;
-};
-
-enum FieldError {
-  Min = 'min',
-  Max = 'max',
-  Required = 'required',
-}
-
-enum ContactType {
-  Email = 'Email',
-  Phone = 'Phone',
 }

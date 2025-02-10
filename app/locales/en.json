@@ -55,5 +55,9 @@
   "NameError": "Your name should contain only letters and spaces!",
   "EmailError": "Please input a valid email address (example: john@doe.com)!",
   "PhoneError": "Please input a valid phone number (example: +33612345678)!",
+  "MessageSending": "Sending message...",
+  "MessageSent": "Message sent successfully!",
+  "MessageError": "Failed to send message. Please try again later.",
+  "DuplicateContact": "A contact with this email or phone number already exists!",
   "footer": "Your trusted partner for cleaning, gardening, and property management."
 }
