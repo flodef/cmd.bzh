@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { companyInfo } from '../constants';
 import { t } from '../i18n';
+import { getPhoneNumber } from '../utils';
 
 const { TextArea } = Input;
 
@@ -263,7 +264,7 @@ export default function Contact() {
                   <div>
                     <p className="font-semibold">{t('Phone')}:</p>
                     <p>
-                      <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
+                      <Link href={`tel:${getPhoneNumber(companyInfo.phone)}`}>{companyInfo.phone}</Link>
                     </p>
                   </div>
                 </div>

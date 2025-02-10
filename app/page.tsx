@@ -11,6 +11,7 @@ import { companyInfo } from './constants';
 import { menuItems, useMenuContext } from './contexts/menuProvider';
 import { useWindowParam } from './hooks/useWindowParam';
 import { t } from './i18n';
+import { getPhoneNumber } from './utils';
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
@@ -110,7 +111,7 @@ export default function Page() {
                   </div>
                   <div className="flex items-center whitespace-nowrap">
                     <IconPhone className="mr-2" size={18} />
-                    <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
+                    <Link href={`tel:${getPhoneNumber(companyInfo.phone)}`}>{companyInfo.phone}</Link>
                   </div>
                   <div className="flex items-center whitespace-nowrap">
                     <IconMail className="mr-2" size={18} />

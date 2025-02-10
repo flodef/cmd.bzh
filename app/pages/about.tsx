@@ -1,9 +1,10 @@
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import { bgColor, companyInfo, textColor } from '../constants';
 import { t } from '../i18n';
-import Image from 'next/image';
+import { getPhoneNumber } from '../utils';
 
 const workingCities = [
   'Saint-Nic',
@@ -37,7 +38,7 @@ export default function About() {
               </div>
               <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
                 <IconPhone className="mr-2" size={18} />
-                <Link href={`tel:${companyInfo.phone.replaceAll(' ', '')}`}>{companyInfo.phone}</Link>
+                <Link href={`tel:${getPhoneNumber(companyInfo.phone)}`}>{companyInfo.phone}</Link>
               </div>
               <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
                 <IconMail className="mr-2" size={18} />
