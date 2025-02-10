@@ -103,7 +103,7 @@ export default function Contact() {
       <section className="py-12">
         <div className="md:mx-4 px-4">
           <h1 className="text-4xl font-bold text-center mb-8">{t('ContactUs')}</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-semibold mb-4">{t('GetInTouch')}</h2>
               <Form
