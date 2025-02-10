@@ -103,7 +103,7 @@ export default function Contact() {
       <section className="py-12">
         <div className="md:mx-4 px-4">
           <h1 className="text-4xl font-bold text-center mb-8">{t('ContactUs')}</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
             <div>
               <h2 className="text-2xl font-semibold mb-4">{t('GetInTouch')}</h2>
               <Form
@@ -235,7 +235,7 @@ export default function Contact() {
                 </Form.Item>
                 <Form.Item className="flex justify-end" style={{ paddingTop: 16 }}>
                   <Button
-                    icon={<IconSend />}
+                    icon={<IconSend style={{ display: 'flex' }} />}
                     iconPosition="start"
                     disabled={!isFormValid}
                     loading={sending}
@@ -250,38 +250,42 @@ export default function Contact() {
             <div>
               <div className="space-y-4 mb-8 hidden md:block">
                 <h2 className="text-2xl font-semibold mb-4">{t('ContactInformation')}</h2>
-                <div className="flex items-start">
-                  <IconMapPin className="mr-2 mt-1" size={18} />
-                  <div>
-                    <p className="font-semibold">{t('Address')}:</p>
-                    {companyInfo.address.split(',').map((item, index) => (
-                      <p key={index}>{item}</p>
-                    ))}
+                <div className="space-y-4 justify-self-center">
+                  <div className="flex items-start">
+                    <IconMapPin className="mr-2 mt-1" size={18} />
+                    <div>
+                      <p className="font-semibold">{t('Address')}:</p>
+                      {companyInfo.address.split(',').map((item, index) => (
+                        <p key={index}>{item}</p>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center">
-                  <IconPhone className="mr-2" size={18} />
-                  <div>
-                    <p className="font-semibold">{t('Phone')}:</p>
-                    <p>
-                      <Link href={`tel:${getPhoneNumber(companyInfo.phone)}`}>{companyInfo.phone}</Link>
-                    </p>
+                  <div className="flex items-start">
+                    <IconPhone className="mr-2" size={18} />
+                    <div>
+                      <p className="font-semibold">{t('Phone')}:</p>
+                      <p>
+                        <Link href={`tel:${getPhoneNumber(companyInfo.phone)}`}>{companyInfo.phone}</Link>
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center">
-                  <IconMail className="mr-2" size={18} />
-                  <div>
-                    <p className="font-semibold">{t('Email')}:</p>
-                    <p>
-                      <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
-                    </p>
+                  <div className="flex items-start">
+                    <IconMail className="mr-2" size={18} />
+                    <div>
+                      <p className="font-semibold">{t('Email')}:</p>
+                      <p>
+                        <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
               <div>
                 <h3 className="text-2xl font-semibold mb-2">{t('BusinessHours')}</h3>
-                <p>{t('BusinessHoursDescription')}</p>
-                <p>{t('ReplyTime')}</p>
+                <div className="justify-self-center">
+                  <p>{t('BusinessHoursDescription')}</p>
+                  <p>{t('ReplyTime')}</p>
+                </div>
               </div>
             </div>
           </div>
