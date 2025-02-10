@@ -58,6 +58,6 @@
   "MessageSending": "Nachricht wird gesendet...",
   "MessageSent": "Nachricht erfolgreich gesendet!",
   "MessageError": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
-  "DuplicateContact": "Ein Kontakt mit dieser E-Mail-Adresse oder Telefonnummer existiert bereits!",
+  "DuplicateContact": "Ein Kontakt mit diesem {0} existiert bereits!",
   "footer": "Ihr vertrauenswürdiger Partner für Reinigung, Gartenarbeit und Immobilienverwaltung."
 }

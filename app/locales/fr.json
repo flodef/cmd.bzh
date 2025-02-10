@@ -58,6 +58,6 @@
   "MessageSending": "Envoi en cours...",
   "MessageSent": "Message envoyé avec succès !",
   "MessageError": "Echec lors du renvoi du message. Veuillez réessayer plus tard.",
-  "DuplicateContact": "Un contact avec cette adresse e-mail ou numéro de téléphone existe déjà !",
+  "DuplicateContact": "Un contact avec le même {0} existe déjà !",
   "footer": "Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété."
 }

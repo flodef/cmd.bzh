@@ -1,6 +1,6 @@
 'use client';
 
-import { IconMail, IconMapPin, IconPhone, IconSend, IconUser, IconX } from '@tabler/icons-react';
+import { IconMail, IconMapPin, IconPhone, IconPlus, IconSend, IconUser, IconX } from '@tabler/icons-react';
 import { Button, Form, FormProps, Input, InputRef, message, Space } from 'antd';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -167,7 +167,7 @@ export default function Contact() {
                                       !value ||
                                       !getFieldValue('Contacts') ||
                                       (getFieldValue('Contacts') as { contact: string }[]).reduce(
-                                        (c, contact) => (contact.contact === value ? c + 1 : c),
+                                        (c, contact) => (contact?.contact === value ? c + 1 : c),
                                         0,
                                       ) === 1
                                     ) {
@@ -175,7 +175,9 @@ export default function Contact() {
                                       return Promise.resolve();
                                     }
                                     setHasContactError(true);
-                                    return Promise.reject(new Error(t('DuplicateContact')));
+                                    return Promise.reject(
+                                      new Error(t('DuplicateContact').replace('{0}', t(getContactType(index)))),
+                                    );
                                   },
                                 }),
                               ]}
@@ -198,6 +200,7 @@ export default function Contact() {
                         ))}
                         <Button
                           type="dashed"
+                          icon={<IconPlus style={{ display: 'flex' }} />}
                           disabled={
                             form.getFieldValue('Contacts').some((contact?: { contact: string }) => !contact?.contact) ||
                             form.getFieldError('Contacts').length > 0 ||
@@ -208,7 +211,7 @@ export default function Contact() {
                           }
                           onClick={() => add()}
                         >
-                          + {t('AddContact')}
+                          {t('AddContact')}
                         </Button>
                       </div>
                     )}

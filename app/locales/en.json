@@ -58,6 +58,6 @@
   "MessageSending": "Sending message...",
   "MessageSent": "Message sent successfully!",
   "MessageError": "Failed to send message. Please try again later.",
-  "DuplicateContact": "A contact with this email or phone number already exists!",
+  "DuplicateContact": "A contact with the same {0} already exists!",
   "footer": "Your trusted partner for cleaning, gardening, and property management."
 }
