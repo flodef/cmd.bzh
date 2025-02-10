@@ -41,9 +41,9 @@ export default function Home() {
 
   return (
     <>
-      <section className={twMerge(bgColor, 'py-12')}>
+      <section className={twMerge('py-12')}>
         <div className="container mx-auto px-4">
-          <Carousel className={twMerge(bgColor, 'w-full max-w-4xl mx-auto')} arrows autoplay>
+          <Carousel className={twMerge('w-full max-w-4xl mx-auto')} arrows autoplay>
             {Array(7)
               .fill(0)
               .map((_, index) => (
@@ -63,7 +63,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12">
+      <section className={twMerge(bgColor, 'py-12')}>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">{t('Services')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -72,16 +72,6 @@ export default function Home() {
                 {item.description}
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={twMerge(bgColor, 'py-12')}>
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">{t('EcoFriendly')}</h2>
-          <p className={twMerge(textColor, 'text-center text-lg max-w-2xl mx-auto')}>{t('EcoFriendlyDescription')}</p>
-          <div className="mt-8 text-center">
-            <Image width={150} height={150} src="/EcoLabel.png" alt={t('EcoFriendlyLabel')} className="inline-block" />
           </div>
         </div>
       </section>
