@@ -37,6 +37,10 @@ export default function Page() {
           Form: {
             labelFontSize: 16,
           },
+          Carousel: {
+            arrowOffset: 0,
+            arrowSize: 24,
+          },
         },
       }}
     >
