@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { companyInfo } from '../../constants';
+import { companyInfo } from '../../utils/constants';
 
 export async function POST(request: Request) {
   try {

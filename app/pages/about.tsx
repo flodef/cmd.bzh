@@ -2,9 +2,9 @@ import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
-import { bgColor, companyInfo, textColor } from '../constants';
 import { t } from '../i18n';
-import { getPhoneNumber } from '../utils';
+import { bgColor, companyInfo, textColor } from '../utils/constants';
+import { getPhoneNumber } from '../utils/functions';
 
 const workingCities = [
   'Saint-Nic',

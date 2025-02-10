@@ -5,9 +5,9 @@ import { Button, Form, FormProps, Input, InputRef, message, Space } from 'antd';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { companyInfo } from '../constants';
 import { t } from '../i18n';
-import { getPhoneNumber } from '../utils';
+import { companyInfo } from '../utils/constants';
+import { getPhoneNumber } from '../utils/functions';
 
 const { TextArea } = Input;
 
