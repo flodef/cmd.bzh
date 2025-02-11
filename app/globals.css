@@ -33,11 +33,6 @@ body {
   opacity: 1 !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  .slick-arrow,
-  .slick-arrow::before,
-  .slick-arrow::after {
-    color: black !important;
-    opacity: 1 !important;
-  }
+.slick-dots li button {
+  background-color: white !important;
 }
