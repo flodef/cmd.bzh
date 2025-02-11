@@ -101,7 +101,7 @@ export default function Page() {
               isMenuOpen && isTinyMobile ? 'pt-[280px]' : '',
             )}
           >
-            <main className="flex-grow">{content}</main>
+            <main className="flex-grow content-center">{content}</main>
             <footer className="bg-[#aaa27d] text-white py-8">
               <div className="container px-4 justify-self-center">
                 <div className="flex flex-col md:flex-row justify-between items-center">

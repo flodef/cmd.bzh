@@ -1,6 +1,7 @@
-import { Button, Card, Carousel } from 'antd';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Button, Card, Carousel, Tooltip } from 'antd';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
@@ -17,26 +18,24 @@ const cardContent = [
 ];
 
 export default function Home() {
-  const { colorScheme } = useWindowParam();
+  const { colorScheme, width } = useWindowParam();
   const { onMenuChange } = useMenuContext();
+
+  const isMobile = useMemo(() => width < 640, [width]);
 
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
     setIsDark(colorScheme === 'dark');
   }, [colorScheme]);
 
-  const mainStyle = {
-    backgroundColor: !isDark ? '#f0f0f0' : '#141414',
-    color: !isDark ? '#141414' : '#f0f0f0',
-    borderColor: !isDark ? '#141414' : '#303030',
-  };
   const cardStyle = {
-    header: { borderColor: !isDark ? '#141414' : '#303030' },
+    header: { borderColor: !isDark ? '#cccccc' : '#303030' },
+    title: { whiteSpace: 'normal' },
   };
   const cardClass = {
     header: 'text-center border-b-[#303030]',
     title: 'text-center text-black dark:text-white',
-    body: twMerge(textColor, 'text-center text-lg'),
+    body: twMerge(textColor, 'text-center text-lg cursor-default'),
   };
 
   return (
@@ -67,11 +66,24 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">{t('Services')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {cardContent.map((item, index) => (
-              <Card key={index} style={mainStyle} styles={cardStyle} classNames={cardClass} title={item.title}>
-                {item.description}
+            {!isMobile ? (
+              cardContent.map((item, index) => (
+                <Card hoverable={!isDark} key={index} styles={cardStyle} classNames={cardClass} title={item.title}>
+                  {item.description}
+                </Card>
+              ))
+            ) : (
+              <Card styles={cardStyle} classNames={cardClass} title={t('Concierge')}>
+                {cardContent.map(item => (
+                  <div key={item.title} className="flex gap-2 items-center justify-center">
+                    <p>{item.title}</p>
+                    <Tooltip title={item.description}>
+                      <IconInfoCircle />
+                    </Tooltip>
+                  </div>
+                ))}
               </Card>
-            ))}
+            )}
           </div>
         </div>
       </section>
