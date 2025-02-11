@@ -21,8 +21,8 @@ export default function Page() {
   const { onMenuChange, isMenuOpen, activeTab, content, title } = useMenuContext();
 
   const isDark = useMemo(() => colorScheme === 'dark', [colorScheme]);
-  const isMobile = useMemo(() => width < 640, [width]);
-  const isTinyMobile = useMemo(() => width < 320, [width]);
+  const isMobile = useMemo(() => width > 0 && width < 640, [width]);
+  const isTinyMobile = useMemo(() => width > 0 && width < 320, [width]);
   const isLoading = useMemo(() => width < 0, [width]);
 
   return (
@@ -97,8 +97,17 @@ export default function Page() {
           <div
             className={twMerge(
               'flex flex-col min-h-screen transition transform',
-              isMenuOpen && isMobile ? 'pt-40' : isTinyMobile ? 'pt-36' : 'pt-28',
-              isMenuOpen && isTinyMobile ? 'pt-[280px]' : '',
+              !isMenuOpen
+                ? isTinyMobile
+                  ? 'pt-44'
+                  : isMobile
+                  ? 'pt-[132px]'
+                  : 'pt-36'
+                : isTinyMobile
+                ? 'pt-[312px]'
+                : isMobile
+                ? 'pt-48'
+                : 'pt-36',
             )}
           >
             <main className="flex-grow content-center">{content}</main>
