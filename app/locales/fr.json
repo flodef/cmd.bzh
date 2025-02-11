@@ -61,5 +61,22 @@
   "MessageSent": "Message envoyé avec succès !",
   "MessageError": "Echec lors du renvoi du message. Veuillez réessayer plus tard.",
   "DuplicateContact": "Un contact avec le même {0} existe déjà !",
-  "footer": "Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété."
+  "Footer": "Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.",
+  "Partner": "Partenaire",
+  "GDPR": "Mentions légales & RGPD",
+  "GDPRTitle": "Conformité RGPD",
+  "GDPRIntroduction": "Chez CMD Breizh, nous protégeons vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD).",
+  "GDPRDataCollection": "Collecte des données",
+  "GDPRDataCollectionText": "Nous ne collectons que les informations personnelles nécessaires à la fourniture de nos services, incluant nom, adresse email et coordonnées.",
+  "GDPRDataUsage": "Utilisation des données",
+  "GDPRDataUsageText": "Vos données sont utilisées exclusivement pour la prestation de services, la communication et les obligations légales. Nous ne partageons jamais de données avec des tiers sans consentement explicite.",
+  "GDPRUserRights": "Vos droits",
+  "GDPRRightAccess": "Droit d'accès à vos données",
+  "GDPRRightRectification": "Droit de rectification des données inexactes",
+  "GDPRRightErasure": "Droit à l'oubli",
+  "GDPRRightRestriction": "Droit à la limitation du traitement",
+  "GDPRRightDataPortability": "Droit à la portabilité des données",
+  "GDPRRightObject": "Droit d'opposition au traitement",
+  "GDPRContact": "Nous contacter",
+  "GDPRContactText": "Pour toute question relative au RGPD ou pour exercer vos droits, contactez-nous à contact@cmd.bzh"
 }

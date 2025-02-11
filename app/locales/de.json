@@ -61,5 +61,22 @@
   "MessageSent": "Nachricht erfolgreich gesendet!",
   "MessageError": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
   "DuplicateContact": "Ein Kontakt mit diesem {0} existiert bereits!",
-  "footer": "Ihr vertrauenswürdiger Partner für Reinigung, Gartenarbeit und Immobilienverwaltung."
+  "Footer": "Ihr vertrauenswürdiger Partner für Reinigung, Gartenarbeit und Immobilienverwaltung.",
+  "Partner": "Partner",
+  "GDPR": "Rechtliche Hinweise und DSGVO",
+  "GDPRTitle": "DSGVO-Konformität",
+  "GDPRIntroduction": "Bei CMD Breizh schützen wir Ihre persönlichen Daten gemäß der Datenschutz-Grundverordnung (DSGVO).",
+  "GDPRDataCollection": "Datenerhebung",
+  "GDPRDataCollectionText": "Wir erheben nur die für unsere Dienstleistungen erforderlichen personenbezogenen Daten, darunter Name, E-Mail-Adresse und Kontaktdaten.",
+  "GDPRDataUsage": "Datenverwendung",
+  "GDPRDataUsageText": "Ihre Daten werden ausschließlich für Dienstleistungen, Kommunikation und gesetzliche Verpflichtungen verwendet. Wir geben Daten niemals ohne ausdrückliche Zustimmung an Dritte weiter.",
+  "GDPRUserRights": "Ihre Rechte",
+  "GDPRRightAccess": "Recht auf Auskunft über Ihre Daten",
+  "GDPRRightRectification": "Recht auf Berichtigung unrichtiger Daten",
+  "GDPRRightErasure": "Recht auf Löschung",
+  "GDPRRightRestriction": "Recht auf Einschränkung der Verarbeitung",
+  "GDPRRightDataPortability": "Recht auf Datenübertragbarkeit",
+  "GDPRRightObject": "Widerspruchsrecht gegen die Verarbeitung",
+  "GDPRContact": "Kontakt",
+  "GDPRContactText": "Bei Fragen zur DSGVO oder zur Ausübung Ihrer Rechte kontaktieren Sie uns unter contact@cmd.bzh"
 }
