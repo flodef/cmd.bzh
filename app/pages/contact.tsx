@@ -32,6 +32,7 @@ export default function Contact() {
   const nameRef = useRef<InputRef>(null);
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isMessageValid, setIsMessageValid] = useState<boolean>(true);
 
   const [form] = Form.useForm();
   const values = Form.useWatch([], form);
@@ -75,6 +76,10 @@ export default function Contact() {
       .validateFields({ validateOnly: true })
       .then(() => setIsFormValid(true))
       .catch(() => setIsFormValid(false));
+    form
+      .validateFields(['Message'], { validateOnly: true })
+      .then(() => setIsMessageValid(true))
+      .catch(() => setIsMessageValid(false));
   }, [form, values]);
 
   useEffect(() => {
@@ -229,7 +234,7 @@ export default function Contact() {
                   <TextArea
                     id="message"
                     name="message"
-                    showCount
+                    showCount={isMessageValid}
                     autoSize={{ minRows: 2 }}
                     maxLength={500}
                     placeholder={t('Your') + ' ' + t('Message')}
