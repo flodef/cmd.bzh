@@ -2,9 +2,8 @@ import en from './locales/en.json';
 import fr from './locales/fr.json';
 
 // Collection of translations loaded from separate files
-const TRANSLATIONS: { [key: string]: Record<string, string> } = { en, fr };
-
-const availableLanguages = Object.keys(TRANSLATIONS);
+const translations: { [key: string]: Record<string, string | string[]> } = { en, fr };
+const availableLanguages = Object.keys(translations);
 const defaultLanguage = 'en';
 
 // The current language for translation, auto-detected
@@ -15,6 +14,7 @@ export const currentLanguage =
 
 // Translation function: returns the text corresponding to the provided key
 // Falls back to the key if translation is not found
-export function t(key: string): string {
-  return TRANSLATIONS[currentLanguage][key] || key;
+export function t(key: string, arrayDelimiter = '/n'): string {
+  const value = translations[currentLanguage][key];
+  return Array.isArray(value) ? value.join(arrayDelimiter) : value || key;
 }
