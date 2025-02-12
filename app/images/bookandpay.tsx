@@ -5,7 +5,7 @@ export const BookandpayLogo: React.FC<React.SVGProps<SVGSVGElement>> = props => 
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     xmlSpace="preserve"
-    width="1\xA0184,3"
+    width={1184.3}
     height={49}
     viewBox="0 0 1184.3 262.6"
     {...props}
