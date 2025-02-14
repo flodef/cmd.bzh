@@ -1,32 +1,48 @@
 'use client';
 
+import { TabsProps } from 'antd';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { t } from '../i18n';
 import About from '../pages/about';
 import Contact from '../pages/contact';
 import Home from '../pages/home';
 
-export const menuItems = [
-  {
-    key: 'Home',
-    label: t('Home'),
-  },
-  {
-    key: 'About',
-    label: t('About'),
-  },
-  {
-    key: 'Contact',
-    label: t('Contact'),
-  },
-];
+export enum Page {
+  Home = 'Home',
+  About = 'About',
+  Contact = 'Contact',
+}
+const defaultPage = Page.Home;
+const pages = Object.values(Page);
+
+export const generateMenuContent = (activeTab: Page) => (
+  <>
+    {pages.map(page => {
+      return (
+        <div key={page} className={page === activeTab ? 'block' : 'hidden'}>
+          {
+            {
+              Home: <Home />,
+              About: <About />,
+              Contact: <Contact />,
+            }[page]
+          }
+        </div>
+      );
+    })}
+  </>
+);
+
+export const menuItems: TabsProps['items'] = pages.map(page => ({
+  key: page,
+  label: t(page),
+}));
 
 type MenuContext = {
   onMenuChange: (key?: string) => void;
   isMenuOpen: boolean;
   setIsMenuOpen: (isMenuOpen: boolean) => void;
-  activeTab: string;
-  content: ReactNode;
+  activeTab: Page;
   title: string;
 };
 
@@ -38,14 +54,13 @@ const MenuContext = createContext<MenuContext | undefined>(undefined);
 
 export const MenuProvider = ({ children }: MenuProviderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Home');
-  const [content, setContent] = useState<ReactNode>(<Home />);
-  const [title, setTitle] = useState(menuItems[0].label);
+  const [activeTab, setActiveTab] = useState(defaultPage);
+  const [title, setTitle] = useState<string>(t(defaultPage));
 
   const onMenuChange = (key = 'Home') => {
-    setTitle(menuItems.find(item => item.key === key)?.label || '');
-    setActiveTab(key);
-    setContent({ Home: <Home />, About: <About />, Contact: <Contact /> }[key]);
+    const activeTab = pages.find(page => page === key) || defaultPage;
+    setTitle(t(key));
+    setActiveTab(activeTab);
     setIsMenuOpen(false);
     window.scrollTo({
       top: 0,
@@ -60,7 +75,6 @@ export const MenuProvider = ({ children }: MenuProviderProps) => {
         isMenuOpen,
         setIsMenuOpen,
         activeTab,
-        content,
         title,
       }}
     >

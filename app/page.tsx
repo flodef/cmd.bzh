@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Footer from './components/footer';
 import { MenuButton } from './components/menuButton';
-import { menuItems, useMenuContext } from './contexts/menuProvider';
+import { generateMenuContent, menuItems, useMenuContext } from './contexts/menuProvider';
 import { useWindowParam } from './hooks/useWindowParam';
 import { CMDLogo } from './images/cmd';
 import Loading from './loading';
@@ -14,7 +14,7 @@ const { defaultAlgorithm, darkAlgorithm } = theme;
 
 export default function Page() {
   const { colorScheme, width } = useWindowParam();
-  const { onMenuChange, isMenuOpen, activeTab, content, title } = useMenuContext();
+  const { onMenuChange, isMenuOpen, activeTab, title } = useMenuContext();
 
   const isDark = useMemo(() => colorScheme === 'dark', [colorScheme]);
   const isMobile = useMemo(() => width > 0 && width < 640, [width]);
@@ -78,7 +78,7 @@ export default function Page() {
                 <div
                   className={twMerge(
                     'absolute text-center w-full self-end',
-                    isTinyMobile ? 'top-32 left-0' : 'top-7 pl-28 pr-20',
+                    isTinyMobile ? 'top-32 left-0' : 'top-7 px-20',
                     !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                   )}
                 >
@@ -103,7 +103,7 @@ export default function Page() {
                 : 'pt-36',
             )}
           >
-            <main className="flex-grow content-center">{content}</main>
+            <main className="flex-grow content-center">{generateMenuContent(activeTab)}</main>
             <Footer />
           </div>
         </div>
