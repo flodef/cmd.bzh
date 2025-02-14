@@ -1,7 +1,6 @@
 import { IconInfoCircle } from '@tabler/icons-react';
 import { Button, Card, Carousel, Tooltip } from 'antd';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
@@ -18,15 +17,9 @@ const cardContent = [
 ];
 
 export default function Home() {
-  const { colorScheme, width } = useWindowParam();
   const { onMenuChange } = useMenuContext();
-
-  const isMobile = useMemo(() => width < 640, [width]);
-
-  const [isDark, setIsDark] = useState(false);
-  useEffect(() => {
-    setIsDark(colorScheme === 'dark');
-  }, [colorScheme]);
+  const { isDark, breakpoints } = useWindowParam();
+  const { isSm: isMobile } = breakpoints;
 
   const cardStyle = {
     header: { borderColor: !isDark ? '#cccccc' : '#303030' },

@@ -1,11 +1,10 @@
-import { useMemo } from 'react';
 import { useWindowParam } from '../hooks/useWindowParam';
 import { t } from '../i18n';
 import { companyInfo, creatorInfo } from '../utils/constants';
 
 export default function GDPR() {
-  const { width } = useWindowParam();
-  const isMobile = useMemo(() => width > 0 && width < 640, [width]);
+  const { breakpoints } = useWindowParam();
+  const { isSm: isMobile } = breakpoints;
 
   return (
     <div className="container mx-auto px-4 py-8">

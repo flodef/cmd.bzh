@@ -1,7 +1,7 @@
 'use client';
 
 import { ConfigProvider, Tabs, theme } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Footer from './components/footer';
 import { MenuButton } from './components/menuButton';
@@ -13,15 +13,11 @@ import Loading from './loading';
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 export default function Page() {
-  const { colorScheme, width } = useWindowParam();
+  const { isDark, isReady, breakpoints, width } = useWindowParam();
+  const { isSm: isMobile, is2xs: isTinyMobile } = breakpoints;
   const { onMenuChange, isMenuOpen, activeTab, title } = useMenuContext();
 
   const [isScrolled, setIsScrolled] = useState(false);
-
-  const isDark = useMemo(() => colorScheme === 'dark', [colorScheme]);
-  const isMobile = useMemo(() => width > 0 && width < 640, [width]);
-  const isTinyMobile = useMemo(() => width > 0 && width < 320, [width]);
-  const isLoading = useMemo(() => width < 0, [width]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +47,7 @@ export default function Page() {
         },
       }}
     >
-      {!isLoading ? (
+      {isReady ? (
         <div className="flex flex-col min-h-screen overflow-x-hidden">
           <header
             className={twMerge(
