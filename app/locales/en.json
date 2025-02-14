@@ -94,5 +94,5 @@
   "GDPRRightDataPortability": "Right to data portability",
   "GDPRRightObject": "Right to object to processing",
   "GDPRContact": "Contact Us",
-  "GDPRContactText": "For any GDPR-related inquiries or to exercise your rights, please contact us at contact@cmd.bzh"
+  "GDPRContactText": "For any GDPR-related inquiries or to exercise your rights, please contact us at ${email}"
 }

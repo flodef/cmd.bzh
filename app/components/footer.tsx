@@ -37,7 +37,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="flex justify-center text-xs space-x-8">
-            <Button className="self-center" type="link">
+            <Button className="self-center" type="link" onClick={() => onMenuChange('GDPR')}>
               <span className="text-xs">{t('GDPR')}</span>
             </Button>
             <div className="flex items-center">

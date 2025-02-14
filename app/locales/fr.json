@@ -78,5 +78,5 @@
   "GDPRRightDataPortability": "Droit à la portabilité des données",
   "GDPRRightObject": "Droit d'opposition au traitement",
   "GDPRContact": "Nous contacter",
-  "GDPRContactText": "Pour toute question relative au RGPD ou pour exercer vos droits, contactez-nous à contact@cmd.bzh"
+  "GDPRContactText": "Pour toute question relative au RGPD ou pour exercer vos droits, contactez-nous à ${email}"
 }

@@ -78,5 +78,5 @@
   "GDPRRightDataPortability": "Recht auf Datenübertragbarkeit",
   "GDPRRightObject": "Widerspruchsrecht gegen die Verarbeitung",
   "GDPRContact": "Kontakt",
-  "GDPRContactText": "Bei Fragen zur DSGVO oder zur Ausübung Ihrer Rechte kontaktieren Sie uns unter contact@cmd.bzh"
+  "GDPRContactText": "Bei Fragen zur DSGVO oder zur Ausübung Ihrer Rechte kontaktieren Sie uns unter ${email}"
 }

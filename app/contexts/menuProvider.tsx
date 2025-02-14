@@ -6,11 +6,13 @@ import { t } from '../i18n';
 import About from '../pages/about';
 import Contact from '../pages/contact';
 import Home from '../pages/home';
+import GDPR from '../pages/GDPR';
 
 export enum Page {
   Home = 'Home',
   About = 'About',
   Contact = 'Contact',
+  GDPR = 'GDPR',
 }
 const defaultPage = Page.Home;
 const pages = Object.values(Page);
@@ -25,6 +27,7 @@ export const generateMenuContent = (activeTab: Page) => (
               Home: <Home />,
               About: <About />,
               Contact: <Contact />,
+              GDPR: <GDPR />,
             }[page]
           }
         </div>
@@ -33,10 +36,12 @@ export const generateMenuContent = (activeTab: Page) => (
   </>
 );
 
-export const menuItems: TabsProps['items'] = pages.map(page => ({
-  key: page,
-  label: t(page),
-}));
+export const menuItems: TabsProps['items'] = pages
+  .filter(page => page !== Page.GDPR)
+  .map(page => ({
+    key: page,
+    label: t(page),
+  }));
 
 type MenuContext = {
   onMenuChange: (key?: string) => void;
