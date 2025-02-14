@@ -41,7 +41,7 @@ export default function About() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
             <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">{iframe}</div>
             <div className="w-full md:w-1/2 text-center">
-              <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
+              <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
               <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
                 <IconMapPin className="mr-2" size={18} />
                 {companyInfo.address}

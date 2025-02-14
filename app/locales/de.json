@@ -64,19 +64,77 @@
   "Footer": "Ihr vertrauenswürdiger Partner für Reinigung, Gartenarbeit und Immobilienverwaltung.",
   "Partner": "Partner",
   "GDPR": "Rechtliche Hinweise und DSGVO",
-  "GDPRTitle": "DSGVO-Konformität",
-  "GDPRIntroduction": "Bei CMD Breizh schützen wir Ihre persönlichen Daten gemäß der Datenschutz-Grundverordnung (DSGVO).",
-  "GDPRDataCollection": "Datenerhebung",
-  "GDPRDataCollectionText": "Wir erheben nur die für unsere Dienstleistungen erforderlichen personenbezogenen Daten, darunter Name, E-Mail-Adresse und Kontaktdaten.",
-  "GDPRDataUsage": "Datenverwendung",
-  "GDPRDataUsageText": "Ihre Daten werden ausschließlich für Dienstleistungen, Kommunikation und gesetzliche Verpflichtungen verwendet. Wir geben Daten niemals ohne ausdrückliche Zustimmung an Dritte weiter.",
-  "GDPRUserRights": "Ihre Rechte",
-  "GDPRRightAccess": "Recht auf Auskunft über Ihre Daten",
-  "GDPRRightRectification": "Recht auf Berichtigung unrichtiger Daten",
-  "GDPRRightErasure": "Recht auf Löschung",
-  "GDPRRightRestriction": "Recht auf Einschränkung der Verarbeitung",
-  "GDPRRightDataPortability": "Recht auf Datenübertragbarkeit",
-  "GDPRRightObject": "Widerspruchsrecht gegen die Verarbeitung",
-  "GDPRContact": "Kontakt",
-  "GDPRContactText": "Bei Fragen zur DSGVO oder zur Ausübung Ihrer Rechte kontaktieren Sie uns unter ${email}"
+  "GDPRIntroduction": "Bei CMD Breizh nehmen wir den Datenschutz ernst und behandeln Ihre persönlichen Daten mit größter Sorgfalt, im Einklang mit der Datenschutz-Grundverordnung (DSGVO).",
+  "GDPRDataCollectionText": "Wir sammeln nur die persönlichen Informationen, die notwendig sind, um unsere Dienstleistungen zu erbringen, einschließlich Name, E-Mail-Adresse und Kontaktdaten. Daher sammeln wir keine Informationen, die mit dem Surfen auf unserer Website zusammenhängen, und verwenden keine Cookies oder ähnliche Tracking-Technologien.",
+  "GDPRContactText": "Bei Fragen zur DSGVO oder um Ihre Rechte auszuüben, kontaktieren Sie uns unter ${email}",
+  "GDPRLegalPublisher": "1. Informationen zum Herausgeber",
+  "GDPRPublisherContent": [
+    "${shortName}, ${companyType}",
+    "Eingetragen im Handelsregister von ${RCSCity} unter der Nummer ${SIREN}",
+    "Sitz: ${address}",
+    "Individuelle Umsatzsteuer-Identifikationsnummer: ${TVA}",
+    "Verantwortlicher für die Veröffentlichung: ${founder} (Präsident von ${shortName})",
+    "Telefonnummer: ${phone}"
+  ],
+  "GDPRHosting": "2. Informationen zum Host",
+  "GDPRHostingContent": [
+    "OVH SAS",
+    "Adresse des Sitzes: 2 rue Kellermann - 59100 Roubaix - Frankreich",
+    "Telefonnummer: (+33) 09 72 10 10 07"
+  ],
+  "GDPRTerms": "3. Nutzungsbedingungen",
+  "GDPRTermsContent": [
+    "Die Website ist über die sichere URL ${url} zugänglich",
+    "Die Nutzung unterliegt diesen Allgemeinen Geschäftsbedingungen. Durch die Nutzung der Website erkennen Sie an, dass Sie diese Bedingungen gelesen und akzeptiert haben. Diese können jederzeit und ohne Vorankündigung von der Gesellschaft ${shortName} geändert werden.",
+    "Die Gesellschaft ${shortName} haftet in keiner Weise für missbräuchliche Nutzung des Dienstes."
+  ],
+  "GDPRLiability": "4. Haftungsbeschränkung",
+  "GDPRLiabilityContent": [
+    "Die Informationen auf dieser Website sind so genau wie möglich, und die Website wird regelmäßig aktualisiert, jedoch kann sie Ungenauigkeiten, Auslassungen oder Lücken enthalten. Wenn Sie einen Fehler oder einen möglichen Fehler bemerken, melden Sie dies bitte per E-Mail und beschreiben Sie das Problem so genau wie möglich.",
+    "Jeder heruntergeladene Inhalt erfolgt auf eigenes Risiko und unter alleiniger Verantwortung des Nutzers. Daher kann die Gesellschaft ${shortName} nicht für Schäden am Computer des Nutzers oder für Datenverlust infolge des Downloads haftbar gemacht werden. Fotos sind nicht vertraglich.",
+    "Hyperlinks auf dieser Website zu anderen Websites haften nicht die Gesellschaft ${shortName}."
+  ],
+  "GDPRDisputes": "5. Streitigkeiten",
+  "GDPRDisputesContent": [
+    "Diese Bedingungen unterliegen dem französischen Recht, und jede Streitigkeit oder gerichtliche Auseinandersetzung, die aus der Auslegung oder Durchführung dieser Bedingungen entstehen könnte, fällt in die ausschließliche Zuständigkeit der Gerichte, unter denen der Sitz der Gesellschaft ${shortName} liegt. Die Referenzsprache für die Beilegung eventueller Streitigkeiten ist Französisch."
+  ],
+  "GDPRDataRights": "6. Recht auf Zugriff, Berichtigung und Löschung Ihrer Daten",
+  "GDPRDataRightsContent": [
+    "Gemäß dem Datenschutzgesetz haben Internetnutzer das Recht auf Zugang, Berichtigung, Änderung und Löschung der Daten, die sie betreffen.",
+    "• Recht auf Zugriff: Sie können Ihr Recht auf Kenntnis der sie betreffenden personenbezogenen Daten ausüben, indem Sie an die folgende E-Mail-Adresse schreiben. In diesem Fall kann die Plattform vor der Ausübung dieses Rechts einen Nachweis der Identität des Nutzers verlangen, um die Richtigkeit zu überprüfen.",
+    "• Recht auf Berichtigung: Wenn die von der Plattform gespeicherten personenbezogenen Daten ungenau sind, können sie die Aktualisierung der Informationen anfordern.",
+    "• Recht auf Löschung der Daten: Nutzer können die Löschung ihrer personenbezogenen Daten gemäß den geltenden Datenschutzgesetzen verlangen.",
+    "Dieses Recht kann postalisch bei ${shortName}, ${address} oder elektronisch an die folgende E-Mail-Adresse ausgeübt werden: ${email}",
+    "Die gesammelten persönlichen Informationen sind vertraulich und werden niemals an Dritte weitergegeben, außer zur möglichen ordnungsgemäßen Erfüllung der bestellten Dienstleistung. Gemäß dem Gesetz Nr. 2000-719 vom 1. August 2000 können die vom Käufer angegebenen Kontaktdaten auf richterliche Anordnung kommuniziert werden."
+  ],
+  "GDPRDataCollection": "7. Datensammlung und Schutz",
+  "GDPRDataCollectionContent": [
+    "Ihre Daten werden von ${shortName} gesammelt.",
+    "Ein personenbezogenes Datum bezeichnet jede Information, die sich auf eine identifizierte oder identifizierbare natürliche Person (betroffene Person) bezieht; als identifizierbar gilt eine Person, die direkt oder indirekt identifiziert werden kann, insbesondere durch Bezug auf einen Namen, eine Identifikationsnummer oder ein oder mehrere spezifische Merkmale, die ihrer physischen, physiologischen, genetischen, psychischen, wirtschaftlichen, kulturellen oder sozialen Identität eigen sind.",
+    "Die persönlichen Informationen, die auf der Website gesammelt werden können, werden hauptsächlich vom Herausgeber für das Management der Beziehungen zu Ihnen verwendet.",
+    "Die in den Kontaktformularen gesammelten personenbezogenen Daten sind die folgenden:",
+    "• Vor- und Nachname",
+    "• E-Mail-Adresse",
+    "• Telefonnummer",
+    "Um Ihre Anfrage zu bearbeiten, muss ${shortName} Ihre personenbezogenen Daten verarbeiten. Die Daten werden für zwei (2) Jahre ab unserem letzten Kontakt aufbewahrt und sind ausschließlich für ${shortName} bestimmt; sie werden nicht an Dritte weitergegeben."
+  ],
+  "GDPRMITLicense": "8. MIT-Lizenz",
+  "GDPRMITContent": [
+    "Diese Website ist Open Source unter der MIT-Lizenz:",
+    "Copyright (c) ${currentYear} ${shortName}",
+    "Es wird hiermit eine Genehmigung erteilt, kostenlos und ohne Einschränkung, jeder Person, die eine Kopie dieser Software und der zugehörigen Dokumentationsdateien (die \"Software\") erhält, die Software ohne Einschränkung zu verwenden, einschließlich, aber nicht beschränkt auf, die Rechte, die Software zu nutzen, zu kopieren, zu verändern, zu verschmelzen, zu veröffentlichen, zu verteilen, unterzulizenzieren und/oder Exemplare der Software zu verkaufen und Personen, denen die Software zur Verfügung gestellt wird, dies zu erlauben, unter den folgenden Bedingungen:",
+    "Die obige Urheberrechtsbenachrichtigung und diese Genehmigungsbenachrichtigung müssen in allen Kopien oder wesentlichen Teilen der Software enthalten sein.",
+    "DIE SOFTWARE WIRD \"WIE SIE IST\" BEREITGESTELLT, OHNE JEGLICHE GARANTIE, AUSDRÜCKLICH ODER STILLSCHWEIGEND, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF, DIE GARANTIEN DER HANDELSÜBLICHKEIT, DER EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND DER NICHTVERLETZUNG. IN KEINEM FALL SIND DIE AUTOREN ODER URHEBERRECHTSINHABER FÜR IRGENDEINEN ANSPRUCH, SCHADEN ODER ANDERE HAFTUNG, OB IN VERTRAG, UNERLAUBTE HANDLUNG ODER ANDERWEITIG, DIE AUS, DURCH ODER IN VERBINDUNG MIT DER SOFTWARE ODER DER NUTZUNG ODER ANDEREN GESCHÄFTEN MIT DER SOFTWARE ENTSTEHT, HAFTBAR."
+  ],
+  "GDPRNoTracking": "9. Cookie-Management",
+  "GDPRNoTrackingContent": [
+    "Was ist ein \"Cookie\"?",
+    "Ein \"Cookie\" oder Tracker ist eine elektronische Datei, die auf einem Endgerät (Computer, Tablet, Smartphone, etc.) abgelegt wird und z.B. beim Besuchen einer Website, Lesen einer E-Mail, Installieren oder Verwenden einer Software oder einer mobilen Anwendung gelesen wird, unabhängig von der Art des Endgeräts (Quelle: https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi).",
+    "Bei CMD verfolgen wir keine Nutzer und verwenden keine Cookies jeglicher Art.",
+    "Es werden keine personenbezogenen Daten ohne Ihre ausdrückliche Zustimmung gesammelt."
+  ],
+  "GDPRTechnicalProvider": "10. Technischer Anbieter",
+  "GDPRTechnicalContent": [
+    "Technische Dienstleistungen werden von ${creatorName}, ${creatorStatus} unter der SIREN-Nummer ${creatorSIREN} erbracht."
+  ]
 }

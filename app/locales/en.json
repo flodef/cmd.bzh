@@ -64,35 +64,77 @@
   "Footer": "Your trusted partner for cleaning, gardening, and property management.",
   "Partner": "Partenaire",
   "GDPR": "Legal notices and GDPR",
-  "GDPRTitle": "Privacy Policy",
-  "GDPRIntroduction": "At CMD Breizh, we are committed to protecting your personal data in accordance with the General Data Protection Regulation (GDPR).",
-  "DataCollection": "Data Collection and Use",
-  "GDPRDataCollection": "We collect only the personal data necessary to provide our services, including name, email address, and contact details. This information is used exclusively for service delivery and communication purposes.",
-  "DataUsage": "Data Usage",
-  "GDPRDataUsage": "Your data is used solely for the purposes of providing requested services, processing payments, and sending service-related communications. We never share your data with third parties without explicit consent.",
-  "DataStorage": "Data Storage and Security",
-  "GDPRDataStorage": "All personal data is stored securely using industry-standard encryption and access controls. Data is retained only for as long as necessary to fulfill the purposes for which it was collected.",
-  "YourRights": "Your Rights",
-  "GDPRRightsList": [
-    "Right to access your personal data",
-    "Right to rectification of inaccurate data",
-    "Right to erasure ('right to be forgotten')",
-    "Right to restrict processing",
-    "Right to data portability",
-    "Right to object to processing"
+  "GDPRIntroduction": "At CMD Breizh, we take privacy seriously and handle your personal data with the utmost care, in compliance with the General Data Protection Regulation (GDPR).",
+  "GDPRDataCollectionText": "We only collect the personal information necessary to provide our services, including name, email address, and contact details. Thus, we do not collect any information related to browsing on our website, nor do we use any cookies or similar tracking technologies.",
+  "GDPRContactText": "For any questions regarding GDPR or to exercise your rights, contact us at ${email}",
+  "GDPRLegalPublisher": "1. Information about the Publisher",
+  "GDPRPublisherContent": [
+    "${shortName}, ${companyType}",
+    "Registered with the RCS of ${RCSCity} under number ${SIREN}",
+    "Headquarters: ${address}",
+    "Individual VAT identification number: ${TVA}",
+    "Publication Director: ${founder} (President of ${shortName})",
+    "Telephone number: ${phone}"
   ],
-  "Consent": "Consent",
-  "GDPRConsent": "By using our services, you consent to the collection and use of your personal data in accordance with this privacy policy. You may withdraw consent at any time by contacting us.",
-  "ContactDPO": "Data Protection Officer",
-  "DPOContactInfo": "For any questions regarding your personal data or to exercise your rights, please contact our Data Protection Officer at dpo@cmd-breizh.com",
-  "PrivacyPolicy": "Privacy Policy",
-  "GDPRUserRights": "Your Rights",
-  "GDPRRightAccess": "Right to access your personal data",
-  "GDPRRightRectification": "Right to correct inaccurate data",
-  "GDPRRightErasure": "Right to be forgotten",
-  "GDPRRightRestriction": "Right to restrict processing",
-  "GDPRRightDataPortability": "Right to data portability",
-  "GDPRRightObject": "Right to object to processing",
-  "GDPRContact": "Contact Us",
-  "GDPRContactText": "For any GDPR-related inquiries or to exercise your rights, please contact us at ${email}"
+  "GDPRHosting": "2. Information about the Host",
+  "GDPRHostingContent": [
+    "OVH SAS",
+    "Headquarters address: 2 rue Kellermann - 59100 Roubaix - France",
+    "Telephone number: (+33) 09 72 10 10 07"
+  ],
+  "GDPRTerms": "3. Terms of Use",
+  "GDPRTermsContent": [
+    "The site is accessible via the secure URL ${url}",
+    "Its use is governed by these general terms. By using the site, you acknowledge that you have read these terms and have accepted them. These terms may be modified at any time and without notice by the company ${shortName}.",
+    "The company ${shortName} cannot be held liable in any way for misuse of the service."
+  ],
+  "GDPRLiability": "4. Limitation of Liability",
+  "GDPRLiabilityContent": [
+    "The information on this site is as accurate as possible, and the site is periodically updated, but may still contain inaccuracies, omissions, or gaps. If you notice an error or what might be a malfunction, please report it by email, describing the problem as precisely as possible.",
+    "Any content downloaded is at the user's own risk and under their sole responsibility. Consequently, the company ${shortName} cannot be held liable for any damage suffered by the user's computer or any data loss resulting from downloading. Photos are non-contractual.",
+    "Hyperlinks placed on this website to other websites do not engage the responsibility of the company ${shortName}."
+  ],
+  "GDPRDisputes": "5. Disputes",
+  "GDPRDisputesContent": [
+    "These terms are governed by French law, and any dispute or litigation that may arise from the interpretation or execution of these terms will be under the exclusive jurisdiction of the courts where the company ${shortName}'s headquarters is located. The reference language for settling any disputes is French."
+  ],
+  "GDPRDataRights": "6. Right to Access, Rectify, and Erase Your Data",
+  "GDPRDataRightsContent": [
+    "Under the Data Protection Act, internet users have a right to access, rectify, modify, and delete the data concerning them.",
+    "• Right of access: they can exercise their right to know personal data concerning them by writing to the following email address. In this case, before implementing this right, the Platform may request proof of the user's identity to verify its accuracy.",
+    "• Right of rectification: if the personal data held by the Platform is inaccurate, they can request an update of the information.",
+    "• Right to erase data: users can request the deletion of their personal data, in accordance with applicable data protection laws.",
+    "This right can be exercised by post to ${shortName}, ${address} or by email to the following address: ${email}",
+    "The personal information collected is confidential and is never transmitted to third parties except for the possible proper execution of the service ordered by the user. Under Law No. 2000-719 of August 1, 2000, the contact details declared by the buyer may be communicated upon judicial requisition."
+  ],
+  "GDPRDataCollection": "7. Data Collection and Protection",
+  "GDPRDataCollectionContent": [
+    "Your data is collected by ${shortName}.",
+    "Personal data refers to any information relating to an identified or identifiable natural person (data subject); an identifiable person is one who can be identified, directly or indirectly, particularly by reference to a name, an identification number, or one or more factors specific to their physical, physiological, genetic, mental, economic, cultural, or social identity.",
+    "The personal information that may be collected on the site is mainly used by the publisher for managing relations with you.",
+    "The personal data collected in contact forms are as follows:",
+    "• First and Last Name",
+    "• Email Address",
+    "• Phone Number",
+    "To process your request, ${shortName} will need to process your personal data. The data is kept for two (2) years from our last contact and is intended exclusively for ${shortName}; it will not be transferred to third parties."
+  ],
+  "GDPRMITLicense": "8. MIT License",
+  "GDPRMITContent": [
+    "This site is open source under the MIT license:",
+    "Copyright (c) ${currentYear} ${shortName}",
+    "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+    "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+    "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+  ],
+  "GDPRNoTracking": "9. Cookie Management",
+  "GDPRNoTrackingContent": [
+    "What is a \"cookie\"?",
+    "A \"cookie\" or tracker is an electronic file deposited on a terminal (computer, tablet, smartphone, etc.) and read, for example, when visiting a website, reading an email, installing or using software or a mobile application, regardless of the type of terminal used (source: https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi).",
+    "At CMD, we do not track users and do not use any cookies whatsoever.",
+    "No personal data is collected without your explicit consent."
+  ],
+  "GDPRTechnicalProvider": "10. Technical Provider",
+  "GDPRTechnicalContent": [
+    "Technical services are provided by ${creatorName}, ${creatorStatus} registered under SIREN number ${creatorSIREN}."
+  ]
 }

@@ -64,19 +64,77 @@
   "Footer": "Votre partenaire pour la propreté, le jardinage et la gestion de votre propriété.",
   "Partner": "Partenaire",
   "GDPR": "Mentions légales & RGPD",
-  "GDPRTitle": "Conformité RGPD",
-  "GDPRIntroduction": "Chez CMD Breizh, nous protégeons vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD).",
-  "GDPRDataCollection": "Collecte des données",
-  "GDPRDataCollectionText": "Nous ne collectons que les informations personnelles nécessaires à la fourniture de nos services, incluant nom, adresse email et coordonnées.",
-  "GDPRDataUsage": "Utilisation des données",
-  "GDPRDataUsageText": "Vos données sont utilisées exclusivement pour la prestation de services, la communication et les obligations légales. Nous ne partageons jamais de données avec des tiers sans consentement explicite.",
-  "GDPRUserRights": "Vos droits",
-  "GDPRRightAccess": "Droit d'accès à vos données",
-  "GDPRRightRectification": "Droit de rectification des données inexactes",
-  "GDPRRightErasure": "Droit à l'oubli",
-  "GDPRRightRestriction": "Droit à la limitation du traitement",
-  "GDPRRightDataPortability": "Droit à la portabilité des données",
-  "GDPRRightObject": "Droit d'opposition au traitement",
-  "GDPRContact": "Nous contacter",
-  "GDPRContactText": "Pour toute question relative au RGPD ou pour exercer vos droits, contactez-nous à ${email}"
+  "GDPRIntroduction": "Chez CMD Breizh, nous avons à coeur la protection de la vie privée et gérons vos données personnelles avec la plus grande attention, conformément au Règlement Général sur la Protection des Données (RGPD).",
+  "GDPRDataCollectionText": "Nous ne collectons que les informations personnelles nécessaires à la fourniture de nos services, incluant nom, adresse email et coordonnées. Ainsi, nous ne collectons aucune informations relatives à la navigation sur notre site web, ni n'utilisons aucun cookie ni autres technologies similaires de traçage.",
+  "GDPRContactText": "Pour toute question relative au RGPD ou pour exercer vos droits, contactez-nous à ${email}",
+  "GDPRLegalPublisher": "1. Informations relatives à l'éditeur",
+  "GDPRPublisherContent": [
+    "${shortName}, ${companyType}",
+    "Immatriculée au RCS de ${RCSCity} sous le numéro ${SIREN}",
+    "Siège social : ${address}",
+    "Numéro individuel d'identification de TVA : ${TVA}",
+    "Directeur de la publication : ${founder} (Président de ${shortName})",
+    "Numéro de téléphone : ${phone}"
+  ],
+  "GDPRHosting": "2. Informations relatives à l'hébergeur",
+  "GDPRHostingContent": [
+    "OVH SAS",
+    "Adresse du siège social : 2 rue Kellermann - 59100 Roubaix - France",
+    "Numéro de téléphone : (+33) 09 72 10 10 07"
+  ],
+  "GDPRTerms": "3. Conditions d'utilisation",
+  "GDPRTermsContent": [
+    "Le site est accessible par l'url sécurisé ${url}",
+    "Son utilisation est régie par les présentes conditions générales. En utilisant le site, vous reconnaissez avoir pris connaissance de ces conditions et les avoir acceptées. Celles-ci pourront être modifiées à tout moment et sans préavis par la société ${shortName}.",
+    "La société ${shortName} ne saurait être tenue pour responsable en aucune manière d'une mauvaise utilisation du service."
+  ],
+  "GDPRLiability": "4. Limitation de la responsabilité",
+  "GDPRLiabilityContent": [
+    "Les informations contenues sur ce site sont aussi précises que possible et le site est périodiquement remis à jour, mais peut toutefois contenir des inexactitudes, des omissions ou des lacunes. Si vous constatez une erreur ou ce qui peut être un dysfonctionnement, merci de bien vouloir le signaler par email en décrivant le problème de la manière la plus précise possible.",
+    "Tout contenu téléchargé se fait aux risques et périls de l'utilisateur et sous sa seule responsabilité. En conséquence, la société ${shortName} ne saurait être tenue responsable d'un quelconque dommage subi par l'ordinateur de l'utilisateur ou d'une quelconque perte de données consécutives au téléchargement. Les photos sont non contractuelles.",
+    "Les liens hypertextes mis en place sur ce site internet en direction d'autres sites internet ne sauraient engager la responsabilité de la société ${shortName}."
+  ],
+  "GDPRDisputes": "5. Litiges",
+  "GDPRDisputesContent": [
+    "Les présentes conditions sont régies par les lois françaises et toute contestation ou litige qui pourrait naître de l'interprétation ou de l'exécution de celles-ci seront de la compétence exclusive des tribunaux dont dépend le siège social de la société ${shortName}. La langue de référence, pour le règlement de contentieux éventuels, est le français."
+  ],
+  "GDPRDataRights": "6. Droit d'accès, de rectification et de suppression de vos données",
+  "GDPRDataRightsContent": [
+    "En application de la loi informatique et libertés, les internautes disposent d'un droit d'accès, de rectification, de modification et de suppression concernant les données qui les concernent personnellement.",
+    "• Le droit d'accès : ils peuvent exercer leur droit d'accès, pour connaître les données personnelles les concernant, en écrivant à l'adresse électronique suivante. Dans ce cas, avant la mise en œuvre de ce droit, la Plateforme peut demander une preuve de l'identité de l'utilisateur afin d'en vérifier l'exactitude.",
+    "• Le droit de rectification : si les données à caractère personnel détenues par la Plateforme sont inexactes, ils peuvent demander la mise à jour des informations.",
+    "• Le droit de suppression des données : les utilisateurs peuvent demander la suppression de leurs données à caractère personnel, conformément aux lois applicables en matière de protection des données.",
+    "Ce droit peut être exercé par voie postale auprès de ${shortName}, ${address} ou par voie électronique à l'adresse email suivante : ${email}",
+    "Les informations personnelles collectées sont confidentielles et ne sont en aucun cas transmises à des tiers hormis pour l'éventuelle bonne exécution de la prestation commandée par l'internaute. En vertu de la loi n° 2000-719 du 1er août 2000, les coordonnées déclarées par l'acheteur pourront être communiquées sur réquisition des autorités judiciaires."
+  ],
+  "GDPRDataCollection": "7. Collecte et protection des données",
+  "GDPRDataCollectionContent": [
+    "Vos données sont collectées par ${shortName}.",
+    "Une donnée à caractère personnel désigne toute information concernant une personne physique identifiée ou identifiable (personne concernée); est réputée identifiable une personne qui peut être identifiée, directement ou indirectement, notamment par référence à un nom, un numéro d'identification ou à un ou plusieurs éléments spécifiques, propres à son identité physique, physiologique, génétique, psychique, economique, culturelle ou sociale.",
+    "Les informations personnelles pouvant être recueillies sur le site sont principalement utilisées par l'éditeur pour la gestion des relations avec vous.",
+    "Les données personnelles collectées dans les formulaires de contact sont les suivantes :",
+    "• Nom et prénom",
+    "• Adresse mail",
+    "• Numéro de téléphone",
+    "Afin de traiter votre demande, ${shortName} devra effectuer un traitement des données personnelles vous concernant. Les données sont conservées pendant deux (2) ans à compter de notre dernier contact et sont destinées exclusivement à ${shortName}, elles ne seront pas transmises à des tiers."
+  ],
+  "GDPRMITLicense": "8. Licence MIT",
+  "GDPRMITContent": [
+    "Ce site est open source sous licence MIT :",
+    "Copyright (c) ${currentYear} ${shortName}",
+    "Permission est par la présente accordée, gratuitement, à toute personne obtenant une copie de ce logiciel et des fichiers de documentation associés (le \"Logiciel\"), de traiter le Logiciel sans restriction, y compris, sans s'y limiter, les droits d'utiliser, de copier, de modifier, de fusionner, de publier, de distribuer, de sous-licencier, et/ou de vendre des copies du Logiciel, et de permettre aux personnes auxquelles le Logiciel est fourni de le faire, sous réserve des conditions suivantes :",
+    "La déclaration de copyright ci-dessus et cette autorisation doivent être incluses dans toutes les copies ou parties substantielles du Logiciel.",
+    "LE LOGICIEL EST FOURNI \"TEL QUEL\", SANS GARANTIE D'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS, MAIS NON LIMITÉ À, LES GARANTIES DE QUALITÉ MARCHANDE, D'ADÉQUATION À UN USAGE PARTICULIER ET D'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, L'AUTEUR OU LES DÉTENTEURS DU COPYRIGHT NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS LE CADRE D'UN CONTRAT, D'UN DÉLIT OU AUTRE, EN LIEN AVEC LE LOGICIEL OU L'UTILISATION OU D'AUTRES TRANSACTIONS DU LOGICIEL."
+  ],
+  "GDPRNoTracking": "9. Gestion des « cookies »",
+  "GDPRNoTrackingContent": [
+    "Qu'est-ce qu'un « cookie » ?",
+    "Un « cookie » ou traceur est un fichier électronique déposé sur un terminal (ordinateur, tablette, smartphone,...) et lu par exemple lors de la consultation d'un site internet, de la lecture d'un courrier électronique, de l'installation ou de l'utilisation d'un logiciel ou d'une application mobile et ce quel que soit le type de terminal utilisé (source : https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi).",
+    "Chez CMD, nous ne suivons pas les utilisateurs et n'utilisons aucun cookie quelqu'il soit.",
+    "Aucune donnée personnelle n'est collectée sans votre consentement explicite."
+  ],
+  "GDPRTechnicalProvider": "10. Prestataire technique",
+  "GDPRTechnicalContent": [
+    "Les prestations techniques sont assurées par ${creatorName}, ${creatorStatus} immatriculé sous le numéro SIREN ${creatorSIREN}."
+  ]
 }

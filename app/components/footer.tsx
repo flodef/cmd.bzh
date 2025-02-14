@@ -16,7 +16,7 @@ export default function Footer() {
         <div className="flex flex-col">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <h3 className="text-xl font-semibold mb-2">{companyInfo.companyName}</h3>
+              <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
               <p className="text-sm">{t('Footer')}</p>
             </div>
             <div className="flex flex-col gap-2 items-center md:items-end">
