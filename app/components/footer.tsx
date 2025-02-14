@@ -11,9 +11,9 @@ export default function Footer() {
   const { onMenuChange } = useMenuContext();
 
   return (
-    <footer className="bg-[#aaa27d] text-white py-8">
+    <footer className="bg-[#aaa27d] text-white pt-8">
       <div className="container px-4 justify-self-center">
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
@@ -22,7 +22,7 @@ export default function Footer() {
             <div className="flex flex-col gap-2 items-center md:items-end">
               <div className="flex items-center">
                 <IconMapPin className="mr-2" size={18} />
-                <span className="cursor-pointer whitespace-nowrap" onClick={() => onMenuChange('About')}>
+                <span className="cursor-pointer 2xs:whitespace-nowrap" onClick={() => onMenuChange('About')}>
                   {companyInfo.address}
                 </span>
               </div>
@@ -36,11 +36,11 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className="flex justify-center text-xs space-x-8">
+          <div className="flex flex-col 2xs:flex-row justify-center text-xs gap-x-8">
             <Button className="self-center" type="link" onClick={() => onMenuChange('GDPR')}>
               <span className="text-xs">{t('GDPR')}</span>
             </Button>
-            <div className="flex items-center">
+            <div className="flex items-center self-center">
               {t('Partner')}
               <Link className="flex items-center" href="https://bookandpay.fr/" target="_blank">
                 <BookandpayLogo className="ml-2 h-6 w-20" />
