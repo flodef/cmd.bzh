@@ -1,12 +1,12 @@
 'use client';
 
 import { TabsProps } from 'antd';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { t } from '../i18n';
 import About from '../pages/about';
 import Contact from '../pages/contact';
-import Home from '../pages/home';
 import GDPR from '../pages/GDPR';
+import Home from '../pages/home';
 
 export enum Page {
   Home = 'Home',
@@ -62,15 +62,44 @@ export const MenuProvider = ({ children }: MenuProviderProps) => {
   const [activeTab, setActiveTab] = useState(defaultPage);
   const [title, setTitle] = useState<string>(t(defaultPage));
 
+  useEffect(() => {
+    const handlePopState = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab') as Page;
+
+      if (tab && pages.includes(tab)) {
+        setActiveTab(tab);
+        setTitle(t(tab));
+      } else {
+        setActiveTab(defaultPage);
+        setTitle(t(defaultPage));
+      }
+    };
+
+    // Initialize from URL on first load
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get('tab') as Page;
+    if (initialTab && pages.includes(initialTab)) {
+      setActiveTab(initialTab);
+      setTitle(t(initialTab));
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const onMenuChange = (key = 'Home') => {
     const activeTab = pages.find(page => page === key) || defaultPage;
+
+    // Update URL without reload
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('tab', activeTab);
+    window.history.pushState({ activeTab }, '', newUrl.toString());
+
     setTitle(t(key));
     setActiveTab(activeTab);
     setIsMenuOpen(false);
-    window.scrollTo({
-      top: 0,
-      behavior: 'instant',
-    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   return (
