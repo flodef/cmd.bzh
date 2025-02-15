@@ -18,6 +18,42 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'CMD Breizh',
   description: "Conciergerie MultiService Debieu presqu'ile de Crozon",
+  applicationName: 'CMD Breizh',
+  authors: [{ name: 'Flojito Stillnet' }],
+  generator: 'Next.js',
+  keywords: [
+    'Conciergerie',
+    'Presqu’ile de Crozon',
+    'Saint-Nic',
+    'Nettoyage',
+    'Jardinage',
+    'Check in / Check out',
+    'Gestion du linge',
+    'Panier de bienvenue',
+    'Multi-Services',
+  ],
+  creator: 'Flojito Stillnet',
+  publisher: 'CMD Breizh',
+  openGraph: {
+    title: 'CMD Breizh',
+    description: "Conciergerie MultiService Debieu presqu'ile de Crozon",
+    url: 'https://cmd.bzh',
+    siteName: 'CMD Breizh',
+    locale: 'fr_FR',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: 'https://www.cmd.bzh/Logo.png',
+  },
+  alternates: {
+    canonical: 'https://www.cmd.bzh',
+  },
+  category: 'Conciergerie',
+  classification: 'Location de biens immobiliers',
 };
 
 export default function RootLayout({
