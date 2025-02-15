@@ -94,26 +94,30 @@ export default function About() {
               /> */}
           </div>
           <div className="flex flex-col gap-4">
-            <p className={textColor}>{t('OurStoryDescription').split('/n')[0]}</p>
-            <ul>
+            <div className="relative flex flex-col gap-4 font-caveat bg-blue-500/10 dark:bg-blue-900/20 border-l-4 border-blue-500/30 dark:border-blue-400/50 p-6 rounded-lg text-2xl">
+              <span className="absolute -top-5 -left-8 text-9xl opacity-25 dark:opacity-35">“</span>
+              <p className={textColor}>{t('OurStoryDescription').split('/n')[0]}</p>
+              <ul>
+                {t('OurStoryDescription')
+                  .split('/n')
+                  .filter(description => description.startsWith('•'))
+                  .map((description, index) => (
+                    <li key={index} className={`${textColor} pl-4`}>
+                      {description}
+                    </li>
+                  ))}
+              </ul>
               {t('OurStoryDescription')
                 .split('/n')
-                .filter(description => description.startsWith('•'))
+                .slice(1)
+                .filter(description => !description.startsWith('•'))
                 .map((description, index) => (
-                  <li key={index} className={`${textColor} pl-4`}>
+                  <p key={index} className={textColor}>
                     {description}
-                  </li>
+                  </p>
                 ))}
-            </ul>
-            {t('OurStoryDescription')
-              .split('/n')
-              .slice(1)
-              .filter(description => !description.startsWith('•'))
-              .map((description, index) => (
-                <p key={index} className={textColor}>
-                  {description}
-                </p>
-              ))}
+              <span className="absolute -bottom-20 right-5 text-9xl opacity-25 dark:opacity-35">”</span>
+            </div>
           </div>
         </div>
       </section>

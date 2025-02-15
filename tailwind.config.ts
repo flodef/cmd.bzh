@@ -28,6 +28,9 @@ const config: Config = {
       DEFAULT: '300ms',
     },
     extend: {
+      fontFamily: {
+        caveat: ['var(--font-caveat)', 'cursive'],
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

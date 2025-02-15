@@ -14,6 +14,11 @@ const geistMono = localFont({
   variable: '--font-geist-mono',
   weight: '100 900',
 });
+const caveat = localFont({
+  src: './fonts/CaveatVF.ttf',
+  variable: '--font-caveat',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'CMD Breizh',
@@ -63,7 +68,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
         <AntdRegistry>
           <MenuProvider>{children}</MenuProvider>
         </AntdRegistry>
