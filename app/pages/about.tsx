@@ -35,8 +35,8 @@ export default function About() {
   }, [activeTab]);
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4">
-      <section className="py-12">
+    <div className="w-full max-w-7xl mx-auto">
+      <section className="px-4 py-12">
         <h1 className="text-3xl font-bold text-center mb-8">{t('OurLocation')}</h1>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">{iframe}</div>
@@ -58,16 +58,17 @@ export default function About() {
             <h3 className="text-xl font-semibold mb-2">{t('WorkingArea')}</h3>
             <ul className="ml-4 mb-2 flex flex-wrap">
               {workingCities.map((city, index) => (
-                <li key={index} className={twMerge(textColor, 'mb-2 w-1/2')}>
+                <li key={index} className="mb-2 w-1/2">
                   {city}
                 </li>
               ))}
             </ul>
+            <p className="mb-2">{t('AndMoreCities')}</p>
           </div>
         </div>
       </section>
 
-      <section className={twMerge(bgColor, 'py-12')}>
+      <section className={twMerge(bgColor, 'px-4 py-12')}>
         <h1 className="text-3xl font-bold text-center mb-8">{t('EcoFriendlyCommitment')}</h1>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <Image width={128} height={128} src="/EcoLabel.png" alt={t('EcoFriendlyLabel')} />
@@ -78,7 +79,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-12">
+      <section className="px-4 py-12">
         <h1 className="text-3xl font-bold text-center mb-8">{t('OurTeam')}</h1>
         <div className="grid grid-cols-1 gap-4 items-center">
           <div>

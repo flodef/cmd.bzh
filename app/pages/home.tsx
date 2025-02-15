@@ -32,8 +32,8 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4">
-      <section className="py-12">
+    <div className="w-full max-w-7xl mx-auto">
+      <section className=" px-4 py-12">
         <Carousel className={twMerge('w-full max-w-4xl mx-auto')} arrows autoplay>
           {Array(4)
             .fill(0)
@@ -53,7 +53,7 @@ export default function Home() {
         </Carousel>
       </section>
 
-      <section className={twMerge(bgColor, 'py-12')}>
+      <section className={twMerge(bgColor, 'px-4 py-12')}>
         <h1 className="text-3xl font-bold text-center mb-8">{t('Services')}</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {!isMobile ? (
@@ -77,7 +77,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 text-center">
+      <section className="px-4 py-12 text-center">
         <h1 className="text-3xl font-bold mb-4">{t('ReadyToExperience')}</h1>
         <Button type="primary" size="large" onClick={() => onMenuChange('Contact')}>
           {t('ContactUs')}
