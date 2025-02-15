@@ -49,14 +49,21 @@ export default function Contact() {
 
   useEffect(() => {
     form
-      .validateFields({ validateOnly: true })
-      .then(() => setIsFormValid(true))
-      .catch(() => setIsFormValid(false));
-    form
       .validateFields(['Message'], { validateOnly: true })
-      .then(() => setIsMessageValid(true))
-      .catch(() => setIsMessageValid(false));
+      .then(() => {
+        setIsMessageValid(true);
+        form
+          .validateFields({ validateOnly: true })
+          .then(() => setIsFormValid(true))
+          .catch(() => setIsFormValid(false));
+      })
+      .catch(() => {
+        setIsMessageValid(false);
+        setIsFormValid(false);
+      });
   }, [form, values]);
+
+  useEffect(() => {}, [form, values]);
 
   const onFinish: FormProps<FieldType>['onFinish'] = async values => {
     setSending(true);
