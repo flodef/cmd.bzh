@@ -90,7 +90,7 @@ export default function Page() {
                 <div
                   className={twMerge(
                     'absolute text-center w-full self-end',
-                    isTinyMobile ? 'top-32 left-0' : 'top-7 pl-28 pr-20',
+                    isTinyMobile ? 'top-32 left-0' : 'top-7 pl-[104px] pr-20',
                     !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                   )}
                 >
