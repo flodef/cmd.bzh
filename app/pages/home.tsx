@@ -36,7 +36,7 @@ export default function Home() {
       <section className={twMerge('py-12')}>
         <div className="container mx-auto px-4">
           <Carousel className={twMerge('w-full max-w-4xl mx-auto')} arrows autoplay>
-            {Array(7)
+            {Array(4)
               .fill(0)
               .map((_, index) => (
                 <div key={index}>
