@@ -94,17 +94,26 @@ export default function About() {
               /> */}
           </div>
           <div className="flex flex-col gap-4">
-            {/* <h3 className="text-xl font-semibold">{t('OurStory')}</h3> */}
-            <p className={textColor}>{t('OurStoryDescription0')}</p>
+            <p className={textColor}>{t('OurStoryDescription').split('/n')[0]}</p>
             <ul>
-              <li className={`${textColor} pl-4`}>{t('OurStoryDescription1')}</li>
-              <li className={`${textColor} pl-4`}>{t('OurStoryDescription2')}</li>
-              <li className={`${textColor} pl-4`}>{t('OurStoryDescription3')}</li>
-              <li className={`${textColor} pl-4`}>{t('OurStoryDescription4')}</li>
+              {t('OurStoryDescription')
+                .split('/n')
+                .filter(description => description.startsWith('•'))
+                .map((description, index) => (
+                  <li key={index} className={`${textColor} pl-4`}>
+                    {description}
+                  </li>
+                ))}
             </ul>
-            <p className={textColor}>{t('OurStoryDescription5')}</p>
-            <p className={textColor}>{t('OurStoryDescription6')}</p>
-            <p className={textColor}>{t('OurStoryDescription7')}</p>
+            {t('OurStoryDescription')
+              .split('/n')
+              .slice(1)
+              .filter(description => !description.startsWith('•'))
+              .map((description, index) => (
+                <p key={index} className={textColor}>
+                  {description}
+                </p>
+              ))}
           </div>
         </div>
       </section>
