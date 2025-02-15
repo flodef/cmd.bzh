@@ -7,7 +7,7 @@ export default function GDPR() {
   const { isSm: isMobile } = breakpoints;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full max-w-7xl mx-auto px-4 py-8">
       {!isMobile && <h1 className="text-3xl font-bold text-center mb-8">{t('GDPR')}</h1>}
 
       <div className="space-y-8 max-w-3xl mx-auto">

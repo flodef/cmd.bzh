@@ -7,7 +7,7 @@ export default function NotFound() {
     <Link className="flex justify-center" href="/">
       <div
         className={twMerge(
-          'container mt-10 flex flex-col justify-center font-bold',
+          'w-full max-w-7xl mx-auto mt-10 flex flex-col justify-center font-bold',
           'uppercase text-[3vmin] text-center text-secondary-light dark:text-secondary-dark',
         )}
       >

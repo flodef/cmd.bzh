@@ -55,9 +55,9 @@ export default function Page() {
               isScrolled ? 'bg-white/80 dark:bg-[#001529]/80 backdrop-blur-sm shadow-md' : 'bg-white dark:bg-[#001529]',
             )}
           >
-            <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <nav className="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
               <CMDLogo
-                className="self-start z-10 cursor-pointer"
+                className="flex-none self-start z-10 cursor-pointer w-24 h-24 sm:w-28 sm:h-28"
                 width={!isMobile ? 112 : 100}
                 height={!isMobile ? 112 : 100}
                 onClick={() => onMenuChange()}
@@ -90,7 +90,7 @@ export default function Page() {
                 <div
                   className={twMerge(
                     'absolute text-center w-full self-end',
-                    isTinyMobile ? 'top-32 left-0' : 'top-7 px-20',
+                    isTinyMobile ? 'top-32 left-0' : 'top-7 pl-28 pr-20',
                     !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                   )}
                 >

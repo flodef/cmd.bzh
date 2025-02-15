@@ -32,63 +32,57 @@ export default function Home() {
   };
 
   return (
-    <>
-      <section className={twMerge('py-12')}>
-        <div className="container mx-auto px-4">
-          <Carousel className={twMerge('w-full max-w-4xl mx-auto')} arrows autoplay>
-            {Array(4)
-              .fill(0)
-              .map((_, index) => (
-                <div key={index}>
-                  <div className="flex items-center justify-center p-6">
-                    <Image
-                      width={600}
-                      height={400}
-                      src={`/carousel/${index}.jpg`}
-                      alt={`Vue ${index}`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
+    <div className="w-full max-w-7xl mx-auto px-4">
+      <section className="py-12">
+        <Carousel className={twMerge('w-full max-w-4xl mx-auto')} arrows autoplay>
+          {Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <div key={index}>
+                <div className="flex items-center justify-center p-6">
+                  <Image
+                    width={600}
+                    height={400}
+                    src={`/carousel/${index}.jpg`}
+                    alt={`Vue ${index}`}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
                 </div>
-              ))}
-          </Carousel>
-        </div>
+              </div>
+            ))}
+        </Carousel>
       </section>
 
       <section className={twMerge(bgColor, 'py-12')}>
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">{t('Services')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {!isMobile ? (
-              cardContent.map((item, index) => (
-                <Card hoverable={!isDark} key={index} styles={cardStyle} classNames={cardClass} title={item.title}>
-                  {item.description}
-                </Card>
-              ))
-            ) : (
-              <Card styles={cardStyle} classNames={cardClass} title={t('Concierge')}>
-                {cardContent.map(item => (
-                  <div key={item.title} className="flex gap-2 items-center justify-center">
-                    <p>{item.title}</p>
-                    <Tooltip title={item.description}>
-                      <IconInfoCircle />
-                    </Tooltip>
-                  </div>
-                ))}
+        <h1 className="text-3xl font-bold text-center mb-8">{t('Services')}</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {!isMobile ? (
+            cardContent.map((item, index) => (
+              <Card hoverable={!isDark} key={index} styles={cardStyle} classNames={cardClass} title={item.title}>
+                {item.description}
               </Card>
-            )}
-          </div>
+            ))
+          ) : (
+            <Card styles={cardStyle} classNames={cardClass} title={t('Concierge')}>
+              {cardContent.map(item => (
+                <div key={item.title} className="flex gap-2 items-center justify-center">
+                  <p>{item.title}</p>
+                  <Tooltip title={item.description}>
+                    <IconInfoCircle />
+                  </Tooltip>
+                </div>
+              ))}
+            </Card>
+          )}
         </div>
       </section>
 
-      <section className="py-12 bg-primary">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">{t('ReadyToExperience')}</h2>
-          <Button type="primary" size="large" onClick={() => onMenuChange('Contact')}>
-            {t('ContactUs')}
-          </Button>
-        </div>
+      <section className="py-12 text-center">
+        <h1 className="text-3xl font-bold mb-4">{t('ReadyToExperience')}</h1>
+        <Button type="primary" size="large" onClick={() => onMenuChange('Contact')}>
+          {t('ContactUs')}
+        </Button>
       </section>
-    </>
+    </div>
   );
 }
