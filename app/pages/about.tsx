@@ -22,6 +22,7 @@ const workingCities = [
 export default function About() {
   const { activeTab } = useMenuContext();
   const [iframe, setIframe] = useState<ReactNode>();
+
   useEffect(() => {
     if (activeTab !== Page.About) return;
     // Dirty tric to load the map properly in the iframe (otherwise, the initial zoom is not working)

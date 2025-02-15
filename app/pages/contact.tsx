@@ -8,6 +8,7 @@ import { twMerge } from 'tailwind-merge';
 import { t } from '../i18n';
 import { companyInfo } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
+import { Page, useMenuContext } from '../contexts/menuProvider';
 
 const { TextArea } = Input;
 
@@ -27,18 +28,35 @@ enum FieldError {
 }
 
 export default function Contact() {
+  const { activeTab } = useMenuContext();
+
   const [messageApi, contextHolder] = message.useMessage();
-
-  const nameRef = useRef<InputRef>(null);
-
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [isMessageValid, setIsMessageValid] = useState<boolean>(true);
 
   const [form] = Form.useForm();
   const values = Form.useWatch([], form);
 
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isMessageValid, setIsMessageValid] = useState<boolean>(true);
   const [hasContactError, setHasContactError] = useState(false);
   const [sending, setSending] = useState(false);
+
+  const nameRef = useRef<InputRef>(null);
+  useEffect(() => {
+    if (activeTab !== Page.Contact) return;
+
+    nameRef.current?.focus(); // Set focus on the name input when the page is displayed
+  }, [activeTab]);
+
+  useEffect(() => {
+    form
+      .validateFields({ validateOnly: true })
+      .then(() => setIsFormValid(true))
+      .catch(() => setIsFormValid(false));
+    form
+      .validateFields(['Message'], { validateOnly: true })
+      .then(() => setIsMessageValid(true))
+      .catch(() => setIsMessageValid(false));
+  }, [form, values]);
 
   const onFinish: FormProps<FieldType>['onFinish'] = async values => {
     setSending(true);
@@ -70,21 +88,6 @@ export default function Contact() {
     console.error('Failed:', errorInfo);
     messageApi.error(t('MessageError'));
   };
-
-  useEffect(() => {
-    form
-      .validateFields({ validateOnly: true })
-      .then(() => setIsFormValid(true))
-      .catch(() => setIsFormValid(false));
-    form
-      .validateFields(['Message'], { validateOnly: true })
-      .then(() => setIsMessageValid(true))
-      .catch(() => setIsMessageValid(false));
-  }, [form, values]);
-
-  useEffect(() => {
-    nameRef.current?.focus();
-  }, []);
 
   const getErrorMessage = (fieldName: string, fieldError?: FieldError, info?: string | number) => {
     switch (fieldError) {
