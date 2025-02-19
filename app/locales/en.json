@@ -81,9 +81,9 @@
   ],
   "GDPRHosting": "2. Information about the Host",
   "GDPRHostingContent": [
-    "OVH SAS",
-    "Headquarters address: 2 rue Kellermann - 59100 Roubaix - France",
-    "Telephone number: (+33) 09 72 10 10 07"
+    "Vercel",
+    "Headquarters address: 650 California St, San Francisco, CA 94108",
+    "Website: https://vercel.com"
   ],
   "GDPRTerms": "3. Terms of Use",
   "GDPRTermsContent": [

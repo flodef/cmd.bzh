@@ -81,9 +81,9 @@
   ],
   "GDPRHosting": "2. Informations relatives à l'hébergeur",
   "GDPRHostingContent": [
-    "OVH SAS",
-    "Adresse du siège social : 2 rue Kellermann - 59100 Roubaix - France",
-    "Numéro de téléphone : (+33) 09 72 10 10 07"
+    "Vercel",
+    "Adresse du siège social : 650 California St, San Francisco, CA 94108",
+    "Site internet : https://vercel.com"
   ],
   "GDPRTerms": "3. Conditions d'utilisation",
   "GDPRTermsContent": [
