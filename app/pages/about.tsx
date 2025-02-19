@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ReactNode, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Page, useMenuContext } from '../contexts/menuProvider';
-import { t } from '../i18n';
+import { t } from '../utils/i18n';
 import { bgColor, companyInfo, textColor } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 

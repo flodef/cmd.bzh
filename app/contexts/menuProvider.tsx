@@ -2,7 +2,7 @@
 
 import { TabsProps } from 'antd';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { t } from '../i18n';
+import { t } from '../utils/i18n';
 import About from '../pages/about';
 import Contact from '../pages/contact';
 import GDPR from '../pages/GDPR';

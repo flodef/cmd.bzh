@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { twMerge } from 'tailwind-merge';
 import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
-import { t } from '../i18n';
+import { t } from '../utils/i18n';
 import { bgColor, textColor } from '../utils/constants';
 
 const cardContent = [

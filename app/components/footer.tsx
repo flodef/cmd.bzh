@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { t } from '../i18n';
+import { t } from '../utils/i18n';
 import { companyInfo } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 import { Button } from 'antd';

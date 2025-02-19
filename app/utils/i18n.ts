@@ -1,8 +1,9 @@
-import en from './locales/en.json';
-import fr from './locales/fr.json';
+import en from '../locales/en.json';
+import fr from '../locales/fr.json';
+import de from '../locales/de.json';
 
 // Collection of translations loaded from separate files
-const translations: { [key: string]: Record<string, string | string[]> } = { en, fr };
+const translations: { [key: string]: Record<string, string | string[]> } = { en, fr, de };
 const availableLanguages = Object.keys(translations);
 const defaultLanguage = 'en';
 

@@ -1,5 +1,5 @@
 import { useWindowParam } from '../hooks/useWindowParam';
-import { t } from '../i18n';
+import { t } from '../utils/i18n';
 import { companyInfo, creatorInfo } from '../utils/constants';
 
 export default function GDPR() {

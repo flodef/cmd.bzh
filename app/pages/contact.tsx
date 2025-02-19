@@ -5,7 +5,7 @@ import { Button, Form, FormProps, Input, InputRef, message, Space } from 'antd';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { t } from '../i18n';
+import { t } from '../utils/i18n';
 import { companyInfo } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 import { Page, useMenuContext } from '../contexts/menuProvider';
