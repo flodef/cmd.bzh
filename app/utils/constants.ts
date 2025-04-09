@@ -7,7 +7,7 @@ export const companyInfo = {
   TVA: 'FR 35 939872131',
   founder: 'Brice Debieu',
   address: "11 rue de l'église, 29550 Saint-Nic, France",
-  phone: '(+33) 06 62 81 59 64',
+  phone: '(+33) 06 18 49 92 69',
   email: 'contact@cmd.bzh',
   url: 'https://cmd.bzh',
 };
