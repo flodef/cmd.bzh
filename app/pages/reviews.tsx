@@ -307,7 +307,7 @@ export default function Reviews() {
           // Pass the existing review ID to update it rather than creating a new one
           const result = await submitNewReview({
             ...values,
-            id: pendingReview.id // Include the existing review ID
+            id: pendingReview.id, // Include the existing review ID
           });
 
           if (result.success) {
@@ -591,6 +591,7 @@ export default function Reviews() {
                   label={t('Name')}
                   name="name"
                   hasFeedback
+                  validateFirst
                   rules={[
                     { required: true, message: getErrorMessage('Name', FieldError.Required) },
                     { min: 5, message: getErrorMessage('Name', FieldError.Min, 5) },
@@ -605,6 +606,7 @@ export default function Reviews() {
                   label={t('Email')}
                   name="email"
                   hasFeedback
+                  validateFirst
                   rules={[
                     { required: true, message: getErrorMessage('Email', FieldError.Required) },
                     {
@@ -636,6 +638,7 @@ export default function Reviews() {
                   label={t('Comment')}
                   name="comment"
                   hasFeedback
+                  validateFirst
                   wrapperCol={{ xs: 18, sm: 20 }}
                   rules={[
                     { required: true, message: getErrorMessage('Message', FieldError.Required) },
