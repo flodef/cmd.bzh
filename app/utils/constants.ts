@@ -1,3 +1,4 @@
+// company
 export const companyInfo = {
   fullName: 'Conciergerie MultiService Debieu Breizh',
   shortName: 'CMD Breizh',
@@ -11,10 +12,18 @@ export const companyInfo = {
   email: 'contact@cmd.bzh',
   url: 'https://cmd.bzh',
 };
+
+// creator
 export const creatorInfo = {
   name: 'Flojito Stillnet',
   SIREN: '982 786 758',
   status: 'Auto-entrepreneur',
 };
+
+// colors
 export const bgColor = 'bg-green-50 dark:bg-gray-900';
 export const textColor = 'text-gray-900 dark:text-gray-400';
+
+// regex
+export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;

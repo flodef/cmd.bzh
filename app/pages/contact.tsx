@@ -6,14 +6,11 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { t } from '../utils/i18n';
-import { companyInfo } from '../utils/constants';
+import { companyInfo, emailRegex, phoneRegex } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 import { Page, useMenuContext } from '../contexts/menuProvider';
 
 const { TextArea } = Input;
-
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
 
 type FieldType = {
   Nom?: string;
