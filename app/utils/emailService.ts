@@ -85,9 +85,6 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
           <a href="${approveUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">Approuver l'avis</a>
           <a href="${rejectUrl}" style="background-color: #f44336; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Rejeter l'avis</a>
         </div>
-        <p style="margin-top: 30px; font-size: 0.9em; color: #666;">Ou copiez-collez ces liens dans votre navigateur :</p>
-        <p style="font-size: 0.8em; color: #666;">Pour approuver : ${approveUrl}</p>
-        <p style="font-size: 0.8em; color: #666;">Pour rejeter : ${rejectUrl}</p>
       `;
       break;
 
