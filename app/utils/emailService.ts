@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { companyInfo } from './constants';
+import { baseUrl, companyInfo } from './constants';
 
 // Email template types
 export type EmailType = 'contact' | 'review' | 'review-validation' | 'notification' | 'password-reset';
@@ -62,7 +62,6 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
 
   switch (type) {
     case 'review-validation':
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       const approveUrl = `${baseUrl}/api/reviews/validate?action=approve&token=${data.id}`;
       const rejectUrl = `${baseUrl}/api/reviews/validate?action=reject&token=${data.id}`;
 

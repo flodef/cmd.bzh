@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { deleteReview, getReviewByToken, publishReview } from '../../../models/review';
+import { baseUrl } from '@/app/utils/constants';
 
 export async function GET(request: Request) {
   try {
@@ -20,7 +21,6 @@ export async function GET(request: Request) {
     const review = await getReviewByToken(token);
     if (!review) {
       // Review not found, redirect to reviews page with not found status
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=notfound`);
     }
 
@@ -29,17 +29,12 @@ export async function GET(request: Request) {
         // Mark the review as published
         const result = await publishReview(review.id);
         if (result) {
-          // Use absolute URL with the base URL from environment
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
           return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=approved`);
         } else {
-          // Use absolute URL with the base URL from environment
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
           return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=publication`);
         }
       } catch {
         // In case of error, redirect to reviews with error status
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=publication`);
       }
     } else {
@@ -47,17 +42,12 @@ export async function GET(request: Request) {
         // Delete the review
         const result = await deleteReview(review.id);
         if (result) {
-          // Use absolute URL with the base URL from environment
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
           return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=rejected`);
         } else {
-          // Use absolute URL with the base URL from environment
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
           return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=deletion`);
         }
       } catch {
         // In case of error, redirect to reviews with error status
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=deletion`);
       }
     }

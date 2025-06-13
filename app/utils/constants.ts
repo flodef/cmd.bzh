@@ -13,6 +13,9 @@ export const companyInfo = {
   url: 'https://cmd.bzh',
 };
 
+// base url
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 // creator
 export const creatorInfo = {
   name: 'Flojito Stillnet',
