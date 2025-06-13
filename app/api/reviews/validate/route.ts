@@ -19,24 +19,46 @@ export async function GET(request: Request) {
     // Get the review associated with this ID/token
     const review = await getReviewByToken(token);
     if (!review) {
-      return NextResponse.json({ success: false, message: 'Avis non trouvé' }, { status: 404 });
+      // Review not found, redirect to reviews page with not found status
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=notfound`);
     }
 
     if (action === 'approve') {
-      // Mark the review as published
-      const result = await publishReview(review.id);
-      if (result) {
-        return NextResponse.redirect(new URL('/reviews?status=approved', request.url));
-      } else {
-        return NextResponse.json({ success: false, message: 'Erreur lors de la publication' }, { status: 500 });
+      try {
+        // Mark the review as published
+        const result = await publishReview(review.id);
+        if (result) {
+          // Use absolute URL with the base URL from environment
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=approved`);
+        } else {
+          // Use absolute URL with the base URL from environment
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=publication`);
+        }
+      } catch {
+        // In case of error, redirect to reviews with error status
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=publication`);
       }
     } else {
-      // Delete the review
-      const result = await deleteReview(review.id);
-      if (result) {
-        return NextResponse.redirect(new URL('/reviews?status=rejected', request.url));
-      } else {
-        return NextResponse.json({ success: false, message: 'Erreur lors de la suppression' }, { status: 500 });
+      try {
+        // Delete the review
+        const result = await deleteReview(review.id);
+        if (result) {
+          // Use absolute URL with the base URL from environment
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=rejected`);
+        } else {
+          // Use absolute URL with the base URL from environment
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=deletion`);
+        }
+      } catch {
+        // In case of error, redirect to reviews with error status
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=deletion`);
       }
     }
   } catch (error) {
