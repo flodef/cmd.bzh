@@ -52,6 +52,8 @@ export default function Reviews() {
   const [submitting, setSubmitting] = useState(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [formChanged, setFormChanged] = useState<boolean>(false);
+  const [shouldValidate, setShouldValidate] = useState<boolean>(false);
+
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCommentValid, setIsCommentValid] = useState<boolean>(true);
@@ -148,14 +150,37 @@ export default function Reviews() {
       setPendingReview(storedReview);
       setIsEditing(true);
 
-      // Pre-fill the form with stored review values
-      form.setFieldsValue({
-        name: storedReview.name,
-        email: storedReview.email,
-        comment: storedReview.comment,
-        rating: storedReview.rating,
-      });
+      // Pre-fill the form with stored review values without triggering validation
+      form.setFields([
+        { name: 'name', value: storedReview.name, touched: false },
+        { name: 'email', value: storedReview.email, touched: false },
+        { name: 'comment', value: storedReview.comment, touched: false },
+        { name: 'rating', value: storedReview.rating, touched: false },
+      ]);
     }
+  }, [form]);
+
+  useEffect(() => {
+    // Temporarily disable form validation on mount
+    const originalValidateFields = form.validateFields;
+    form.validateFields = async () => Promise.resolve({});
+
+    // After mounting, reset validation errors
+    const fieldsWithoutErrors = Object.keys(form.getFieldsValue()).map(fieldName => ({
+      name: fieldName,
+      errors: [],
+      touched: false,
+    }));
+    form.setFields(fieldsWithoutErrors);
+
+    // After a brief delay, restore normal validation
+    const timer = setTimeout(() => {
+      form.validateFields = originalValidateFields;
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [form]);
 
   useEffect(() => {
@@ -580,12 +605,15 @@ export default function Reviews() {
                 style={{ maxWidth: 600 }}
                 labelCol={{ xs: 6, lg: 5 }}
                 wrapperCol={{ xs: 18, sm: 12, md: 18, lg: 14, xl: 12 }}
-                initialValues={{ rating: 5 }}
+                initialValues={{ name: '', email: '', comment: '', rating: 5 }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 requiredMark={false}
                 validateTrigger="onChange"
                 autoComplete="on"
+                onFieldsChange={() => {
+                  if (!shouldValidate) setShouldValidate(true);
+                }}
               >
                 <Form.Item
                   label={t('Name')}
