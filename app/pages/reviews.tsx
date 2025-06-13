@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Page, useMenuContext } from '../contexts/menuProvider';
 import { emailRegex, textColor } from '../utils/constants';
 import { t } from '../utils/i18n';
+import { submitReview } from '../actions/email';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -171,31 +172,32 @@ export default function Reviews() {
     }, 1000);
   };
 
-  // Mock function to simulate submitting a review
-  const onFinish: FormProps<ReviewFormValues>['onFinish'] = values => {
+  // Submit review using server action
+  const onFinish: FormProps<ReviewFormValues>['onFinish'] = async values => {
     setSubmitting(true);
-    // This would normally be an API call
-    setTimeout(() => {
-      try {
-        const newReview: Review = {
-          id: Date.now().toString(),
-          name: values.name,
-          email: values.email,
-          comment: values.comment,
-          rating: values.rating,
-          createdAt: new Date().toISOString(),
-        };
-
-        setReviews([newReview, ...reviews]);
-        form.resetFields();
-        messageApi.success(t('ReviewSuccess'));
-      } catch (error) {
-        console.error('Error:', error);
-        messageApi.error(t('ReviewError'));
-      } finally {
-        setSubmitting(false);
-      }
-    }, 1000);
+    try {
+      const newReview: Review = {
+        id: Date.now().toString(),
+        name: values.name,
+        email: values.email,
+        comment: values.comment,
+        rating: values.rating,
+        createdAt: new Date().toISOString(),
+      };
+      
+      // Send review via server action - convert to Record<string, unknown>
+      await submitReview(newReview as unknown as Record<string, unknown>);
+      
+      // Add new review to state
+      setReviews([newReview, ...reviews]);
+      form.resetFields();
+      messageApi.success(t('ReviewSuccess'));
+    } catch (error) {
+      console.error('Error:', error);
+      messageApi.error(t('ReviewError'));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const onFinishFailed: FormProps<ReviewFormValues>['onFinishFailed'] = errorInfo => {

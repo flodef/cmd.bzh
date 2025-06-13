@@ -9,6 +9,7 @@ import { t } from '../utils/i18n';
 import { companyInfo, emailRegex, phoneRegex } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 import { Page, useMenuContext } from '../contexts/menuProvider';
+import { submitContactForm } from '../actions/email';
 
 const { TextArea } = Input;
 
@@ -69,16 +70,13 @@ export default function Contact() {
         ({ contact }, index) => `\n    ${index + 1}. ${t(getContactType(index))}: ${contact}`,
       );
 
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...values,
-          Contacts: transformedContacts,
-        }),
+      // Use the server action instead of fetch API
+      const result = await submitContactForm({
+        ...values,
+        Contacts: transformedContacts,
       });
 
-      if (!response.ok) throw new Error('Failed to send message');
+      if (!result.success) throw new Error('Failed to send message');
       form.resetFields();
       messageApi.success(t('MessageSent'));
     } catch {
