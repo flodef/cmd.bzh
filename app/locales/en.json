@@ -65,7 +65,7 @@
   "MessageError": "Failed to send message. Please try again later.",
   "DuplicateContact": "A contact with the same {0} already exists!",
   "Footer": "Your trusted partner for cleaning, gardening, and property management.",
-  "Partner": "Partenaire",
+  "Partner": "Partner",
   "GDPR": "Legal notices and GDPR",
   "GDPRIntroduction": "At CMD Breizh, we take privacy seriously and handle your personal data with the utmost care, in compliance with the General Data Protection Regulation (GDPR).",
   "GDPRDataCollectionText": "We only collect the personal information necessary to provide our services, including name, email address, and contact details. Thus, we do not collect any information related to browsing on our website, nor do we use any cookies or similar tracking technologies.",
@@ -139,5 +139,16 @@
   "GDPRTechnicalProvider": "10. Technical Provider",
   "GDPRTechnicalContent": [
     "Technical services are provided by ${creatorName}, ${creatorStatus} registered under SIREN number ${creatorSIREN}."
-  ]
+  ],
+  "Reviews": "Reviews",
+  "ClientReviews": "Client Reviews",
+  "AddReview": "Add Your Review",
+  "YourReview": "Your Review",
+  "ReviewRating": "Rating",
+  "SubmitReview": "Submit Review",
+  "ReviewSuccess": "Thank you for your review!",
+  "ReviewError": "Failed to submit review. Please try again later.",
+  "ReviewSubmitting": "Submitting review...",
+  "ReviewAllReviews": "All Reviews",
+  "ReviewNoReviews": "No reviews yet. Be the first to leave one!"
 }

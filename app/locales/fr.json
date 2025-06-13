@@ -139,5 +139,16 @@
   "GDPRTechnicalProvider": "10. Prestataire technique",
   "GDPRTechnicalContent": [
     "Les prestations techniques sont assurées par ${creatorName}, ${creatorStatus} immatriculé sous le numéro SIREN ${creatorSIREN}."
-  ]
+  ],
+  "Reviews": "Avis",
+  "ClientReviews": "Avis Clients",
+  "AddReview": "Ajoutez votre avis",
+  "YourReview": "Votre avis",
+  "ReviewRating": "Évaluation",
+  "SubmitReview": "Soumettre l'avis",
+  "ReviewSuccess": "Merci pour votre avis !",
+  "ReviewError": "Échec de l'envoi de l'avis. Veuillez réessayer plus tard.",
+  "ReviewSubmitting": "Envoi en cours...",
+  "ReviewAllReviews": "Tous les avis",
+  "ReviewNoReviews": "Aucun avis pour le moment. Soyez le premier à en laisser un !"
 }

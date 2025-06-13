@@ -139,5 +139,16 @@
   "GDPRTechnicalProvider": "10. Technischer Anbieter",
   "GDPRTechnicalContent": [
     "Technische Dienstleistungen werden von ${creatorName}, ${creatorStatus} unter der SIREN-Nummer ${creatorSIREN} erbracht."
-  ]
+  ],
+  "Reviews": "Bewertungen",
+  "ClientReviews": "Kundenbewertungen",
+  "AddReview": "Ihre Bewertung hinzufügen",
+  "YourReview": "Ihre Bewertung",
+  "ReviewRating": "Bewertung",
+  "SubmitReview": "Bewertung absenden",
+  "ReviewSuccess": "Vielen Dank für Ihre Bewertung!",
+  "ReviewError": "Bewertung konnte nicht abgeschickt werden. Bitte versuchen Sie es später erneut.",
+  "ReviewSubmitting": "Bewertung wird abgeschickt...",
+  "ReviewAllReviews": "Alle Bewertungen",
+  "ReviewNoReviews": "Noch keine Bewertungen vorhanden. Schreiben Sie als Erste eine!"
 }
