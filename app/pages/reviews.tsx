@@ -98,17 +98,6 @@ export default function Reviews() {
         })),
       ];
 
-      // Check if there's a pending review to edit
-      const pendingReview = getLocalStorageItem<ReviewFormValues>(STORAGE_KEYS.PENDING_REVIEW, undefined);
-      if (pendingReview) {
-        setPendingReview(pendingReview);
-        setIsEditing(true);
-        form.setFieldsValue(pendingReview);
-      } else {
-        setPendingReview(undefined);
-        setIsEditing(false);
-      }
-
       setReviews(combinedReviews);
 
       // Check cooldown status
@@ -119,7 +108,7 @@ export default function Reviews() {
     } finally {
       setLoading(false);
     }
-  }, [messageApi, form, checkCooldown]);
+  }, [messageApi, checkCooldown]);
 
   // Handle status hash fragment for review validation success/failure
   useEffect(() => {
@@ -152,8 +141,26 @@ export default function Reviews() {
     }
   }, [messageApi]);
 
+  // Initialize form with values from localStorage
+  const initFormFromLocalStorage = useCallback(() => {
+    const storedReview = getLocalStorageItem<ReviewFormValues>(STORAGE_KEYS.PENDING_REVIEW);
+    if (storedReview) {
+      setPendingReview(storedReview);
+      setIsEditing(true);
+
+      // Pre-fill the form with stored review values
+      form.setFieldsValue({
+        name: storedReview.name,
+        email: storedReview.email,
+        comment: storedReview.comment,
+        rating: storedReview.rating,
+      });
+    }
+  }, [form]);
+
   useEffect(() => {
     fetchReviews();
+    initFormFromLocalStorage();
 
     // Set up cooldown check interval
     cooldownIntervalRef.current = setInterval(() => {
@@ -165,7 +172,7 @@ export default function Reviews() {
         clearInterval(cooldownIntervalRef.current);
       }
     };
-  }, [fetchReviews, checkCooldown]);
+  }, [fetchReviews, checkCooldown, initFormFromLocalStorage]);
 
   useEffect(() => {
     if (activeTab !== Page.Reviews) return;
@@ -288,6 +295,9 @@ export default function Reviews() {
             setFormChanged(false);
             setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
 
+            // Refresh the reviews list to reflect the changes
+            fetchReviews();
+
             messageApi.success(t('ReviewUpdatedDirect'));
           } else {
             throw new Error(result.message || 'Unknown error');
@@ -312,7 +322,7 @@ export default function Reviews() {
             setFormChanged(false);
             setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
 
-            messageApi.success(t('ReviewCommentChanged') + ' ' + t('PendingApproval'));
+            messageApi.success(t('ReviewCommentChanged'));
           } else {
             throw new Error(result.message || 'Unknown error');
           }
@@ -375,7 +385,11 @@ export default function Reviews() {
 
   const getAverageRating = () => {
     if (reviews.length === 0) return 0;
-    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const total = reviews.reduce((sum, review) => {
+      // Make sure we have a valid numeric rating (could be string from DB)
+      const rating = typeof review.rating === 'string' ? parseFloat(review.rating) : review.rating;
+      return sum + (isNaN(rating) ? 0 : rating);
+    }, 0);
     return (total / reviews.length).toFixed(1);
   };
 
@@ -411,9 +425,9 @@ export default function Reviews() {
       // Show up arrow if scrolled down at all
       setCanScrollUp(scrollTop > 1);
 
-      // Show down arrow if not at the bottom
+      // Show down arrow only if there are more than 3 reviews and not at the bottom
       // Add a small buffer (5px) to account for rounding errors
-      setCanScrollDown(scrollTop + containerHeight < scrollHeight - 5);
+      setCanScrollDown(reviews.length > 3 && scrollTop + containerHeight < scrollHeight - 5);
 
       if (calculatedPage !== currentPage && !isTransitioning) {
         setCurrentPage(calculatedPage);
@@ -431,12 +445,15 @@ export default function Reviews() {
 
       container.addEventListener('scroll', throttledScrollHandler);
 
+      // Initial check
+      handleScroll();
+
       return () => {
         if (scrollTimeout) clearTimeout(scrollTimeout);
         container.removeEventListener('scroll', throttledScrollHandler);
       };
     }
-  }, [currentPage, isTransitioning, maxPage, REVIEW_TOTAL_HEIGHT]);
+  }, [currentPage, isTransitioning, maxPage, reviews.length, REVIEW_TOTAL_HEIGHT]);
 
   // Modal state for review details
   const [modalVisible, setModalVisible] = useState(false);
@@ -536,7 +553,7 @@ export default function Reviews() {
           centered
         >
           <div className="mb-3">
-            <Rate disabled allowHalf defaultValue={selectedReview.rating} />
+            <Rate disabled allowHalf value={selectedReview.rating} />
           </div>
           <div className={`${textColor} mt-4`}>{selectedReview.comment}</div>
         </Modal>
@@ -658,12 +675,12 @@ export default function Reviews() {
             {/* Reviews List - Right Column */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold">{t('ReviewAllReviews')}</h2>
+                <h2 className="text-2xl font-semibold">{t('ReviewAllReviews') + ' (' + reviews.length + ')'}</h2>
                 {reviews.length > 0 && (
                   <div className="flex items-center">
                     <IconStar size={20} className="text-yellow-500 mr-1" />
                     <span className="font-semibold">{getAverageRating()}</span>
-                    <span className="text-gray-500 text-sm ml-1">/ {reviews.length}</span>
+                    <span className="text-gray-500 text-sm ml-1">/ 5</span>
                   </div>
                 )}
               </div>

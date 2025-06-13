@@ -19,17 +19,17 @@ export async function submitNewReview(reviewData: NewReview) {
     // Create the review in the database (initially unpublished)
     const savedReview = await createReview(review);
 
-    // Send validation email to admin
+    // Send validation email to admin (admin only needs review-validation email, not the review email)
     await sendEmail('review-validation', {
       to: companyInfo.email,
       data: savedReview as unknown as Record<string, unknown>,
       subject: `Validation d'avis - ${reviewData.name}`,
     });
 
-    // Send confirmation to the reviewer
+    // Send confirmation to the reviewer if they provided an email
     if (reviewData.email) {
       await sendEmail('review', {
-        to: reviewData.email,
+        to: reviewData.email, // Send only to reviewer, not to admin
         data: reviewData as unknown as Record<string, unknown>,
         subject: 'Merci pour votre avis',
       });

@@ -127,13 +127,13 @@ export async function sendEmail(type: EmailType, emailData: EmailData) {
 
     const content = generateEmailContent(type, data);
     const emailSubject = subject || getSubjectByType(type);
-    const recipient = to || companyInfo.email; // TODO: only for test
+    const recipient = to || companyInfo.email;
     const sender = from || `CMD Breizh <${process.env.SMTP_FROM_EMAIL}>`;
 
     // Send email
     const result = await transporter.sendMail({
       from: sender,
-      to: recipient !== 'flo@fims.fi' ? 'flo@fims.fi' : recipient, // TODO: only for test
+      to: recipient,
       replyTo: replyTo || undefined,
       subject: emailSubject,
       text: content.text,
