@@ -31,5 +31,5 @@ export const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?
 // LocalStorage keys
 export const STORAGE_KEYS = {
   PENDING_REVIEW: 'cmd_pending_review',
-  SUBMITTED_REVIEWS: 'cmd_submitted_reviews'
+  LAST_SUBMIT_TIME: 'cmd-bzh-last-submit-time',
 };

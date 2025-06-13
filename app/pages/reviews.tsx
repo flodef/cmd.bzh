@@ -4,7 +4,7 @@ import { IconChevronDown, IconChevronUp, IconMail, IconSend, IconStar, IconUser 
 import { Button, Card, Empty, Form, FormProps, Input, InputRef, message, Modal, Rate, Spin, Typography } from 'antd';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Page, useMenuContext } from '../contexts/menuProvider';
-import { emailRegex, textColor, STORAGE_KEYS } from '../utils/constants';
+import { emailRegex, STORAGE_KEYS, textColor } from '../utils/constants';
 import { t } from '../utils/i18n';
 import { submitNewReview, getReviews } from '../actions/reviews';
 import { getLocalStorageItem, setLocalStorageItem } from '../utils/localStorage';
@@ -13,6 +13,9 @@ const { TextArea } = Input;
 const { Text } = Typography;
 
 const REVIEWS_PER_PAGE = 3;
+
+// Cooldown period in milliseconds (15 minutes)
+const SUBMIT_COOLDOWN = 15 * 60 * 1000;
 
 interface Review {
   id: string;
@@ -25,6 +28,7 @@ interface Review {
 }
 
 interface ReviewFormValues {
+  id?: string;
   name: string;
   email: string;
   comment: string;
@@ -47,13 +51,33 @@ export default function Reviews() {
 
   const [submitting, setSubmitting] = useState(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [formChanged, setFormChanged] = useState<boolean>(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCommentValid, setIsCommentValid] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // States for editing mode and cooldown
+  const [pendingReview, setPendingReview] = useState<ReviewFormValues | undefined>(undefined);
+  const [isEditing, setIsEditing] = useState(false);
+  const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
+  const cooldownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const nameRef = useRef<InputRef>(null);
+
+  // Function to check and update cooldown status
+  const checkCooldown = useCallback(() => {
+    const lastSubmitTime = getLocalStorageItem<number>(STORAGE_KEYS.LAST_SUBMIT_TIME, 0);
+    if (lastSubmitTime) {
+      const now = Date.now();
+      const elapsed = now - lastSubmitTime;
+
+      setCooldownRemaining(elapsed < SUBMIT_COOLDOWN ? Math.ceil((SUBMIT_COOLDOWN - elapsed) / 1000) : 0);
+    } else {
+      setCooldownRemaining(0);
+    }
+  }, []);
 
   // Fetch published reviews from the database
   const fetchReviews = useCallback(async () => {
@@ -62,24 +86,8 @@ export default function Reviews() {
       // Fetch reviews from the server
       const dbReviews = await getReviews();
 
-      // Check if there are any pending reviews in localStorage to display
-      const submittedReviews =
-        getLocalStorageItem<Array<Record<string, unknown>>>(STORAGE_KEYS.SUBMITTED_REVIEWS, []) || [];
-      const pendingReviews = submittedReviews
-        .filter(review => review && review.isPending)
-        .map(review => ({
-          id: String(review.id || ''),
-          name: String(review.name || ''),
-          email: String(review.email || ''),
-          comment: String(review.comment || ''),
-          rating: Number(review.rating || 0),
-          createdAt: String(review.createdAt || new Date().toISOString()),
-          pending: true,
-        }));
-
-      // Combine database reviews with pending reviews from localStorage
+      // Only show published reviews from the database
       const combinedReviews: Review[] = [
-        ...pendingReviews,
         ...dbReviews.map(dbReview => ({
           id: dbReview.id,
           name: dbReview.name,
@@ -90,20 +98,104 @@ export default function Reviews() {
         })),
       ];
 
+      // Check if there's a pending review to edit
+      const pendingReview = getLocalStorageItem<ReviewFormValues>(STORAGE_KEYS.PENDING_REVIEW, undefined);
+      if (pendingReview) {
+        setPendingReview(pendingReview);
+        setIsEditing(true);
+        form.setFieldsValue(pendingReview);
+      } else {
+        setPendingReview(undefined);
+        setIsEditing(false);
+      }
+
       setReviews(combinedReviews);
+
+      // Check cooldown status
+      checkCooldown();
     } catch (error) {
       console.error('Error fetching reviews:', error);
       messageApi.error(t('ReviewsFetchError'));
     } finally {
       setLoading(false);
     }
+  }, [messageApi, form, checkCooldown]);
+
+  // Handle status hash fragment for review validation success/failure
+  useEffect(() => {
+    // Parse hash fragment if available (e.g., #status=approved)
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash.substring(1); // remove the # character
+      const params = new URLSearchParams(hash);
+      const status = params.get('status');
+      const message = params.get('message');
+
+      if (status === 'approved') {
+        messageApi.success(t('ReviewApproved'));
+      } else if (status === 'rejected') {
+        messageApi.info(t('ReviewRejected'));
+      } else if (status === 'notfound') {
+        messageApi.error(t('ReviewNotFound'));
+      } else if (status === 'error') {
+        if (message === 'publication') {
+          messageApi.error(t('ReviewPublicationError'));
+        } else if (message === 'deletion') {
+          messageApi.error(t('ReviewDeletionError'));
+        } else {
+          messageApi.error(t('ReviewGenericError'));
+        }
+      }
+
+      // Remove hash to prevent showing the message on refresh
+      // Keep the tab parameter if it exists
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
   }, [messageApi]);
 
   useEffect(() => {
-    if (activeTab !== Page.Reviews) return;
     fetchReviews();
+
+    // Set up cooldown check interval
+    cooldownIntervalRef.current = setInterval(() => {
+      checkCooldown();
+    }, 1000); // Update every second
+
+    return () => {
+      if (cooldownIntervalRef.current) {
+        clearInterval(cooldownIntervalRef.current);
+      }
+    };
+  }, [fetchReviews, checkCooldown]);
+
+  useEffect(() => {
+    if (activeTab !== Page.Reviews) return;
+    // Only refetch if needed
     nameRef.current?.focus();
-  }, [activeTab, fetchReviews]);
+  }, [activeTab]);
+
+  useEffect(() => {
+    // Check if the form is valid
+    form
+      .validateFields()
+      .then(() => {
+        setIsFormValid(true);
+      })
+      .catch(() => {
+        setIsFormValid(false);
+      });
+
+    // Check if form values have changed from the original pendingReview
+    if (pendingReview && isEditing) {
+      const currentValues = form.getFieldsValue();
+      const hasChanged =
+        currentValues.name !== pendingReview.name ||
+        currentValues.email !== pendingReview.email ||
+        currentValues.comment !== pendingReview.comment ||
+        currentValues.rating !== pendingReview.rating;
+
+      setFormChanged(hasChanged);
+    }
+  }, [form, values, pendingReview, isEditing]);
 
   useEffect(() => {
     form
@@ -121,65 +213,137 @@ export default function Reviews() {
       });
   }, [form, values]);
 
-  useEffect(() => {}, [form, values]);
+  // Direct update review without requiring re-approval
+  const updateReviewDirectly = async (
+    values: ReviewFormValues,
+    reviewId: string,
+  ): Promise<{ success: boolean; message?: string }> => {
+    try {
+      // Call the API to update the review without requiring approval
+      const response = await fetch('/api/reviews/update-direct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: reviewId,
+          name: values.name,
+          email: values.email,
+          rating: values.rating,
+        }),
+      });
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error updating review directly:', error);
+      return { success: false, message: 'Failed to update review' };
+    }
+  };
 
   // Handle submitting a review
   const onFinish: FormProps<ReviewFormValues>['onFinish'] = async values => {
+    if (submitting) return;
+
+    // Check cooldown for all submissions
+    const lastSubmitTime = getLocalStorageItem<number>(STORAGE_KEYS.LAST_SUBMIT_TIME, 0);
+    if (lastSubmitTime) {
+      const now = Date.now();
+      const elapsed = now - lastSubmitTime;
+
+      if (elapsed < SUBMIT_COOLDOWN) {
+        const remainingMinutes = Math.floor((SUBMIT_COOLDOWN - elapsed) / 60000);
+        const remainingSeconds = Math.floor(((SUBMIT_COOLDOWN - elapsed) % 60000) / 1000);
+        messageApi.error(
+          t('ReviewCooldownActive')
+            .replace('{{minutes}}', String(remainingMinutes))
+            .replace('{{seconds}}', String(remainingSeconds)),
+        );
+        return;
+      }
+    }
+
     setSubmitting(true);
+
     try {
-      const newReview = {
-        name: values.name,
-        email: values.email,
-        comment: values.comment,
-        rating: values.rating,
-      };
+      // If we're editing and only name/email/rating has changed (not comment)
+      if (isEditing && pendingReview && pendingReview.id) {
+        const commentChanged = values.comment !== pendingReview.comment;
 
-      // First store the review in localStorage
-      setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, newReview);
+        if (!commentChanged) {
+          // Direct update without approval
+          const result = await updateReviewDirectly(values, pendingReview.id);
 
-      // Add this review to the submitted reviews list in localStorage
-      const submittedReviews =
-        getLocalStorageItem<Array<Record<string, unknown>>>(STORAGE_KEYS.SUBMITTED_REVIEWS, []) || [];
-      const updatedSubmittedReviews = [
-        {
-          ...newReview,
-          id: Date.now().toString(),
-          createdAt: new Date().toISOString(),
-          isPending: true,
-        },
-        ...submittedReviews,
-      ];
-      setLocalStorageItem(STORAGE_KEYS.SUBMITTED_REVIEWS, updatedSubmittedReviews);
+          if (result.success) {
+            // Update the pending review with new values but keep the existing ID
+            const updatedReview: ReviewFormValues = {
+              ...values,
+              id: pendingReview.id,
+            };
 
-      // Submit to the database via server action
-      const result = await submitNewReview(newReview);
+            // Store updated review and reset last submission time
+            setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, updatedReview);
+            setLocalStorageItem(STORAGE_KEYS.LAST_SUBMIT_TIME, Date.now());
 
-      if (result.success) {
-        // Add temporary review to the UI
-        const tempReview: Review = {
-          id: result.reviewId || Date.now().toString(),
-          name: values.name,
-          email: values.email,
-          comment: values.comment,
-          rating: values.rating,
-          createdAt: new Date().toISOString(),
-          // This review is pending approval
-          pending: true,
-        };
+            // Update UI state
+            setPendingReview(updatedReview);
+            setFormChanged(false);
+            setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
 
-        // Update the reviews state with the new review
-        setReviews(prev => [tempReview, ...prev]);
+            messageApi.success(t('ReviewUpdatedDirect'));
+          } else {
+            throw new Error(result.message || 'Unknown error');
+          }
+        } else {
+          // Comment changed, needs re-approval
+          const result = await submitNewReview(values);
 
-        form.resetFields();
-        messageApi.success(t('ReviewSuccess') + ' ' + t('PendingApproval'));
+          if (result.success) {
+            // Store the review in localStorage with ID from the server
+            const reviewToStore: ReviewFormValues = {
+              ...values,
+              id: result.reviewId,
+            };
 
-        // Clear the pending review from localStorage
-        setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, undefined);
+            // Store pending review and set last submission time
+            setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, reviewToStore);
+            setLocalStorageItem(STORAGE_KEYS.LAST_SUBMIT_TIME, Date.now());
+
+            // Update UI state with the new review data
+            setPendingReview(reviewToStore);
+            setFormChanged(false);
+            setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
+
+            messageApi.success(t('ReviewCommentChanged') + ' ' + t('PendingApproval'));
+          } else {
+            throw new Error(result.message || 'Unknown error');
+          }
+        }
       } else {
-        throw new Error(result.message || 'Unknown error');
+        // New review submission
+        const result = await submitNewReview(values);
+
+        if (result.success) {
+          // Store the review in localStorage with ID from the server
+          const reviewToStore: ReviewFormValues = {
+            ...values,
+            id: result.reviewId,
+          };
+
+          // Store pending review and set last submission time
+          setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, reviewToStore);
+          setLocalStorageItem(STORAGE_KEYS.LAST_SUBMIT_TIME, Date.now());
+
+          // Update UI state
+          setPendingReview(reviewToStore);
+          setIsEditing(true);
+          setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
+
+          messageApi.success(t('ReviewSuccess') + ' ' + t('PendingApproval'));
+        } else {
+          throw new Error(result.message || 'Unknown error');
+        }
       }
     } catch (error) {
-      console.error('Error submitting review:', error);
+      console.error('Error handling review:', error);
       messageApi.error(t('ReviewError'));
     } finally {
       setSubmitting(false);
@@ -383,7 +547,7 @@ export default function Reviews() {
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
             {/* Add Review Form - Left Column */}
             <div>
-              <h2 className="text-2xl font-semibold mb-4">{t('AddReview')}</h2>
+              <h2 className="text-2xl font-semibold mb-4">{isEditing ? t('ReviewEditTitle') : t('ReviewFormTitle')}</h2>
 
               <Form
                 name="reviewForm"
@@ -469,14 +633,23 @@ export default function Reviews() {
 
                 <Form.Item className="flex justify-end" style={{ paddingTop: 16 }}>
                   <Button
-                    icon={<IconSend style={{ display: 'flex' }} />}
-                    iconPosition="start"
-                    disabled={!isFormValid}
-                    loading={submitting}
                     type="primary"
                     htmlType="submit"
+                    loading={submitting}
+                    disabled={!isFormValid || cooldownRemaining > 0 || (isEditing && !formChanged)}
+                    icon={<IconSend style={{ display: 'flex' }} />}
                   >
-                    {t('SubmitReview')}
+                    {submitting
+                      ? t('ReviewSubmitting')
+                      : cooldownRemaining > 0
+                      ? `${isEditing ? t('ReviewUpdate') : t('ReviewSubmit')} (${Math.floor(cooldownRemaining / 60)}:${(
+                          cooldownRemaining % 60
+                        )
+                          .toString()
+                          .padStart(2, '0')})`
+                      : isEditing
+                      ? t('ReviewUpdate')
+                      : t('ReviewSubmit')}
                   </Button>
                 </Form.Item>
               </Form>
