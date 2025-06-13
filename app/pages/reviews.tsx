@@ -226,37 +226,56 @@ export default function Reviews() {
     return (total / reviews.length).toFixed(1);
   };
 
-  // Calculate the max page for sliding window pagination
-  const maxPage = Math.max(1, reviews.length - REVIEWS_PER_PAGE + 1);
+  // Reference for the scrollable container
+  const reviewsContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Calculate the max page for pagination
+  const maxPage = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
+
+  // Fixed height constants
+  const REVIEW_HEIGHT = 210; // Height of each card in pixels
+  const REVIEW_SPACING = 24; // Height of spacing between cards (margin-bottom)
+  const REVIEW_TOTAL_HEIGHT = REVIEW_HEIGHT + REVIEW_SPACING; // Combined height of card + spacing
 
   const handleScrollDown = () => {
     if (currentPage < maxPage && !isTransitioning) {
       setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentPage(currentPage + 1);
-        setIsTransitioning(false);
-      }, 300);
+      
+      // Calculate the exact scroll position for the next page (each page = 3 reviews)
+      const container = reviewsContainerRef.current;
+      if (container) {
+        const nextScrollPosition = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE * (currentPage); 
+        
+        container.scrollTo({
+          top: nextScrollPosition,
+          behavior: 'smooth'
+        });
+      }
+      
+      setCurrentPage(currentPage + 1);
+      setTimeout(() => setIsTransitioning(false), 500);
     }
   };
 
   const handleScrollUp = () => {
     if (currentPage > 1 && !isTransitioning) {
       setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentPage(currentPage - 1);
-        setIsTransitioning(false);
-      }, 300);
+      
+      // Calculate the exact scroll position for the previous page
+      const container = reviewsContainerRef.current;
+      if (container) {
+        const prevScrollPosition = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE * (currentPage - 2);
+        
+        container.scrollTo({
+          top: prevScrollPosition,
+          behavior: 'smooth'
+        });
+      }
+      
+      setCurrentPage(currentPage - 1);
+      setTimeout(() => setIsTransitioning(false), 500);
     }
   };
-
-  // Get the current reviews with a sliding window approach
-  // If we have reviews 1,2,3,4,5,6,7,8,9,10:
-  // Page 1 shows reviews 1,2,3
-  // Page 2 shows reviews 2,3,4
-  // Page 3 shows reviews 3,4,5
-  // and so on...
-  const startIndex = currentPage - 1;
-  const currentReviews = reviews.slice(startIndex, startIndex + REVIEWS_PER_PAGE);
 
   return (
     <>
@@ -400,33 +419,53 @@ export default function Reviews() {
                     </div>
                   )}
 
-                  {/* Reviews cards with fixed height and smooth transitions */}
+                  {/* Reviews cards in scrollable container with hidden scrollbar */}
                   <div
-                    className="space-y-6 transition-all duration-300 ease-in-out"
+                    ref={reviewsContainerRef}
+                    className="space-y-6 overflow-y-auto relative"
                     style={{
-                      opacity: isTransitioning ? 0.3 : 1,
-                      minHeight: '24rem', // Fixed height for 3 reviews
+                      height: `${REVIEW_HEIGHT * 3 + REVIEW_SPACING * 2}px`, // Exact height for 3 reviews with spacing between them
+                      scrollbarWidth: 'none', // Hide scrollbar for Firefox
+                      msOverflowStyle: 'none', // Hide scrollbar for IE/Edge
+                      scrollBehavior: 'smooth', // Add native smooth scrolling
+                      scrollSnapType: 'y mandatory' // Snap to reviews when scrolling
                     }}
                   >
-                    {currentReviews.length === 0 && (
+                    {/* CSS to hide scrollbar for Chrome/Safari */}
+                    <style jsx>{`
+                      div::-webkit-scrollbar {
+                        display: none;
+                      }
+                    `}</style>
+                    
+                    {/* Render all reviews, not just current page */}
+                    {reviews.length === 0 ? (
                       <div className="py-20 flex justify-center">
                         <Empty description={t('ReviewNoReviews')} />
                       </div>
+                    ) : (
+                      reviews.map(review => (
+                        <Card 
+                          key={review.id} 
+                          className="w-full shadow-sm hover:shadow-md transition-shadow"
+                          style={{ 
+                            height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
+                            scrollSnapAlign: 'start' // Snap align for smooth scrolling
+                          }}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <Text strong className="text-lg">
+                              {review.name}
+                            </Text>
+                            <Text type="secondary" className="text-sm">
+                              {formatDate(review.createdAt)}
+                            </Text>
+                          </div>
+                          <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
+                          <p className={`${textColor}`}>{review.comment}</p>
+                        </Card>
+                      ))
                     )}
-                    {currentReviews.map(review => (
-                      <Card key={review.id} className="w-full shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <Text strong className="text-lg">
-                            {review.name}
-                          </Text>
-                          <Text type="secondary" className="text-sm">
-                            {formatDate(review.createdAt)}
-                          </Text>
-                        </div>
-                        <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
-                        <p className={`${textColor}`}>{review.comment}</p>
-                      </Card>
-                    ))}
                   </div>
 
                   {/* Down arrow for scrolling - only shown when not on last page */}
