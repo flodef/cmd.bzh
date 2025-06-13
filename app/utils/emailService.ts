@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { companyInfo } from './constants';
 
 // Email template types
-export type EmailType = 'contact' | 'review' | 'notification' | 'password-reset';
+export type EmailType = 'contact' | 'review' | 'review-validation' | 'notification' | 'password-reset';
 
 // Email data structure
 export interface EmailData {
@@ -37,6 +37,8 @@ const getSubjectByType = (type: EmailType): string => {
       return 'Contact depuis le site web';
     case 'review':
       return 'Nouvelle évaluation reçue';
+    case 'review-validation':
+      return "Validation d'avis requise";
     case 'notification':
       return 'Notification de CMD Breizh';
     case 'password-reset':
@@ -54,11 +56,41 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
   const textContent = Object.entries(data)
     .map(([key, value]) => `${key}: ${value}`)
     .join('\n');
-    
+
   // Generate HTML based on email type
   let htmlContent: string;
-  
+
   switch (type) {
+    case 'review-validation':
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      const approveUrl = `${baseUrl}/api/reviews/validate?action=approve&token=${data.id}`;
+      const rejectUrl = `${baseUrl}/api/reviews/validate?action=reject&token=${data.id}`;
+
+      htmlContent = `
+        <h1>Nouvelle évaluation - Validation requise</h1>
+        <p>Une nouvelle évaluation a été soumise et nécessite votre validation :</p>
+        <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p><strong>De:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Note:</strong> ${data.rating} / 5</p>
+          <p><strong>Commentaire:</strong> ${data.comment}</p>
+          <p><strong>Date:</strong> ${
+            typeof data.created_at === 'string'
+              ? new Date(data.created_at).toLocaleDateString('fr-FR')
+              : new Date().toLocaleDateString('fr-FR')
+          }</p>
+        </div>
+        <p>Veuillez valider ou rejeter cette évaluation :</p>
+        <div style="margin: 25px 0;">
+          <a href="${approveUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">Approuver l'avis</a>
+          <a href="${rejectUrl}" style="background-color: #f44336; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Rejeter l'avis</a>
+        </div>
+        <p style="margin-top: 30px; font-size: 0.9em; color: #666;">Ou copiez-collez ces liens dans votre navigateur :</p>
+        <p style="font-size: 0.8em; color: #666;">Pour approuver : ${approveUrl}</p>
+        <p style="font-size: 0.8em; color: #666;">Pour rejeter : ${rejectUrl}</p>
+      `;
+      break;
+
     case 'review':
       htmlContent = `
         <h1>Nouvelle évaluation reçue</h1>
@@ -80,7 +112,7 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
       htmlContent = `<pre>${textContent}</pre>`;
       break;
   }
-  
+
   return {
     text: textContent,
     html: htmlContent,
@@ -93,24 +125,24 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
 export async function sendEmail(type: EmailType, emailData: EmailData) {
   try {
     const transporter = createTransporter();
-    
+
     const { to, from, subject, data, replyTo } = emailData;
-    
+
     const content = generateEmailContent(type, data);
     const emailSubject = subject || getSubjectByType(type);
-    const recipient = to || companyInfo.email;
+    const recipient = to || companyInfo.email; // TODO: only for test
     const sender = from || `CMD Breizh <${process.env.SMTP_FROM_EMAIL}>`;
-    
+
     // Send email
     const result = await transporter.sendMail({
       from: sender,
-      to: recipient,
+      to: recipient !== 'flo@fims.fi' ? 'flo@fims.fi' : recipient, // TODO: only for test
       replyTo: replyTo || undefined,
       subject: emailSubject,
       text: content.text,
       html: content.html,
     });
-    
+
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('Email send error:', error);

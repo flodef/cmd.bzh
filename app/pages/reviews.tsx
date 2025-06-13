@@ -2,11 +2,12 @@
 
 import { IconChevronDown, IconChevronUp, IconMail, IconSend, IconStar, IconUser } from '@tabler/icons-react';
 import { Button, Card, Empty, Form, FormProps, Input, InputRef, message, Modal, Rate, Spin, Typography } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { Page, useMenuContext } from '../contexts/menuProvider';
-import { emailRegex, textColor } from '../utils/constants';
+import { emailRegex, textColor, STORAGE_KEYS } from '../utils/constants';
 import { t } from '../utils/i18n';
-import { submitReview } from '../actions/email';
+import { submitNewReview, getReviews } from '../actions/reviews';
+import { getLocalStorageItem, setLocalStorageItem } from '../utils/localStorage';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -20,6 +21,7 @@ interface Review {
   comment: string;
   rating: number;
   createdAt: string;
+  pending?: boolean;
 }
 
 interface ReviewFormValues {
@@ -52,11 +54,56 @@ export default function Reviews() {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const nameRef = useRef<InputRef>(null);
+
+  // Fetch published reviews from the database
+  const fetchReviews = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Fetch reviews from the server
+      const dbReviews = await getReviews();
+
+      // Check if there are any pending reviews in localStorage to display
+      const submittedReviews =
+        getLocalStorageItem<Array<Record<string, unknown>>>(STORAGE_KEYS.SUBMITTED_REVIEWS, []) || [];
+      const pendingReviews = submittedReviews
+        .filter(review => review && review.isPending)
+        .map(review => ({
+          id: String(review.id || ''),
+          name: String(review.name || ''),
+          email: String(review.email || ''),
+          comment: String(review.comment || ''),
+          rating: Number(review.rating || 0),
+          createdAt: String(review.createdAt || new Date().toISOString()),
+          pending: true,
+        }));
+
+      // Combine database reviews with pending reviews from localStorage
+      const combinedReviews: Review[] = [
+        ...pendingReviews,
+        ...dbReviews.map(dbReview => ({
+          id: dbReview.id,
+          name: dbReview.name,
+          email: dbReview.email,
+          comment: dbReview.comment,
+          rating: dbReview.rating,
+          createdAt: dbReview.created_at,
+        })),
+      ];
+
+      setReviews(combinedReviews);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      messageApi.error(t('ReviewsFetchError'));
+    } finally {
+      setLoading(false);
+    }
+  }, [messageApi]);
+
   useEffect(() => {
     if (activeTab !== Page.Reviews) return;
     fetchReviews();
     nameRef.current?.focus();
-  }, [activeTab]);
+  }, [activeTab, fetchReviews]);
 
   useEffect(() => {
     form
@@ -76,124 +123,63 @@ export default function Reviews() {
 
   useEffect(() => {}, [form, values]);
 
-  // Mock function to simulate getting reviews
-  const fetchReviews = () => {
-    setLoading(true);
-    // This would normally be an API call
-    setTimeout(() => {
-      const mockReviews: Review[] = [
-        {
-          id: '1',
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          comment:
-            'Great service! The team was professional and did an amazing job with our garden maintenance. Great service! The team was professional and did an amazing job with our garden maintenance.',
-          rating: 5,
-          createdAt: '2023-06-12T10:00:00Z',
-        },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          email: 'jane.smith@example.com',
-          comment: 'Very satisfied with the window cleaning service. Prompt and efficient. Will use again.',
-          rating: 4.5,
-          createdAt: '2023-06-10T14:30:00Z',
-        },
-        {
-          id: '3',
-          name: 'Robert Johnson',
-          email: 'robert.j@example.com',
-          comment: 'Good cleaning service but could be more thorough in some areas.',
-          rating: 3.5,
-          createdAt: '2023-06-01T09:15:00Z',
-        },
-        {
-          id: '4',
-          name: 'Marie Dubois',
-          email: 'marie.d@example.com',
-          comment:
-            "Excellente prestation pour l'entretien de notre résidence secondaire. Service fiable et professionel.",
-          rating: 5,
-          createdAt: '2023-05-25T11:45:00Z',
-        },
-        {
-          id: '5',
-          name: 'Thomas Martin',
-          email: 'thomas.m@example.com',
-          comment: 'Très bon service de jardinage. Les équipes sont ponctuelles et soigneuses. Je recommande vivement.',
-          rating: 4,
-          createdAt: '2023-05-15T16:20:00Z',
-        },
-        {
-          id: '6',
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          comment: 'Great service! The team was professional and did an amazing job with our garden maintenance.',
-          rating: 5,
-          createdAt: '2023-06-12T10:00:00Z',
-        },
-        {
-          id: '7',
-          name: 'Jane Smith',
-          email: 'jane.smith@example.com',
-          comment: 'Very satisfied with the window cleaning service. Prompt and efficient. Will use again.',
-          rating: 4.5,
-          createdAt: '2023-06-10T14:30:00Z',
-        },
-        {
-          id: '8',
-          name: 'Robert Johnson',
-          email: 'robert.j@example.com',
-          comment: 'Good cleaning service but could be more thorough in some areas.',
-          rating: 3.5,
-          createdAt: '2023-06-01T09:15:00Z',
-        },
-        {
-          id: '9',
-          name: 'Marie Dubois',
-          email: 'marie.d@example.com',
-          comment:
-            "Excellente prestation pour l'entretien de notre résidence secondaire. Service fiable et professionel.",
-          rating: 5,
-          createdAt: '2023-05-25T11:45:00Z',
-        },
-        {
-          id: '10',
-          name: 'Thomas Martin',
-          email: 'thomas.m@example.com',
-          comment: 'Très bon service de jardinage. Les équipes sont ponctuelles et soigneuses. Je recommande vivement.',
-          rating: 4,
-          createdAt: '2023-05-15T16:20:00Z',
-        },
-      ];
-
-      setReviews(mockReviews);
-      setLoading(false);
-    }, 1000);
-  };
-
-  // Submit review using server action
+  // Handle submitting a review
   const onFinish: FormProps<ReviewFormValues>['onFinish'] = async values => {
     setSubmitting(true);
     try {
-      const newReview: Review = {
-        id: Date.now().toString(),
+      const newReview = {
         name: values.name,
         email: values.email,
         comment: values.comment,
         rating: values.rating,
-        createdAt: new Date().toISOString(),
       };
-      
-      // Send review via server action - convert to Record<string, unknown>
-      await submitReview(newReview as unknown as Record<string, unknown>);
-      
-      // Add new review to state
-      setReviews([newReview, ...reviews]);
-      form.resetFields();
-      messageApi.success(t('ReviewSuccess'));
+
+      // First store the review in localStorage
+      setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, newReview);
+
+      // Add this review to the submitted reviews list in localStorage
+      const submittedReviews =
+        getLocalStorageItem<Array<Record<string, unknown>>>(STORAGE_KEYS.SUBMITTED_REVIEWS, []) || [];
+      const updatedSubmittedReviews = [
+        {
+          ...newReview,
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+          isPending: true,
+        },
+        ...submittedReviews,
+      ];
+      setLocalStorageItem(STORAGE_KEYS.SUBMITTED_REVIEWS, updatedSubmittedReviews);
+
+      // Submit to the database via server action
+      const result = await submitNewReview(newReview);
+
+      if (result.success) {
+        // Add temporary review to the UI
+        const tempReview: Review = {
+          id: result.reviewId || Date.now().toString(),
+          name: values.name,
+          email: values.email,
+          comment: values.comment,
+          rating: values.rating,
+          createdAt: new Date().toISOString(),
+          // This review is pending approval
+          pending: true,
+        };
+
+        // Update the reviews state with the new review
+        setReviews(prev => [tempReview, ...prev]);
+
+        form.resetFields();
+        messageApi.success(t('ReviewSuccess') + ' ' + t('PendingApproval'));
+
+        // Clear the pending review from localStorage
+        setLocalStorageItem(STORAGE_KEYS.PENDING_REVIEW, undefined);
+      } else {
+        throw new Error(result.message || 'Unknown error');
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error submitting review:', error);
       messageApi.error(t('ReviewError'));
     } finally {
       setSubmitting(false);
@@ -239,37 +225,37 @@ export default function Reviews() {
 
   // Calculate the max page for pagination
   const maxPage = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
-  
+
   // State for scroll position tracking
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(true);
-  
+
   // Update scroll status based on scroll position
   useEffect(() => {
     const handleScroll = () => {
       if (!reviewsContainerRef.current) return;
-      
+
       const container = reviewsContainerRef.current;
       const scrollTop = container.scrollTop;
       const scrollHeight = container.scrollHeight;
       const containerHeight = container.clientHeight;
-      
+
       // Calculate which page we're on based on scroll position
       const estimatedPage = Math.floor(scrollTop / (REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE)) + 1;
       const calculatedPage = Math.min(Math.max(1, estimatedPage), maxPage);
-      
+
       // Show up arrow if scrolled down at all
       setCanScrollUp(scrollTop > 1);
-      
+
       // Show down arrow if not at the bottom
       // Add a small buffer (5px) to account for rounding errors
       setCanScrollDown(scrollTop + containerHeight < scrollHeight - 5);
-      
+
       if (calculatedPage !== currentPage && !isTransitioning) {
         setCurrentPage(calculatedPage);
       }
     };
-    
+
     const container = reviewsContainerRef.current;
     if (container) {
       // Add throttled scroll event listener with small delay to avoid performance issues
@@ -278,9 +264,9 @@ export default function Reviews() {
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(handleScroll, 100); // 100ms throttle
       };
-      
+
       container.addEventListener('scroll', throttledScrollHandler);
-      
+
       return () => {
         if (scrollTimeout) clearTimeout(scrollTimeout);
         container.removeEventListener('scroll', throttledScrollHandler);
@@ -301,14 +287,14 @@ export default function Reviews() {
       if (container) {
         // Get the current scroll position
         const currentScrollTop = container.scrollTop;
-        
+
         // Calculate how many reviews to scroll down (always 3)
         const scrollDownAmount = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE;
-        
+
         // New position is current position plus 3 reviews' height
         const nextScrollPosition = Math.min(
           currentScrollTop + scrollDownAmount,
-          container.scrollHeight - container.clientHeight
+          container.scrollHeight - container.clientHeight,
         );
 
         container.scrollTo({
@@ -338,10 +324,10 @@ export default function Reviews() {
       if (container) {
         // Get the current scroll position
         const currentScrollTop = container.scrollTop;
-        
+
         // Calculate how many reviews to scroll up (always 3)
         const scrollUpAmount = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE;
-        
+
         // New position is current position minus 3 reviews' height
         const prevScrollPosition = Math.max(0, currentScrollTop - scrollUpAmount);
 

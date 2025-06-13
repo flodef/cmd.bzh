@@ -27,3 +27,9 @@ export const textColor = 'text-gray-900 dark:text-gray-400';
 // regex
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 export const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+
+// LocalStorage keys
+export const STORAGE_KEYS = {
+  PENDING_REVIEW: 'cmd_pending_review',
+  SUBMITTED_REVIEWS: 'cmd_submitted_reviews'
+};
