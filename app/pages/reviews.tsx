@@ -238,19 +238,32 @@ export default function Reviews() {
   // Calculate the max page for pagination
   const maxPage = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
   
-  // Update current page based on scroll position
+  // State for scroll position tracking
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(true);
+  
+  // Update scroll status based on scroll position
   useEffect(() => {
     const handleScroll = () => {
-      if (isTransitioning || !reviewsContainerRef.current) return;
+      if (!reviewsContainerRef.current) return;
       
       const container = reviewsContainerRef.current;
       const scrollTop = container.scrollTop;
+      const scrollHeight = container.scrollHeight;
+      const containerHeight = container.clientHeight;
       
       // Calculate which page we're on based on scroll position
       const estimatedPage = Math.floor(scrollTop / (REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE)) + 1;
       const calculatedPage = Math.min(Math.max(1, estimatedPage), maxPage);
       
-      if (calculatedPage !== currentPage) {
+      // Show up arrow if scrolled down at all
+      setCanScrollUp(scrollTop > 1);
+      
+      // Show down arrow if not at the bottom
+      // Add a small buffer (5px) to account for rounding errors
+      setCanScrollDown(scrollTop + containerHeight < scrollHeight - 5);
+      
+      if (calculatedPage !== currentPage && !isTransitioning) {
         setCurrentPage(calculatedPage);
       }
     };
@@ -278,16 +291,23 @@ export default function Reviews() {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   const handleScrollDown = () => {
-    if (currentPage < maxPage && !isTransitioning) {
+    if (!isTransitioning) {
       setIsTransitioning(true);
 
-      // Calculate position to scroll down by 3 reviews
+      // Calculate position to scroll down by exactly 3 reviews from current position
       const container = reviewsContainerRef.current;
       if (container) {
-        // For going down, we need to jump 3 reviews ahead
-        const nextPage = currentPage + 1;
-        const targetIndex = (nextPage - 1) * REVIEWS_PER_PAGE;
-        const nextScrollPosition = REVIEW_TOTAL_HEIGHT * targetIndex;
+        // Get the current scroll position
+        const currentScrollTop = container.scrollTop;
+        
+        // Calculate how many reviews to scroll down (always 3)
+        const scrollDownAmount = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE;
+        
+        // New position is current position plus 3 reviews' height
+        const nextScrollPosition = Math.min(
+          currentScrollTop + scrollDownAmount,
+          container.scrollHeight - container.clientHeight
+        );
 
         container.scrollTo({
           top: nextScrollPosition,
@@ -295,13 +315,20 @@ export default function Reviews() {
         });
       }
 
-      setCurrentPage(currentPage + 1);
-      setTimeout(() => setIsTransitioning(false), 500);
+      setTimeout(() => {
+        // Update page after scrolling
+        const container = reviewsContainerRef.current;
+        if (container) {
+          const newPage = Math.floor(container.scrollTop / (REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE)) + 1;
+          setCurrentPage(Math.min(newPage, maxPage));
+        }
+        setIsTransitioning(false);
+      }, 500);
     }
   };
 
   const handleScrollUp = () => {
-    if (currentPage > 1 && !isTransitioning) {
+    if (!isTransitioning) {
       setIsTransitioning(true);
 
       // Calculate position to scroll up by exactly 3 reviews from current position
@@ -322,8 +349,15 @@ export default function Reviews() {
         });
       }
 
-      setCurrentPage(currentPage - 1);
-      setTimeout(() => setIsTransitioning(false), 500);
+      setTimeout(() => {
+        // Update page after scrolling
+        const container = reviewsContainerRef.current;
+        if (container) {
+          const newPage = Math.floor(container.scrollTop / (REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE)) + 1;
+          setCurrentPage(Math.max(1, newPage));
+        }
+        setIsTransitioning(false);
+      }, 500);
     }
   };
 
@@ -483,17 +517,16 @@ export default function Reviews() {
                 </div>
               ) : (
                 <div>
-                  {/* Up arrow for scrolling - only shown when not on first page */}
-                  {currentPage > 1 && (
-                    <div className="flex justify-center">
-                      <Button
-                        type="text"
-                        icon={<IconChevronUp size={28} style={{ display: 'flex' }} />}
-                        onClick={handleScrollUp}
-                        disabled={isTransitioning}
-                      />
-                    </div>
-                  )}
+                  {/* Up arrow for scrolling - always present but only visible when scrolled down */}
+                  <div className="flex justify-center">
+                    <Button
+                      type="text"
+                      icon={<IconChevronUp size={28} style={{ display: 'flex' }} />}
+                      onClick={handleScrollUp}
+                      disabled={isTransitioning}
+                      style={{ opacity: canScrollUp ? 1 : 0, transition: 'opacity 0.3s' }}
+                    />
+                  </div>
 
                   {/* Reviews cards in scrollable container with hidden scrollbar */}
                   <div
@@ -556,17 +589,16 @@ export default function Reviews() {
                     )}
                   </div>
 
-                  {/* Down arrow for scrolling - only shown when not on last page */}
-                  {currentPage < maxPage && (
-                    <div className="flex justify-center">
-                      <Button
-                        type="text"
-                        icon={<IconChevronDown size={28} style={{ display: 'flex' }} />}
-                        onClick={handleScrollDown}
-                        disabled={isTransitioning}
-                      />
-                    </div>
-                  )}
+                  {/* Down arrow for scrolling - always present but only visible when not at bottom */}
+                  <div className="flex justify-center mt-2">
+                    <Button
+                      type="text"
+                      icon={<IconChevronDown size={28} style={{ display: 'flex' }} />}
+                      onClick={handleScrollDown}
+                      disabled={isTransitioning}
+                      style={{ opacity: canScrollDown ? 1 : 0, transition: 'opacity 0.3s' }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
