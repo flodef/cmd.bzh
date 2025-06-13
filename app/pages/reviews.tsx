@@ -1,7 +1,7 @@
 'use client';
 
 import { IconChevronDown, IconChevronUp, IconMail, IconSend, IconStar, IconUser } from '@tabler/icons-react';
-import { Button, Card, Empty, Form, FormProps, Input, InputRef, message, Rate, Spin, Typography } from 'antd';
+import { Button, Card, Empty, Form, FormProps, Input, InputRef, message, Modal, Rate, Spin, Typography } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { Page, useMenuContext } from '../contexts/menuProvider';
 import { emailRegex, textColor } from '../utils/constants';
@@ -85,7 +85,8 @@ export default function Reviews() {
           id: '1',
           name: 'John Doe',
           email: 'john.doe@example.com',
-          comment: 'Great service! The team was professional and did an amazing job with our garden maintenance.',
+          comment:
+            'Great service! The team was professional and did an amazing job with our garden maintenance. Great service! The team was professional and did an amazing job with our garden maintenance.',
           rating: 5,
           createdAt: '2023-06-12T10:00:00Z',
         },
@@ -228,30 +229,72 @@ export default function Reviews() {
 
   // Reference for the scrollable container
   const reviewsContainerRef = useRef<HTMLDivElement>(null);
-  
-  // Calculate the max page for pagination
-  const maxPage = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
 
   // Fixed height constants
-  const REVIEW_HEIGHT = 210; // Height of each card in pixels
+  const REVIEW_HEIGHT = 140; // Reduced height of each card in pixels
   const REVIEW_SPACING = 24; // Height of spacing between cards (margin-bottom)
   const REVIEW_TOTAL_HEIGHT = REVIEW_HEIGHT + REVIEW_SPACING; // Combined height of card + spacing
+
+  // Calculate the max page for pagination
+  const maxPage = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
+  
+  // Update current page based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isTransitioning || !reviewsContainerRef.current) return;
+      
+      const container = reviewsContainerRef.current;
+      const scrollTop = container.scrollTop;
+      
+      // Calculate which page we're on based on scroll position
+      const estimatedPage = Math.floor(scrollTop / (REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE)) + 1;
+      const calculatedPage = Math.min(Math.max(1, estimatedPage), maxPage);
+      
+      if (calculatedPage !== currentPage) {
+        setCurrentPage(calculatedPage);
+      }
+    };
+    
+    const container = reviewsContainerRef.current;
+    if (container) {
+      // Add throttled scroll event listener with small delay to avoid performance issues
+      let scrollTimeout: ReturnType<typeof setTimeout>;
+      const throttledScrollHandler = () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(handleScroll, 100); // 100ms throttle
+      };
+      
+      container.addEventListener('scroll', throttledScrollHandler);
+      
+      return () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        container.removeEventListener('scroll', throttledScrollHandler);
+      };
+    }
+  }, [currentPage, isTransitioning, maxPage, REVIEW_TOTAL_HEIGHT]);
+
+  // Modal state for review details
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   const handleScrollDown = () => {
     if (currentPage < maxPage && !isTransitioning) {
       setIsTransitioning(true);
-      
-      // Calculate the exact scroll position for the next page (each page = 3 reviews)
+
+      // Calculate position to scroll down by 3 reviews
       const container = reviewsContainerRef.current;
       if (container) {
-        const nextScrollPosition = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE * (currentPage); 
-        
+        // For going down, we need to jump 3 reviews ahead
+        const nextPage = currentPage + 1;
+        const targetIndex = (nextPage - 1) * REVIEWS_PER_PAGE;
+        const nextScrollPosition = REVIEW_TOTAL_HEIGHT * targetIndex;
+
         container.scrollTo({
           top: nextScrollPosition,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
-      
+
       setCurrentPage(currentPage + 1);
       setTimeout(() => setIsTransitioning(false), 500);
     }
@@ -260,25 +303,58 @@ export default function Reviews() {
   const handleScrollUp = () => {
     if (currentPage > 1 && !isTransitioning) {
       setIsTransitioning(true);
-      
-      // Calculate the exact scroll position for the previous page
+
+      // Calculate position to scroll up by exactly 3 reviews from current position
       const container = reviewsContainerRef.current;
       if (container) {
-        const prevScrollPosition = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE * (currentPage - 2);
+        // Get the current scroll position
+        const currentScrollTop = container.scrollTop;
         
+        // Calculate how many reviews to scroll up (always 3)
+        const scrollUpAmount = REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE;
+        
+        // New position is current position minus 3 reviews' height
+        const prevScrollPosition = Math.max(0, currentScrollTop - scrollUpAmount);
+
         container.scrollTo({
           top: prevScrollPosition,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
-      
+
       setCurrentPage(currentPage - 1);
       setTimeout(() => setIsTransitioning(false), 500);
     }
   };
 
+  // Function to open modal with review details
+  const openReviewModal = (review: Review) => {
+    setSelectedReview(review);
+    setModalVisible(true);
+  };
+
   return (
     <>
+      {/* Review detail modal */}
+      {selectedReview && (
+        <Modal
+          title={
+            <div className="flex justify-between items-center">
+              <span className="font-semibold">{selectedReview.name}</span>
+              <span className="text-sm text-gray-500 mr-8">{formatDate(selectedReview.createdAt)}</span>
+            </div>
+          }
+          open={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          footer={null}
+          centered
+        >
+          <div className="mb-3">
+            <Rate disabled allowHalf defaultValue={selectedReview.rating} />
+          </div>
+          <div className={`${textColor} mt-4`}>{selectedReview.comment}</div>
+        </Modal>
+      )}
       {contextHolder}
       <section className="py-12">
         <div className="md:mx-4 px-4">
@@ -428,7 +504,7 @@ export default function Reviews() {
                       scrollbarWidth: 'none', // Hide scrollbar for Firefox
                       msOverflowStyle: 'none', // Hide scrollbar for IE/Edge
                       scrollBehavior: 'smooth', // Add native smooth scrolling
-                      scrollSnapType: 'y mandatory' // Snap to reviews when scrolling
+                      scrollSnapType: 'y mandatory', // Snap to reviews when scrolling
                     }}
                   >
                     {/* CSS to hide scrollbar for Chrome/Safari */}
@@ -437,7 +513,7 @@ export default function Reviews() {
                         display: none;
                       }
                     `}</style>
-                    
+
                     {/* Render all reviews, not just current page */}
                     {reviews.length === 0 ? (
                       <div className="py-20 flex justify-center">
@@ -445,13 +521,14 @@ export default function Reviews() {
                       </div>
                     ) : (
                       reviews.map(review => (
-                        <Card 
-                          key={review.id} 
-                          className="w-full shadow-sm hover:shadow-md transition-shadow"
-                          style={{ 
+                        <Card
+                          key={review.id}
+                          className="w-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                          style={{
                             height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
-                            scrollSnapAlign: 'start' // Snap align for smooth scrolling
+                            scrollSnapAlign: 'start', // Snap align for smooth scrolling
                           }}
+                          onClick={() => openReviewModal(review)}
                         >
                           <div className="flex justify-between items-start mb-2">
                             <Text strong className="text-lg">
@@ -462,7 +539,18 @@ export default function Reviews() {
                             </Text>
                           </div>
                           <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
-                          <p className={`${textColor}`}>{review.comment}</p>
+                          <p
+                            className={`${textColor} line-clamp-2 overflow-hidden`}
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {review.comment}
+                          </p>
                         </Card>
                       ))
                     )}
