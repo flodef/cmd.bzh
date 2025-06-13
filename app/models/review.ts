@@ -90,3 +90,29 @@ export async function getAllReviews(): Promise<DbReview[]> {
   
   return results as unknown as DbReview[];
 }
+
+/**
+ * Update an existing review content and set it to unpublished
+ * Used when editing a review with comment changes that require re-approval
+ */
+export async function updateReviewContent(id: string, review: NewReview): Promise<DbReview | null> {
+  const { name, email, comment, rating } = review;
+  
+  try {
+    const result = await sql`
+      UPDATE reviews 
+      SET name = ${name}, 
+          email = ${email}, 
+          comment = ${comment}, 
+          rating = ${rating}, 
+          published = false
+      WHERE id = ${id}
+      RETURNING id, created_at, name, email, comment, rating, published
+    `;
+    
+    return result.length > 0 ? result[0] as unknown as DbReview : null;
+  } catch (error) {
+    console.error('Error updating review content:', error);
+    return null;
+  }
+}

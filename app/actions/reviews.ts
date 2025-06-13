@@ -1,14 +1,14 @@
 'use server';
 
-import { createReview, NewReview, getPublishedReviews, DbReview } from '../models/review';
+import { createReview, updateReviewContent, NewReview, getPublishedReviews, DbReview } from '../models/review';
 import { sendEmail } from '../utils/emailService';
 import { companyInfo } from '../utils/constants';
 
 /**
- * Server action to submit a new review
+ * Server action to submit a new review or update an existing one
  * This creates an unpublished review in the database and sends a validation email
  */
-export async function submitNewReview(reviewData: NewReview) {
+export async function submitNewReview(reviewData: NewReview & { id?: string }) {
   try {
     // Ensure rating is treated as a decimal
     const review = {
@@ -16,8 +16,18 @@ export async function submitNewReview(reviewData: NewReview) {
       rating: Number(reviewData.rating),
     };
 
-    // Create the review in the database (initially unpublished)
-    const savedReview = await createReview(review);
+    let savedReview;
+    // If there's an ID, we're updating an existing review
+    if (reviewData.id) {
+      // Update the existing review and mark it as unpublished for re-approval
+      savedReview = await updateReviewContent(reviewData.id, review);
+      if (!savedReview) {
+        throw new Error('Failed to update review');
+      }
+    } else {
+      // Create a new review (initially unpublished)
+      savedReview = await createReview(review);
+    }
 
     // Send validation email to admin (admin only needs review-validation email, not the review email)
     await sendEmail('review-validation', {

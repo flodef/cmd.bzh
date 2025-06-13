@@ -304,13 +304,17 @@ export default function Reviews() {
           }
         } else {
           // Comment changed, needs re-approval
-          const result = await submitNewReview(values);
+          // Pass the existing review ID to update it rather than creating a new one
+          const result = await submitNewReview({
+            ...values,
+            id: pendingReview.id // Include the existing review ID
+          });
 
           if (result.success) {
-            // Store the review in localStorage with ID from the server
+            // Store the review in localStorage with the same ID
             const reviewToStore: ReviewFormValues = {
               ...values,
-              id: result.reviewId,
+              id: pendingReview.id, // Keep the same ID to prevent duplicates
             };
 
             // Store pending review and set last submission time
