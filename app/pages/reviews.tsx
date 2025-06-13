@@ -1,6 +1,6 @@
 'use client';
 
-import { IconMail, IconSend, IconUser } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronUp, IconMail, IconSend, IconStar, IconUser } from '@tabler/icons-react';
 import { Button, Card, Empty, Form, FormProps, Input, InputRef, message, Rate, Spin, Typography } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { Page, useMenuContext } from '../contexts/menuProvider';
@@ -9,6 +9,8 @@ import { t } from '../utils/i18n';
 
 const { TextArea } = Input;
 const { Text } = Typography;
+
+const REVIEWS_PER_PAGE = 3;
 
 interface Review {
   id: string;
@@ -45,6 +47,8 @@ export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCommentValid, setIsCommentValid] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const nameRef = useRef<InputRef>(null);
   useEffect(() => {
@@ -73,34 +77,91 @@ export default function Reviews() {
 
   // Mock function to simulate getting reviews
   const fetchReviews = () => {
-    // This would normally be an API call
     setLoading(true);
+    // This would normally be an API call
     setTimeout(() => {
-      // Mock data
       const mockReviews: Review[] = [
         {
           id: '1',
-          name: 'Jean Dupont',
-          email: 'jean@example.com',
-          comment: 'Service exceptionnel ! La maison était impeccable.',
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          comment: 'Great service! The team was professional and did an amazing job with our garden maintenance.',
           rating: 5,
-          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: '2023-06-12T10:00:00Z',
         },
         {
           id: '2',
-          name: 'Marie Lefevre',
-          email: 'marie@example.com',
-          comment: 'Très satisfaite du service de jardinage. Personnel ponctuel et professionnel.',
+          name: 'Jane Smith',
+          email: 'jane.smith@example.com',
+          comment: 'Very satisfied with the window cleaning service. Prompt and efficient. Will use again.',
           rating: 4.5,
-          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: '2023-06-10T14:30:00Z',
         },
         {
           id: '3',
-          name: 'Pierre Martin',
-          email: 'pierre@example.com',
-          comment: "Excellente conciergerie, toujours à l'écoute et très réactifs.",
+          name: 'Robert Johnson',
+          email: 'robert.j@example.com',
+          comment: 'Good cleaning service but could be more thorough in some areas.',
+          rating: 3.5,
+          createdAt: '2023-06-01T09:15:00Z',
+        },
+        {
+          id: '4',
+          name: 'Marie Dubois',
+          email: 'marie.d@example.com',
+          comment:
+            "Excellente prestation pour l'entretien de notre résidence secondaire. Service fiable et professionel.",
           rating: 5,
-          createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: '2023-05-25T11:45:00Z',
+        },
+        {
+          id: '5',
+          name: 'Thomas Martin',
+          email: 'thomas.m@example.com',
+          comment: 'Très bon service de jardinage. Les équipes sont ponctuelles et soigneuses. Je recommande vivement.',
+          rating: 4,
+          createdAt: '2023-05-15T16:20:00Z',
+        },
+        {
+          id: '6',
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          comment: 'Great service! The team was professional and did an amazing job with our garden maintenance.',
+          rating: 5,
+          createdAt: '2023-06-12T10:00:00Z',
+        },
+        {
+          id: '7',
+          name: 'Jane Smith',
+          email: 'jane.smith@example.com',
+          comment: 'Very satisfied with the window cleaning service. Prompt and efficient. Will use again.',
+          rating: 4.5,
+          createdAt: '2023-06-10T14:30:00Z',
+        },
+        {
+          id: '8',
+          name: 'Robert Johnson',
+          email: 'robert.j@example.com',
+          comment: 'Good cleaning service but could be more thorough in some areas.',
+          rating: 3.5,
+          createdAt: '2023-06-01T09:15:00Z',
+        },
+        {
+          id: '9',
+          name: 'Marie Dubois',
+          email: 'marie.d@example.com',
+          comment:
+            "Excellente prestation pour l'entretien de notre résidence secondaire. Service fiable et professionel.",
+          rating: 5,
+          createdAt: '2023-05-25T11:45:00Z',
+        },
+        {
+          id: '10',
+          name: 'Thomas Martin',
+          email: 'thomas.m@example.com',
+          comment: 'Très bon service de jardinage. Les équipes sont ponctuelles et soigneuses. Je recommande vivement.',
+          rating: 4,
+          createdAt: '2023-05-15T16:20:00Z',
         },
       ];
 
@@ -158,6 +219,44 @@ export default function Reviews() {
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
+
+  const getAverageRating = () => {
+    if (reviews.length === 0) return 0;
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (total / reviews.length).toFixed(1);
+  };
+
+  // Calculate the max page for sliding window pagination
+  const maxPage = Math.max(1, reviews.length - REVIEWS_PER_PAGE + 1);
+
+  const handleScrollDown = () => {
+    if (currentPage < maxPage && !isTransitioning) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentPage(currentPage + 1);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
+  const handleScrollUp = () => {
+    if (currentPage > 1 && !isTransitioning) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentPage(currentPage - 1);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
+  // Get the current reviews with a sliding window approach
+  // If we have reviews 1,2,3,4,5,6,7,8,9,10:
+  // Page 1 shows reviews 1,2,3
+  // Page 2 shows reviews 2,3,4
+  // Page 3 shows reviews 3,4,5
+  // and so on...
+  const startIndex = currentPage - 1;
+  const currentReviews = reviews.slice(startIndex, startIndex + REVIEWS_PER_PAGE);
 
   return (
     <>
@@ -268,7 +367,16 @@ export default function Reviews() {
 
             {/* Reviews List - Right Column */}
             <div>
-              <h2 className="text-2xl font-semibold mb-4">{t('ReviewAllReviews')}</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold">{t('ReviewAllReviews')}</h2>
+                {reviews.length > 0 && (
+                  <div className="flex items-center">
+                    <IconStar size={20} className="text-yellow-500 mr-1" />
+                    <span className="font-semibold">{getAverageRating()}</span>
+                    <span className="text-gray-500 text-sm ml-1">/ {reviews.length}</span>
+                  </div>
+                )}
+              </div>
 
               {loading ? (
                 <div className="flex justify-center py-8">
@@ -279,21 +387,59 @@ export default function Reviews() {
                   <Empty description={t('ReviewNoReviews')} />
                 </div>
               ) : (
-                <div className="space-y-6">
-                  {reviews.map(review => (
-                    <Card key={review.id} className="w-full shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start mb-2">
-                        <Text strong className="text-lg">
-                          {review.name}
-                        </Text>
-                        <Text type="secondary" className="text-sm">
-                          {formatDate(review.createdAt)}
-                        </Text>
+                <div>
+                  {/* Up arrow for scrolling - only shown when not on first page */}
+                  {currentPage > 1 && (
+                    <div className="flex justify-center">
+                      <Button
+                        type="text"
+                        icon={<IconChevronUp size={28} style={{ display: 'flex' }} />}
+                        onClick={handleScrollUp}
+                        disabled={isTransitioning}
+                      />
+                    </div>
+                  )}
+
+                  {/* Reviews cards with fixed height and smooth transitions */}
+                  <div
+                    className="space-y-6 transition-all duration-300 ease-in-out"
+                    style={{
+                      opacity: isTransitioning ? 0.3 : 1,
+                      minHeight: '24rem', // Fixed height for 3 reviews
+                    }}
+                  >
+                    {currentReviews.length === 0 && (
+                      <div className="py-20 flex justify-center">
+                        <Empty description={t('ReviewNoReviews')} />
                       </div>
-                      <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
-                      <p className={`${textColor}`}>{review.comment}</p>
-                    </Card>
-                  ))}
+                    )}
+                    {currentReviews.map(review => (
+                      <Card key={review.id} className="w-full shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <Text strong className="text-lg">
+                            {review.name}
+                          </Text>
+                          <Text type="secondary" className="text-sm">
+                            {formatDate(review.createdAt)}
+                          </Text>
+                        </div>
+                        <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
+                        <p className={`${textColor}`}>{review.comment}</p>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {/* Down arrow for scrolling - only shown when not on last page */}
+                  {currentPage < maxPage && (
+                    <div className="flex justify-center">
+                      <Button
+                        type="text"
+                        icon={<IconChevronDown size={28} style={{ display: 'flex' }} />}
+                        onClick={handleScrollDown}
+                        disabled={isTransitioning}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
