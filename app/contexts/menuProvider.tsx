@@ -7,11 +7,13 @@ import About from '../pages/about';
 import Contact from '../pages/contact';
 import GDPR from '../pages/GDPR';
 import Home from '../pages/home';
+import Reviews from '../pages/reviews';
 
 export enum Page {
   Home = 'Home',
   About = 'About',
   Contact = 'Contact',
+  Reviews = 'Reviews',
   GDPR = 'GDPR',
 }
 const defaultPage = Page.Home;
@@ -27,6 +29,7 @@ export const generateMenuContent = (activeTab: Page) => (
               Home: <Home />,
               About: <About />,
               Contact: <Contact />,
+              Reviews: <Reviews />,
               GDPR: <GDPR />,
             }[page]
           }

@@ -66,8 +66,8 @@ export default function Page() {
                 <div
                   className={twMerge(
                     isMobile ? 'transition transform' : 'visible max-h-28 flex items-center',
-                    isMenuOpen || !isMobile ? 'opacity-100 scale-y-100 h-40' : 'opacity-0 scale-y-0 h-0',
-                    isTinyMobile ? (isMenuOpen ? 'h-[280px]' : 'h-36') : '',
+                    isMenuOpen || !isMobile ? 'opacity-100 scale-y-100 h-52' : 'opacity-0 scale-y-0 h-0',
+                    isTinyMobile ? (isMenuOpen ? 'h-[320px]' : 'h-40') : '',
                   )}
                 >
                   <Tabs
@@ -104,14 +104,14 @@ export default function Page() {
               'flex flex-col min-h-screen transition transform',
               !isMenuOpen
                 ? isTinyMobile
-                  ? 'pt-44'
+                  ? 'pt-40'
                   : isMobile
                   ? 'pt-[132px]'
                   : 'pt-36'
                 : isTinyMobile
-                ? 'pt-[312px]'
+                ? 'pt-[320px]'
                 : isMobile
-                ? 'pt-48'
+                ? 'pt-60'
                 : 'pt-36',
             )}
           >
