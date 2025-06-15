@@ -10,7 +10,7 @@ export const companyInfo = {
   address: "11 rue de l'église, 29550 Saint-Nic, France",
   phone: '(+33) 06 18 49 92 69',
   email: 'contact@cmd.bzh',
-  url: 'https://cmd.bzh',
+  url: process.env.NEXT_PUBLIC_DEV_EMAIL || 'https://cmd.bzh',
 };
 
 // base url
