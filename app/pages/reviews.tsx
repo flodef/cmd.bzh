@@ -1,7 +1,21 @@
 'use client';
 
 import { IconChevronDown, IconChevronUp, IconMail, IconSend, IconStar, IconUser } from '@tabler/icons-react';
-import { Button, Card, Empty, Form, FormProps, Input, InputRef, message, Modal, Rate, Spin, Typography } from 'antd';
+import {
+  Button,
+  Card,
+  Empty,
+  Form,
+  FormProps,
+  Input,
+  InputRef,
+  message,
+  Modal,
+  Rate,
+  Spin,
+  Typography,
+  Tag,
+} from 'antd';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Page, useMenuContext } from '../contexts/menuProvider';
 import { emailRegex, STORAGE_KEYS, textColor } from '../utils/constants';
@@ -24,7 +38,7 @@ interface Review {
   comment: string;
   rating: number;
   createdAt: string;
-  pending?: boolean;
+  isPending?: boolean;
 }
 
 interface ReviewFormValues {
@@ -88,17 +102,44 @@ export default function Reviews() {
       // Fetch reviews from the server
       const dbReviews = await getReviews();
 
-      // Only show published reviews from the database
-      const combinedReviews: Review[] = [
-        ...dbReviews.map(dbReview => ({
-          id: dbReview.id,
-          name: dbReview.name,
-          email: dbReview.email,
-          comment: dbReview.comment,
-          rating: dbReview.rating,
-          createdAt: dbReview.created_at,
-        })),
-      ];
+      // Get the user's pending review from localStorage if it exists
+      const storedReview = getLocalStorageItem<ReviewFormValues>(STORAGE_KEYS.PENDING_REVIEW);
+
+      // Map database reviews to the Review type
+      const publishedReviews = dbReviews.map(dbReview => ({
+        id: dbReview.id,
+        name: dbReview.name,
+        email: dbReview.email,
+        comment: dbReview.comment,
+        rating: dbReview.rating,
+        createdAt: dbReview.created_at,
+        isPending: false,
+      }));
+
+      // Create combined reviews array
+      let combinedReviews: (Review & { isPending?: boolean })[] = [...publishedReviews];
+
+      // Check if we have a pending review
+      if (storedReview) {
+        // Check if the pending review is already in the published reviews
+        const isAlreadyPublished = publishedReviews.some(r => r.id === storedReview.id);
+
+        if (!isAlreadyPublished) {
+          // Add the pending review at the top of the list - treat it as a regular published review
+          combinedReviews = [
+            {
+              id: storedReview.id || 'pending',
+              name: storedReview.name,
+              email: storedReview.email,
+              comment: storedReview.comment,
+              rating: storedReview.rating,
+              createdAt: new Date().toISOString(),
+              isPending: true, // Mark it as pending for special styling
+            },
+            ...combinedReviews,
+          ];
+        }
+      }
 
       setReviews(combinedReviews);
 
@@ -320,8 +361,20 @@ export default function Reviews() {
             setFormChanged(false);
             setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
 
-            // Refresh the reviews list to reflect the changes
-            fetchReviews();
+            // Immediately update the reviews list with the updated review
+            const updatedReviewForList: Review = {
+              id: updatedReview.id || 'pending',
+              name: updatedReview.name,
+              email: updatedReview.email,
+              comment: updatedReview.comment,
+              rating: updatedReview.rating,
+              createdAt: new Date().toISOString(),
+              isPending: true,
+            };
+
+            // Remove any existing pending review by this user and add the new one at the top
+            const filteredReviews = reviews.filter(r => !(r.isPending && r.id === updatedReviewForList.id));
+            setReviews([updatedReviewForList, ...filteredReviews]);
 
             messageApi.success(t('ReviewUpdatedDirect'));
           } else {
@@ -351,6 +404,21 @@ export default function Reviews() {
             setFormChanged(false);
             setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
 
+            // Immediately update the reviews list with the updated review
+            const updatedReviewForList: Review = {
+              id: reviewToStore.id || 'pending',
+              name: reviewToStore.name,
+              email: reviewToStore.email,
+              comment: reviewToStore.comment,
+              rating: reviewToStore.rating,
+              createdAt: new Date().toISOString(),
+              isPending: true,
+            };
+
+            // Remove any existing pending review by this user and add the new one at the top
+            const filteredReviews = reviews.filter(r => !(r.isPending && r.id === updatedReviewForList.id));
+            setReviews([updatedReviewForList, ...filteredReviews]);
+
             messageApi.success(t('ReviewCommentChanged'));
           } else {
             throw new Error(result.message || 'Unknown error');
@@ -376,7 +444,21 @@ export default function Reviews() {
           setIsEditing(true);
           setCooldownRemaining(SUBMIT_COOLDOWN / 1000);
 
-          messageApi.success(t('ReviewSuccess') + ' ' + t('PendingApproval'));
+          // Immediately update the reviews list with the new review
+          const newReviewForList: Review = {
+            id: reviewToStore.id || 'pending',
+            name: reviewToStore.name,
+            email: reviewToStore.email,
+            comment: reviewToStore.comment,
+            rating: reviewToStore.rating,
+            createdAt: new Date().toISOString(),
+            isPending: true,
+          };
+
+          // Add the new review at the top of the list
+          setReviews([newReviewForList, ...reviews]);
+
+          messageApi.success(t('ReviewSuccess'));
         } else {
           throw new Error(result.message || 'Unknown error');
         }
@@ -766,39 +848,52 @@ export default function Reviews() {
                         <Empty description={t('ReviewNoReviews')} />
                       </div>
                     ) : (
-                      reviews.map(review => (
-                        <Card
-                          key={review.id}
-                          className="w-full shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                          style={{
-                            height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
-                            scrollSnapAlign: 'start', // Snap align for smooth scrolling
-                          }}
-                          onClick={() => openReviewModal(review)}
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <Text strong className="text-lg">
-                              {review.name}
-                            </Text>
-                            <Text type="secondary" className="text-sm">
-                              {formatDate(review.createdAt)}
-                            </Text>
-                          </div>
-                          <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
-                          <p
-                            className={`${textColor} line-clamp-2 overflow-hidden`}
+                      reviews.map(review => {
+                        const isPending = 'isPending' in review && review.isPending;
+
+                        return (
+                          <Card
+                            key={review.id}
+                            className={`w-full transition-shadow cursor-pointer ${
+                              isPending ? 'shadow-md border-blue-400 border-2' : 'shadow-sm hover:shadow-md'
+                            }`}
                             style={{
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
+                              height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
+                              scrollSnapAlign: 'start', // Snap align for smooth scrolling
                             }}
+                            onClick={() => openReviewModal(review)}
                           >
-                            {review.comment}
-                          </p>
-                        </Card>
-                      ))
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <Text strong className="text-lg">
+                                  {review.name}
+                                </Text>
+                                {isPending && (
+                                  <Tag color="blue" className="ml-2">
+                                    {t('PendingApproval')}
+                                  </Tag>
+                                )}
+                              </div>
+                              <Text type="secondary" className="text-sm">
+                                {formatDate(review.createdAt)}
+                              </Text>
+                            </div>
+                            <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
+                            <p
+                              className={`${textColor} line-clamp-2 overflow-hidden`}
+                              style={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {review.comment}
+                            </p>
+                          </Card>
+                        );
+                      })
                     )}
                   </div>
 
