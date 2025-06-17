@@ -9,12 +9,9 @@ export const companyInfo = {
   founder: 'Brice Debieu',
   address: "11 rue de l'église, 29550 Saint-Nic, France",
   phone: '(+33) 06 18 49 92 69',
-  email: 'contact@cmd.bzh',
-  url: process.env.NEXT_PUBLIC_DEV_EMAIL || 'https://cmd.bzh',
+  email: process.env.NEXT_PUBLIC_DEV_EMAIL || 'contact@cmd.bzh',
+  url: process.env.NEXT_PUBLIC_BASE_URL || 'https://cmd.bzh',
 };
-
-// base url
-export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 // creator
 export const creatorInfo = {

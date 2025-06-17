@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { deleteReview, getReviewByToken, publishReview } from '../../../models/review';
-import { baseUrl } from '@/app/utils/constants';
+import { companyInfo } from '@/app/utils/constants';
 
 export async function GET(request: Request) {
   try {
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const review = await getReviewByToken(token);
     if (!review) {
       // Review not found, redirect to reviews page with not found status
-      return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=notfound`);
+      return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=notfound`);
     }
 
     if (action === 'approve') {
@@ -29,26 +29,26 @@ export async function GET(request: Request) {
         // Mark the review as published
         const result = await publishReview(review.id);
         if (result) {
-          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=approved`);
+          return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=approved`);
         } else {
-          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=publication`);
+          return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=error&message=publication`);
         }
       } catch {
         // In case of error, redirect to reviews with error status
-        return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=publication`);
+        return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=error&message=publication`);
       }
     } else {
       try {
         // Delete the review
         const result = await deleteReview(review.id);
         if (result) {
-          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=rejected`);
+          return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=rejected`);
         } else {
-          return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=deletion`);
+          return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=error&message=deletion`);
         }
       } catch {
         // In case of error, redirect to reviews with error status
-        return NextResponse.redirect(`${baseUrl}/?tab=Reviews#status=error&message=deletion`);
+        return NextResponse.redirect(`${companyInfo.url}/?tab=Reviews#status=error&message=deletion`);
       }
     }
   } catch (error) {
