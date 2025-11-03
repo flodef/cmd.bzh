@@ -8,7 +8,7 @@ import { t } from '../utils/i18n';
 import { bgColor, companyInfo, textColor } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 
-const workingCities = ['Saint-Nic', 'Plomodiern', 'Plonevez-Porzay', 'Ploeven', 'Dinéault', 'Cast', 'Trégarvan'];
+const workingCities = ['Saint-Nic', 'Plomodiern'];
 
 export default function About() {
   const { activeTab } = useMenuContext();
