@@ -28,6 +28,15 @@ export const textColor = 'text-gray-900 dark:text-gray-400';
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 export const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
 
+// business hours
+export const businessHours = {
+  replyTimeHours: 48,
+  openingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+  openingHour: 9,
+  closingHour: 18,
+  timezone: 'Europe/Paris',
+};
+
 // LocalStorage keys
 export const STORAGE_KEYS = {
   PENDING_REVIEW: 'cmd-bzh-pending-review',

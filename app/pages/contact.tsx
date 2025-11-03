@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { t } from '../utils/i18n';
-import { companyInfo, emailRegex, phoneRegex } from '../utils/constants';
-import { getPhoneNumber } from '../utils/functions';
+import { businessHours, companyInfo, emailRegex, phoneRegex } from '../utils/constants';
+import { formatBusinessHours, getBusinessStatus, getPhoneNumber } from '../utils/functions';
 import { Page, useMenuContext } from '../contexts/menuProvider';
 import { submitContactForm } from '../actions/email';
 
@@ -37,6 +37,7 @@ export default function Contact() {
   const [isMessageValid, setIsMessageValid] = useState<boolean>(true);
   const [hasContactError, setHasContactError] = useState(false);
   const [sending, setSending] = useState(false);
+  const [businessStatus, setBusinessStatus] = useState(getBusinessStatus());
 
   const nameRef = useRef<InputRef>(null);
   useEffect(() => {
@@ -44,6 +45,15 @@ export default function Contact() {
 
     nameRef.current?.focus(); // Set focus on the name input when the page is displayed
   }, [activeTab]);
+
+  // Update business status every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBusinessStatus(getBusinessStatus());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     form
@@ -294,9 +304,18 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-2xl font-semibold mb-2">{t('BusinessHours')}</h3>
-                <div className="justify-self-center">
-                  <p>{t('BusinessHoursDescription')}</p>
-                  <p>{t('ReplyTime')}</p>
+                <div className="justify-self-center space-y-2">
+                  <p>
+                    <span className="font-semibold">{t('Status')}: </span>
+                    <span className={businessStatus.isOpen ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+                      {t(businessStatus.message)}
+                      {businessStatus.minutesUntilChange && (
+                        <span> {t('In')} {businessStatus.minutesUntilChange} {t('Minutes')}</span>
+                      )}
+                    </span>
+                  </p>
+                  <p>{t('Schedule')}: {t(formatBusinessHours())}</p>
+                  <p>{t('ReplyTime')}: {t('Within')} {businessHours.replyTimeHours} {t('Hours')}</p>
                 </div>
               </div>
             </div>

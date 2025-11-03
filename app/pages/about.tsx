@@ -54,7 +54,7 @@ export default function About() {
                 </li>
               ))}
             </ul>
-            <p className="mb-2">{t('AndMoreCities')}</p>
+            <p className="mb-2 hidden">{t('AndMoreCities')}</p>
           </div>
         </div>
       </section>
