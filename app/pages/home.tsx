@@ -46,6 +46,7 @@ export default function Home() {
                     src={`/carousel/${index}.jpg`}
                     alt={`Vue ${index}`}
                     className="w-full h-full object-cover rounded-lg"
+                    loading="eager"
                   />
                 </div>
               </div>

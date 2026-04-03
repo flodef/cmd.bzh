@@ -80,7 +80,7 @@ export default function Page() {
                     items={menuItems}
                     onChange={onMenuChange}
                     size="large"
-                    tabPosition={isMobile ? 'right' : 'top'}
+                    tabPlacement={isMobile ? 'end' : 'top'}
                   />
                 </div>
 
@@ -106,13 +106,13 @@ export default function Page() {
                 ? isTinyMobile
                   ? 'pt-40'
                   : isMobile
-                  ? 'pt-[132px]'
-                  : 'pt-36'
+                    ? 'pt-[132px]'
+                    : 'pt-36'
                 : isTinyMobile
-                ? 'pt-[320px]'
-                : isMobile
-                ? 'pt-60'
-                : 'pt-36',
+                  ? 'pt-[320px]'
+                  : isMobile
+                    ? 'pt-60'
+                    : 'pt-36',
             )}
           >
             <main className="flex-grow content-center">{generateMenuContent(activeTab)}</main>

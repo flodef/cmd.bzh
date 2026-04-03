@@ -211,7 +211,8 @@ export default function Contact() {
                                 form.getFieldValue('Contacts').at(0)?.contact ? 'cursor-pointer' : 'hidden',
                               )}
                               onClick={() => {
-                                if (contactFields.length === 1) form.resetFields(['Contacts']); // Just clear the field
+                                if (contactFields.length === 1)
+                                  form.resetFields(['Contacts']); // Just clear the field
                                 else remove(contactField.name); // Remove the selected field
                               }}
                             />
@@ -307,15 +308,24 @@ export default function Contact() {
                 <div className="justify-self-center space-y-2">
                   <p>
                     <span className="font-semibold">{t('Status')}: </span>
-                    <span className={businessStatus.isOpen ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+                    <span
+                      className={businessStatus.isOpen ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}
+                    >
                       {t(businessStatus.message)}
                       {businessStatus.minutesUntilChange && (
-                        <span> {t('In')} {businessStatus.minutesUntilChange} {t('Minutes')}</span>
+                        <span>
+                          {' '}
+                          {t('In')} {businessStatus.minutesUntilChange} {t('Minutes')}
+                        </span>
                       )}
                     </span>
                   </p>
-                  <p>{t('Schedule')}: {t(formatBusinessHours())}</p>
-                  <p>{t('ReplyTime')}: {t('Within')} {businessHours.replyTimeHours} {t('Hours')}</p>
+                  <p>
+                    {t('Schedule')}: {t(formatBusinessHours())}
+                  </p>
+                  <p>
+                    {t('ReplyTime')}: {t('Within')} {businessHours.replyTimeHours} {t('Hours')}
+                  </p>
                 </div>
               </div>
             </div>
