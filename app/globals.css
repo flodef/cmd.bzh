@@ -1,23 +1,27 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  --background: #a4bcde;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer utilities {
   :root {
-    --background: #0a0a0a;
-    --foreground: #a4bcde;
+    --background: #a4bcde;
+    --foreground: #171717;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --foreground: #a4bcde;
+    }
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .font-caveat {
+    font-family: var(--font-caveat), cursive;
+  }
 }
 
 @layer utilities {

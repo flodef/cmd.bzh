@@ -115,7 +115,7 @@ export default function Page() {
                     : 'pt-36',
             )}
           >
-            <main className="flex-grow content-center">{generateMenuContent(activeTab)}</main>
+            <main className="grow content-center">{generateMenuContent(activeTab)}</main>
             <Footer />
           </div>
         </div>

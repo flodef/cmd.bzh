@@ -32,7 +32,7 @@ export const MenuButton = ({ className }: { className?: string }) => {
         className={twMerge(
           genericHamburgerLine,
           isMenuOpen
-            ? '-rotate-45 -translate-y-[10px] opacity-100 group-hover:opacity-100'
+            ? '-rotate-45 translate-y-[-10px] opacity-100 group-hover:opacity-100'
             : 'opacity-100 group-hover:opacity-100',
         )}
       />
