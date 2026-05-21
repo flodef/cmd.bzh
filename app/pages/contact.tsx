@@ -259,7 +259,7 @@ export default function Contact() {
                 <Form.Item className="flex justify-end" style={{ paddingTop: 16 }}>
                   <Button
                     icon={<IconSend style={{ display: 'flex' }} />}
-                    iconPosition="start"
+                    iconPlacement="start"
                     disabled={!isFormValid}
                     loading={sending}
                     type="primary"
