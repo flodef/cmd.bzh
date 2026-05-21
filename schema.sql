@@ -44,3 +44,18 @@ INSERT INTO reviews (id, name, email, comment, rating, published, created_at) VA
 
 -- Cleanup command to delete all reviews
 -- TRUNCATE TABLE reviews;
+
+-- Contact messages table
+CREATE TABLE contact_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  name VARCHAR(255) NOT NULL,
+  contacts TEXT[] NOT NULL,
+  message TEXT NOT NULL
+);
+
+-- Index for filtering contact messages by date
+CREATE INDEX idx_contact_messages_created_at ON contact_messages(created_at DESC);
+
+-- Example query for getting all contact messages
+-- SELECT * FROM contact_messages ORDER BY created_at DESC;
