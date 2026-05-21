@@ -19,13 +19,38 @@ export default function About() {
   // Coordinates from the original iframe: 48.19939569036789, -4.284582138061523
   const mapCenter: [number, number] = [48.19939569036789, -4.284582138061523];
 
+  // Working area coordinates
+  const workingAreas = [
+    { name: 'Saint-Nic', coords: [48.19939569036789, -4.284582138061523] as [number, number] },
+    { name: 'Plomodiern', coords: [48.18713, -4.22839] as [number, number] },
+  ];
+
+  // Calculate center point for working area circle
+  const centerLat = (workingAreas[0].coords[0] + workingAreas[1].coords[0]) / 2;
+  const centerLng = (workingAreas[0].coords[1] + workingAreas[1].coords[1]) / 2;
+  const workingAreaCenter: [number, number] = [centerLat, centerLng];
+
+  // Calculate radius to encompass both points (in degrees, approximate)
+  const latDiff = Math.abs(workingAreas[0].coords[0] - workingAreas[1].coords[0]);
+  const lngDiff = Math.abs(workingAreas[0].coords[1] - workingAreas[1].coords[1]);
+  const radius = Math.max(latDiff, lngDiff) / 2 + 0.02; // Add buffer
+
   return (
     <div className="w-full max-w-7xl mx-auto">
       <section className="px-4 py-12">
         <h1 className="text-3xl font-bold text-center mb-8">{t('OurLocation')}</h1>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">
-            {activeTab === Page.About && <LeafletMap center={mapCenter} zoom={13} markerText={companyInfo.shortName} />}
+            {activeTab === Page.About && (
+              <LeafletMap
+                center={mapCenter}
+                zoom={10}
+                markerText={companyInfo.shortName}
+                logo="/Logo.png"
+                workingAreaCenter={workingAreaCenter}
+                workingAreaRadius={radius}
+              />
+            )}
           </div>
           <div className="w-full md:w-1/2 text-center">
             <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
