@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {
-    root: '/home/flo/Github/cmd.bzh',
+    root: process.cwd(),
   },
+  outputFileTracingRoot: process.cwd(),
 };
 
 export default nextConfig;
