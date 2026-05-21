@@ -15,10 +15,12 @@
     "@tabler/icons-react": "latest",
     "@types/nodemailer": "latest",
     "antd": "latest",
+    "leaflet": "^1.9.4",
     "next": "latest",
     "nodemailer": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-leaflet": "^5.0.0",
     "tailwind-merge": "latest"
   },
   "devDependencies": {

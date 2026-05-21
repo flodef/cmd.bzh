@@ -1,36 +1,32 @@
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ReactNode, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Page, useMenuContext } from '../contexts/menuProvider';
 import { t } from '../utils/i18n';
 import { bgColor, companyInfo, textColor } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
+import dynamic from 'next/dynamic';
+
+// Dynamically import LeafletMap to avoid SSR issues
+const LeafletMap = dynamic(() => import('../components/LeafletMap'), { ssr: false });
 
 const workingCities = ['Saint-Nic', 'Plomodiern'];
 
 export default function About() {
   const { activeTab } = useMenuContext();
-  const [iframe, setIframe] = useState<ReactNode>();
 
-  useEffect(() => {
-    if (activeTab !== Page.About) return;
-    // Dirty tric to load the map properly in the iframe (otherwise, the initial zoom is not working)
-    setIframe(
-      <iframe
-        src="https://www.openstreetmap.org/export/embed.html?bbox=-4.312176704406739%2C48.18806693411636%2C-4.2569875717163095%2C48.2107219419585&amp;layer=mapnik&amp;marker=48.19939569036789%2C-4.284582138061523"
-        style={{ border: 0, width: '100%', height: '100%' }}
-      ></iframe>,
-    );
-  }, [activeTab]);
+  // Coordinates from the original iframe: 48.19939569036789, -4.284582138061523
+  const mapCenter: [number, number] = [48.19939569036789, -4.284582138061523];
 
   return (
     <div className="w-full max-w-7xl mx-auto">
       <section className="px-4 py-12">
         <h1 className="text-3xl font-bold text-center mb-8">{t('OurLocation')}</h1>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">{iframe}</div>
+          <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">
+            {activeTab === Page.About && <LeafletMap center={mapCenter} zoom={13} markerText={companyInfo.shortName} />}
+          </div>
           <div className="w-full md:w-1/2 text-center">
             <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
             <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
