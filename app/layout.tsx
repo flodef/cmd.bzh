@@ -2,6 +2,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { MenuProvider } from './contexts/menuProvider';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
 const geistSans = localFont({
@@ -72,6 +73,7 @@ export default function RootLayout({
         <AntdRegistry>
           <MenuProvider>{children}</MenuProvider>
         </AntdRegistry>
+        <Analytics />
       </body>
     </html>
   );
