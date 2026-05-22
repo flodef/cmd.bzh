@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { MenuProvider } from './contexts/menuProvider';
 import { Analytics } from '@vercel/analytics/react';
+import { companyInfo, businessHours, getAddressComponents } from './utils/constants';
 import './globals.css';
 
 const geistSans = localFont({
@@ -22,29 +23,38 @@ const caveat = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'CMD Breizh',
-  description: "Conciergerie MultiService Debieu presqu'ile de Crozon",
+  title: "Conciergerie Presqu'île de Crozon - CMD Breizh | Nettoyage, Jardinage, Gestion",
+  description: companyInfo.description,
   applicationName: 'CMD Breizh',
   authors: [{ name: 'Flojito Stillnet' }],
   generator: 'Next.js',
   keywords: [
     'Conciergerie',
-    'Presqu’ile de Crozon',
+    "Presqu'île de Crozon",
+    'Crozon',
     'Saint-Nic',
+    'Plomodiern',
+    'Morgat',
+    'Camaret',
+    'Telgruc',
     'Nettoyage',
     'Jardinage',
     'Check in / Check out',
     'Gestion du linge',
     'Panier de bienvenue',
     'Multi-Services',
+    'Location saisonnière',
+    'Gestion locative',
+    'Conciergerie Bretagne',
+    'Conciergerie Finistère',
   ],
   creator: 'Flojito Stillnet',
   publisher: 'CMD Breizh',
   openGraph: {
-    title: 'CMD Breizh',
-    description: "Conciergerie MultiService Debieu presqu'ile de Crozon",
-    url: 'https://cmd.bzh',
-    siteName: 'CMD Breizh',
+    title: "Conciergerie Presqu'île de Crozon - CMD Breizh",
+    description: companyInfo.description,
+    url: companyInfo.url,
+    siteName: companyInfo.shortName,
     locale: 'fr_FR',
     type: 'website',
   },
@@ -68,7 +78,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'LocalBusiness',
+              name: companyInfo.fullName,
+              alternateName: companyInfo.shortName,
+              description: companyInfo.description,
+              address: {
+                '@type': 'PostalAddress',
+                ...getAddressComponents(companyInfo.address),
+              },
+              telephone: companyInfo.phone,
+              email: companyInfo.email,
+              url: companyInfo.url,
+              areaServed: companyInfo.areaServed,
+              openingHoursSpecification: {
+                '@type': 'OpeningHoursSpecification',
+                dayOfWeek: businessHours.openingDays.map(day => day.charAt(0).toUpperCase() + day.slice(1)),
+                opens: `${String(businessHours.openingHour).padStart(2, '0')}:00`,
+                closes: `${String(businessHours.closingHour).padStart(2, '0')}:00`,
+              },
+              priceRange: companyInfo.priceRange,
+              founder: companyInfo.founder,
+              foundingDate: companyInfo.foundingDate,
+            }),
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
         <AntdRegistry>
           <MenuProvider>{children}</MenuProvider>
