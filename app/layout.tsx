@@ -80,6 +80,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="8b01b6b5-5654-44d9-896b-6b4a52226756" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
