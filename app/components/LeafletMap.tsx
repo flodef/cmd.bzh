@@ -3,6 +3,7 @@
 import { GeoJSON, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { t } from '../utils/i18n';
 
@@ -108,7 +109,7 @@ function WorkingAreaChoropleth({
   };
 
   // Add interaction handlers
-  const onEachFeature = (feature: any, layer: any) => {
+  const onEachFeature = (feature: { properties?: { name?: string } }, layer: any) => {
     layer.on({
       mouseover: highlightFeature,
       mouseout: resetHighlight,
@@ -157,7 +158,7 @@ export default function LeafletMap({
               <div className="font-semibold text-base text-center">{markerText}</div>
               {logo && (
                 <div className="mt-2">
-                  <img src={logo} alt="CMD Breizh Logo" className="h-20 mx-auto" />
+                  <Image src={logo} alt="CMD Breizh Logo" width={80} height={80} className="h-20 mx-auto" />
                 </div>
               )}
             </div>

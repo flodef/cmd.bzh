@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server';
 import { deleteReview, getReviewByToken, publishReview } from '../../../models/review';
 import { companyInfo } from '@/app/utils/constants';
+import { checkRateLimit, getClientIp } from '../../../utils/rateLimit';
 
 export async function GET(request: Request) {
   try {
+    // Rate limiting: 10 requests per minute per IP
+    const clientIp = getClientIp(request);
+    if (checkRateLimit(clientIp, 10, 60000)) {
+      return NextResponse.json({ success: false, message: 'Too many requests' }, { status: 429 });
+    }
+
     // Get the URL and parse parameters
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');

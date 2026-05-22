@@ -153,7 +153,13 @@ export default function Contact() {
                     { pattern: /^[a-zA-Z\s]+$/, message: getErrorMessage('Name') },
                   ]}
                 >
-                  <Input ref={nameRef} prefix={<IconUser />} placeholder={t('Your') + ' ' + t('Name')} />
+                  <Input
+                    ref={nameRef}
+                    prefix={<IconUser aria-label="User icon" />}
+                    placeholder={t('Your') + ' ' + t('Name')}
+                    aria-label={t('Name')}
+                    aria-required="true"
+                  />
                 </Form.Item>
                 <Form.Item label="Contact(s)">
                   <Form.List name="Contacts">
@@ -202,8 +208,16 @@ export default function Contact() {
                               ]}
                             >
                               <Input
-                                prefix={isEmailContact(index) ? <IconMail /> : <IconPhone />}
+                                prefix={
+                                  isEmailContact(index) ? (
+                                    <IconMail aria-label="Email icon" />
+                                  ) : (
+                                    <IconPhone aria-label="Phone icon" />
+                                  )
+                                }
                                 placeholder={t('Your') + ' ' + t('Email') + ' / ' + t('Phone')}
+                                aria-label={`${t('Contact')} ${index + 1}`}
+                                aria-required="true"
                               />
                             </Form.Item>
                             <IconX
@@ -215,12 +229,15 @@ export default function Contact() {
                                   form.resetFields(['Contacts']); // Just clear the field
                                 else remove(contactField.name); // Remove the selected field
                               }}
+                              aria-label={t('Remove contact')}
+                              role="button"
+                              tabIndex={0}
                             />
                           </Space>
                         ))}
                         <Button
                           type="dashed"
-                          icon={<IconPlus style={{ display: 'flex' }} />}
+                          icon={<IconPlus style={{ display: 'flex' }} aria-label="Add icon" />}
                           disabled={
                             form.getFieldValue('Contacts').some((contact?: { contact: string }) => !contact?.contact) ||
                             form.getFieldError('Contacts').length > 0 ||
@@ -230,6 +247,7 @@ export default function Contact() {
                             sending
                           }
                           onClick={() => add()}
+                          aria-label={t('AddContact')}
                         >
                           {t('AddContact')}
                         </Button>
@@ -254,16 +272,19 @@ export default function Contact() {
                     autoSize={{ minRows: 2 }}
                     maxLength={500}
                     placeholder={t('Your') + ' ' + t('Message')}
+                    aria-label={t('Message')}
+                    aria-required="true"
                   />
                 </Form.Item>
                 <Form.Item className="flex justify-end" style={{ paddingTop: 16 }}>
                   <Button
-                    icon={<IconSend style={{ display: 'flex' }} />}
+                    icon={<IconSend style={{ display: 'flex' }} aria-label="Send icon" />}
                     iconPlacement="start"
                     disabled={!isFormValid}
                     loading={sending}
                     type="primary"
                     htmlType="submit"
+                    aria-label={t('SendMessage')}
                   >
                     {t('SendMessage')}
                   </Button>

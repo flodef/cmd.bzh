@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
 import { sql } from '../../../utils/db';
 import { t } from '../../../utils/i18n';
+import { checkRateLimit, getClientIp } from '../../../utils/rateLimit';
 
 // API route to update review non-content fields without requiring re-approval
 export async function POST(request: Request) {
   try {
+    // Rate limiting: 10 requests per minute per IP
+    const clientIp = getClientIp(request);
+    if (checkRateLimit(clientIp, 10, 60000)) {
+      return NextResponse.json({ success: false, message: 'Too many requests' }, { status: 429 });
+    }
+
     const body = await request.json();
     const { id, name, email, rating } = body;
 
