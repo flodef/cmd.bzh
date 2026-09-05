@@ -67,7 +67,7 @@ export default function Page() {
                   className={twMerge(
                     isMobile ? 'transition transform' : 'visible max-h-28 flex items-center',
                     isMenuOpen || !isMobile ? 'opacity-100 scale-y-100 h-52' : 'opacity-0 scale-y-0 h-0',
-                    isTinyMobile ? (isMenuOpen ? 'h-[320px]' : 'h-40') : '',
+                    isTinyMobile ? (isMenuOpen ? 'h-80' : 'h-40') : '',
                   )}
                 >
                   <Tabs
@@ -90,7 +90,7 @@ export default function Page() {
                 <div
                   className={twMerge(
                     'absolute text-center w-full self-end',
-                    isTinyMobile ? 'top-32 left-0' : 'top-7 pl-[104px] pr-20',
+                    isTinyMobile ? 'top-32 left-0' : 'top-7 pl-26 pr-20',
                     !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
                   )}
                 >
@@ -106,10 +106,10 @@ export default function Page() {
                 ? isTinyMobile
                   ? 'pt-40'
                   : isMobile
-                    ? 'pt-[132px]'
+                    ? 'pt-33'
                     : 'pt-36'
                 : isTinyMobile
-                  ? 'pt-[320px]'
+                  ? 'pt-80'
                   : isMobile
                     ? 'pt-60'
                     : 'pt-36',
