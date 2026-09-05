@@ -14,6 +14,12 @@ const LeafletMap = dynamic(() => import('../components/LeafletMap'), { ssr: fals
 export default function About() {
   const { activeTab } = useMenuContext();
 
+  // Compute the number of seasons since the business started (September 2025)
+  const now = new Date();
+  const seasons = now.getFullYear() - 2025 + (now.getMonth() >= 8 ? 1 : 0); // Month 8 = September
+  const seasonsLabel = t(seasons > 1 ? 'SeasonPlural' : 'SeasonSingular');
+  const storyParams = { seasons: String(seasons), seasonsLabel };
+
   // Coordinates from the original iframe: 48.19939569036789, -4.284582138061523
   const mapCenter: [number, number] = [48.19939569036789, -4.284582138061523];
 
@@ -106,9 +112,9 @@ export default function About() {
           <div className="flex flex-col gap-4">
             <div className="relative flex flex-col gap-4 font-caveat bg-blue-500/10 dark:bg-blue-900/20 border-l-4 border-blue-500/30 dark:border-blue-400/50 p-6 rounded-lg text-2xl">
               <span className="absolute -top-5 -left-8 text-9xl opacity-25 dark:opacity-35">&ldquo;</span>
-              <p className={textColor}>{t('OurStoryDescription').split('/n')[0]}</p>
+              <p className={textColor}>{t('OurStoryDescription', storyParams).split('/n')[0]}</p>
               <ul>
-                {t('OurStoryDescription')
+                {t('OurStoryDescription', storyParams)
                   .split('/n')
                   .filter(description => description.startsWith('•'))
                   .map((description, index) => (
@@ -117,7 +123,7 @@ export default function About() {
                     </li>
                   ))}
               </ul>
-              {t('OurStoryDescription')
+              {t('OurStoryDescription', storyParams)
                 .split('/n')
                 .slice(1)
                 .filter(description => !description.startsWith('•'))
