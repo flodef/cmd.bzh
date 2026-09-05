@@ -64,12 +64,10 @@ export default function Reviews() {
   const values = Form.useWatch([], form);
 
   const [submitting, setSubmitting] = useState(false);
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [formChanged, setFormChanged] = useState<boolean>(false);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isCommentValid, setIsCommentValid] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -201,29 +199,6 @@ export default function Reviews() {
   }, [form]);
 
   useEffect(() => {
-    // Temporarily disable form validation on mount
-    const originalValidateFields = form.validateFields;
-    form.validateFields = async () => Promise.resolve({});
-
-    // After mounting, reset validation errors
-    const fieldsWithoutErrors = Object.keys(form.getFieldsValue()).map(fieldName => ({
-      name: fieldName,
-      errors: [],
-      touched: false,
-    }));
-    form.setFields(fieldsWithoutErrors);
-
-    // After a brief delay, restore normal validation
-    const timer = setTimeout(() => {
-      form.validateFields = originalValidateFields;
-    }, 500);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [form]);
-
-  useEffect(() => {
     fetchReviews();
     initFormFromLocalStorage();
 
@@ -246,16 +221,6 @@ export default function Reviews() {
   }, [activeTab]);
 
   useEffect(() => {
-    // Check if the form is valid
-    form
-      .validateFields()
-      .then(() => {
-        setIsFormValid(true);
-      })
-      .catch(() => {
-        setIsFormValid(false);
-      });
-
     // Check if form values have changed from the original pendingReview
     if (pendingReview && isEditing) {
       const currentValues = form.getFieldsValue();
@@ -268,22 +233,6 @@ export default function Reviews() {
       setFormChanged(hasChanged);
     }
   }, [form, values, pendingReview, isEditing]);
-
-  useEffect(() => {
-    form
-      .validateFields(['comment'], { validateOnly: true })
-      .then(() => {
-        setIsCommentValid(true);
-        form
-          .validateFields({ validateOnly: true })
-          .then(() => setIsFormValid(true))
-          .catch(() => setIsFormValid(false));
-      })
-      .catch(() => {
-        setIsCommentValid(false);
-        setIsFormValid(false);
-      });
-  }, [form, values]);
 
   // Direct update review without requiring re-approval
   const updateReviewDirectly = async (
@@ -763,7 +712,7 @@ export default function Reviews() {
                   <TextArea
                     id="comment"
                     name="comment"
-                    showCount={isCommentValid}
+                    showCount
                     autoSize={{ minRows: 2 }}
                     maxLength={500}
                     placeholder={t('Your') + ' ' + t('Message')}
@@ -775,7 +724,7 @@ export default function Reviews() {
                     type="primary"
                     htmlType="submit"
                     loading={submitting}
-                    disabled={!isFormValid || cooldownRemaining > 0 || (isEditing && !formChanged)}
+                    disabled={cooldownRemaining > 0 || (isEditing && !formChanged)}
                     icon={<IconSend style={{ display: 'flex' }} />}
                   >
                     {submitting

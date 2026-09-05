@@ -31,10 +31,7 @@ export default function Contact() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [form] = Form.useForm();
-  const values = Form.useWatch([], form);
 
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [isMessageValid, setIsMessageValid] = useState<boolean>(true);
   const [hasContactError, setHasContactError] = useState(false);
   const [sending, setSending] = useState(false);
   const [businessStatus, setBusinessStatus] = useState(getBusinessStatus());
@@ -54,22 +51,6 @@ export default function Contact() {
 
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    form
-      .validateFields(['Message'], { validateOnly: true })
-      .then(() => {
-        setIsMessageValid(true);
-        form
-          .validateFields({ validateOnly: true })
-          .then(() => setIsFormValid(true))
-          .catch(() => setIsFormValid(false));
-      })
-      .catch(() => {
-        setIsMessageValid(false);
-        setIsFormValid(false);
-      });
-  }, [form, values]);
 
   const onFinish: FormProps<FieldType>['onFinish'] = async values => {
     setSending(true);
@@ -266,7 +247,7 @@ export default function Contact() {
                   <TextArea
                     id="message"
                     name="message"
-                    showCount={isMessageValid}
+                    showCount
                     autoSize={{ minRows: 2 }}
                     maxLength={500}
                     placeholder={t('Your') + ' ' + t('Message')}
@@ -278,7 +259,6 @@ export default function Contact() {
                   <Button
                     icon={<IconSend style={{ display: 'flex' }} aria-label="Send icon" />}
                     iconPlacement="start"
-                    disabled={!isFormValid}
                     loading={sending}
                     type="primary"
                     htmlType="submit"
