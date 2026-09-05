@@ -65,11 +65,15 @@ export function useWindowParam() {
       setColorScheme(event.matches ? ColorScheme.Dark : ColorScheme.Light);
     };
 
+    // Stable handlers for online/offline so removeEventListener matches
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
     // Add event listener
     window.addEventListener('resize', handleResize);
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleColorScheme);
-    window.addEventListener('online', () => setIsOnline(true), false);
-    window.addEventListener('offline', () => setIsOnline(false), false);
+    window.addEventListener('online', handleOnline, false);
+    window.addEventListener('offline', handleOffline, false);
 
     // Call handler right away so state gets updated with initial window size
     handleResize();
@@ -80,8 +84,8 @@ export function useWindowParam() {
     return () => {
       window.removeEventListener('resize', handleResize);
       window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handleColorScheme);
-      window.removeEventListener('online', () => setIsOnline(true));
-      window.removeEventListener('offline', () => setIsOnline(false));
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, []); // Empty array ensures that effect is only run on mount
 

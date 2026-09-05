@@ -2,6 +2,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { MenuProvider } from './contexts/menuProvider';
+import { LoadingProvider } from './contexts/loadingProvider';
 import { Analytics } from '@vercel/analytics/react';
 import { companyInfo, businessHours, getAddressComponents } from './utils/constants';
 import './globals.css';
@@ -113,7 +114,9 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
         <AntdRegistry>
-          <MenuProvider>{children}</MenuProvider>
+          <LoadingProvider>
+            <MenuProvider>{children}</MenuProvider>
+          </LoadingProvider>
         </AntdRegistry>
         <Analytics />
       </body>

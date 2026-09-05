@@ -11,8 +11,6 @@ import dynamic from 'next/dynamic';
 // Dynamically import LeafletMap to avoid SSR issues
 const LeafletMap = dynamic(() => import('../components/LeafletMap'), { ssr: false });
 
-const workingCities = ['Saint-Nic', 'Plomodiern'];
-
 export default function About() {
   const { activeTab } = useMenuContext();
 
@@ -69,9 +67,9 @@ export default function About() {
             <hr style={{ marginTop: 16, marginBottom: 16 }} />
             <h3 className="text-xl font-semibold mb-2">{t('WorkingArea')}</h3>
             <ul className="ml-4 mb-2 flex flex-wrap">
-              {workingCities.map((city, index) => (
+              {workingAreas.map((area, index) => (
                 <li key={index} className="mb-2 w-1/2">
-                  {city}
+                  {area.name}
                 </li>
               ))}
             </ul>

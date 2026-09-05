@@ -17,11 +17,7 @@ const rateLimitMap = new Map<string, RateLimitEntry>();
  * @param windowMs - Time window in milliseconds
  * @returns true if rate limited, false otherwise
  */
-export function checkRateLimit(
-  identifier: string,
-  maxRequests: number = 10,
-  windowMs: number = 60000,
-): boolean {
+export function checkRateLimit(identifier: string, maxRequests: number = 10, windowMs: number = 60000): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(identifier);
 
@@ -53,9 +49,13 @@ export function checkRateLimit(
 /**
  * Get rate limit information for a client
  * @param identifier - Unique identifier for the client
+ * @param maxRequests - Maximum number of requests allowed (should match the value used with checkRateLimit)
  * @returns Rate limit info or null if not rate limited
  */
-export function getRateLimitInfo(identifier: string): { resetTime: number; remaining: number } | null {
+export function getRateLimitInfo(
+  identifier: string,
+  maxRequests: number = 10,
+): { resetTime: number; remaining: number } | null {
   const entry = rateLimitMap.get(identifier);
   if (!entry) return null;
 
@@ -67,7 +67,7 @@ export function getRateLimitInfo(identifier: string): { resetTime: number; remai
 
   return {
     resetTime: entry.resetTime,
-    remaining: Math.max(0, 10 - entry.count), // Assuming max 10 requests
+    remaining: Math.max(0, maxRequests - entry.count),
   };
 }
 

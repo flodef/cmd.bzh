@@ -8,7 +8,7 @@ interface LoadingContextState {
   stopLoading: () => void;
 }
 
-const LoadingContext = createContext<LoadingContextState>({} as LoadingContextState);
+const LoadingContext = createContext<LoadingContextState | undefined>(undefined);
 
 export const LoadingProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,7 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
 
 export function useLoading(): LoadingContextState {
   const context = useContext(LoadingContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useLoading must be used within a LoadingProvider');
   }
   return context;

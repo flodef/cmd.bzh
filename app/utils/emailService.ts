@@ -1,6 +1,19 @@
 import nodemailer from 'nodemailer';
 import { companyInfo } from './constants';
 
+/**
+ * Escape HTML special characters to prevent injection in email templates
+ */
+const escapeHtml = (value: unknown): string => {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
 // Email template types
 export type EmailType = 'contact' | 'review' | 'review-validation' | 'notification' | 'password-reset';
 
@@ -17,10 +30,11 @@ export interface EmailData {
  * Creates and configures the email transporter
  */
 const createTransporter = () => {
+  const port = Number(process.env.SMTP_PORT);
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: true,
+    port,
+    secure: port === 465, // Implicit TLS on 465, STARTTLS on 587
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
@@ -69,13 +83,13 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
         <h1>Nouvelle évaluation - Validation requise</h1>
         <p>Une nouvelle évaluation a été soumise et nécessite votre validation :</p>
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <p><strong>De:</strong> ${data.name}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Note:</strong> ${data.rating} / 5</p>
-          <p><strong>Commentaire:</strong> ${data.comment}</p>
+          <p><strong>De:</strong> ${escapeHtml(data.name)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+          <p><strong>Note:</strong> ${escapeHtml(data.rating)} / 5</p>
+          <p><strong>Commentaire:</strong> ${escapeHtml(data.comment)}</p>
           <p><strong>Date:</strong> ${
             typeof data.created_at === 'string'
-              ? new Date(data.created_at).toLocaleDateString('fr-FR')
+              ? new Date(data.created_at as string).toLocaleDateString('fr-FR')
               : new Date().toLocaleDateString('fr-FR')
           }</p>
         </div>
@@ -90,16 +104,16 @@ const generateEmailContent = (type: EmailType, data: Record<string, unknown>) =>
     case 'review':
       htmlContent = `
         <h1>Nouvelle évaluation reçue</h1>
-        <p><strong>De:</strong> ${data.name}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Note:</strong> ${data.rating} / 5</p>
-        <p><strong>Commentaire:</strong> ${data.comment}</p>
+        <p><strong>De:</strong> ${escapeHtml(data.name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+        <p><strong>Note:</strong> ${escapeHtml(data.rating)} / 5</p>
+        <p><strong>Commentaire:</strong> ${escapeHtml(data.comment)}</p>
       `;
       break;
     case 'notification':
       htmlContent = `
-        <h1>${data.title || 'Notification'}</h1>
-        <p>${data.message}</p>
+        <h1>${escapeHtml(data.title) || 'Notification'}</h1>
+        <p>${escapeHtml(data.message)}</p>
       `;
       break;
     case 'contact':

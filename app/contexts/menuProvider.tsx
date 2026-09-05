@@ -92,15 +92,15 @@ export const MenuProvider = ({ children }: MenuProviderProps) => {
   }, []);
 
   const onMenuChange = (key = 'Home') => {
-    const activeTab = pages.find(page => page === key) || defaultPage;
+    const newTab = pages.find(page => page === key) || defaultPage;
 
     // Update URL without reload
     const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('tab', activeTab);
-    window.history.pushState({ activeTab }, '', newUrl.toString());
+    newUrl.searchParams.set('tab', newTab);
+    window.history.pushState({ activeTab: newTab }, '', newUrl.toString());
 
     setTitle(t(key));
-    setActiveTab(activeTab);
+    setActiveTab(newTab);
     setIsMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };

@@ -4,7 +4,7 @@ import { GeoJSON, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-l
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { t } from '../utils/i18n';
 
 // Fix for default marker icon in react-leaflet
@@ -92,7 +92,7 @@ function WorkingAreaChoropleth({
 
   // Highlight function on hover
   const highlightFeature = (e: L.LeafletMouseEvent) => {
-    const layer = e.target;
+    const layer = e.target as L.Path;
     layer.setStyle({
       weight: 3,
       color: '#1B5E20',
@@ -104,12 +104,12 @@ function WorkingAreaChoropleth({
 
   // Reset highlight on mouseout
   const resetHighlight = (e: L.LeafletMouseEvent) => {
-    const layer = e.target;
+    const layer = e.target as L.Path;
     layer.setStyle(style());
   };
 
   // Add interaction handlers
-  const onEachFeature = (feature: { properties?: { name?: string } }, layer: any) => {
+  const onEachFeature = (feature: { properties?: { name?: string } }, layer: L.Layer) => {
     layer.on({
       mouseover: highlightFeature,
       mouseout: resetHighlight,
@@ -133,11 +133,6 @@ export default function LeafletMap({
   workingAreaRadius,
 }: LeafletMapProps) {
   const markerRef = useRef<L.Marker>(null);
-
-  useEffect(() => {
-    // Ensure Leaflet CSS is loaded
-    import('leaflet/dist/leaflet.css');
-  }, []);
 
   return (
     <MapContainer

@@ -71,8 +71,6 @@ export default function Contact() {
       });
   }, [form, values]);
 
-  useEffect(() => {}, [form, values]);
-
   const onFinish: FormProps<FieldType>['onFinish'] = async values => {
     setSending(true);
     try {
@@ -104,11 +102,11 @@ export default function Contact() {
   const getErrorMessage = (fieldName: string, fieldError?: FieldError, info?: string | number) => {
     switch (fieldError) {
       case FieldError.Min:
-        return t('FieldMin').replace('{0}', t(fieldName)).replace('{1}', String(info));
+        return t('FieldMin', { field: t(fieldName), min: String(info) });
       case FieldError.Max:
-        return t('FieldMax').replace('{0}', t(fieldName)).replace('{1}', String(info));
+        return t('FieldMax', { field: t(fieldName), max: String(info) });
       case FieldError.Required:
-        return t('FieldRequired').replace('{0}', t(fieldName));
+        return t('FieldRequired', { field: t(fieldName) });
       default:
         return t(fieldName + 'Error');
     }
@@ -201,7 +199,7 @@ export default function Contact() {
                                     }
                                     setHasContactError(true);
                                     return Promise.reject(
-                                      new Error(t('DuplicateContact').replace('{0}', t(getContactType(index)))),
+                                      new Error(t('DuplicateContact', { field: t(getContactType(index)) })),
                                     );
                                   },
                                 }),

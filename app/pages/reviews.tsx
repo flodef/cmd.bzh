@@ -66,7 +66,6 @@ export default function Reviews() {
   const [submitting, setSubmitting] = useState(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [formChanged, setFormChanged] = useState<boolean>(false);
-  const [shouldValidate, setShouldValidate] = useState<boolean>(false);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +77,7 @@ export default function Reviews() {
   const [pendingReview, setPendingReview] = useState<ReviewFormValues | undefined>(undefined);
   const [isEditing, setIsEditing] = useState(false);
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
-  const cooldownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const cooldownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const nameRef = useRef<InputRef>(null);
 
@@ -326,9 +325,7 @@ export default function Reviews() {
         const remainingMinutes = Math.floor((SUBMIT_COOLDOWN - elapsed) / 60000);
         const remainingSeconds = Math.floor(((SUBMIT_COOLDOWN - elapsed) % 60000) / 1000);
         messageApi.error(
-          t('ReviewCooldownActive')
-            .replace('{{minutes}}', String(remainingMinutes))
-            .replace('{{seconds}}', String(remainingSeconds)),
+          t('ReviewCooldownActive', { minutes: String(remainingMinutes), seconds: String(remainingSeconds) }),
         );
         return;
       }
@@ -479,11 +476,11 @@ export default function Reviews() {
   const getErrorMessage = (fieldName: string, fieldError?: FieldError, info?: string | number) => {
     switch (fieldError) {
       case FieldError.Min:
-        return t('FieldMin').replace('{0}', t(fieldName)).replace('{1}', String(info));
+        return t('FieldMin', { field: t(fieldName), min: String(info) });
       case FieldError.Max:
-        return t('FieldMax').replace('{0}', t(fieldName)).replace('{1}', String(info));
+        return t('FieldMax', { field: t(fieldName), max: String(info) });
       case FieldError.Required:
-        return t('FieldRequired').replace('{0}', t(fieldName));
+        return t('FieldRequired', { field: t(fieldName) });
       default:
         return t(fieldName + 'Error');
     }
@@ -491,17 +488,18 @@ export default function Reviews() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('fr-FR');
   };
 
   const getAverageRating = () => {
-    if (reviews.length === 0) return 0;
-    const total = reviews.reduce((sum, review) => {
+    const publishedReviews = reviews.filter(r => !r.isPending);
+    if (publishedReviews.length === 0) return 0;
+    const total = publishedReviews.reduce((sum, review) => {
       // Make sure we have a valid numeric rating (could be string from DB)
       const rating = typeof review.rating === 'string' ? parseFloat(review.rating) : review.rating;
       return sum + (isNaN(rating) ? 0 : rating);
     }, 0);
-    return (total / reviews.length).toFixed(1);
+    return (total / publishedReviews.length).toFixed(1);
   };
 
   // Reference for the scrollable container
@@ -519,6 +517,16 @@ export default function Reviews() {
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(true);
 
+  // Refs to avoid re-subscribing the scroll listener on every state change
+  const currentPageRef = useRef(currentPage);
+  const isTransitioningRef = useRef(isTransitioning);
+  const maxPageRef = useRef(maxPage);
+  const reviewsLengthRef = useRef(reviews.length);
+  currentPageRef.current = currentPage;
+  isTransitioningRef.current = isTransitioning;
+  maxPageRef.current = maxPage;
+  reviewsLengthRef.current = reviews.length;
+
   // Update scroll status based on scroll position
   useEffect(() => {
     const handleScroll = () => {
@@ -531,16 +539,16 @@ export default function Reviews() {
 
       // Calculate which page we're on based on scroll position
       const estimatedPage = Math.floor(scrollTop / (REVIEW_TOTAL_HEIGHT * REVIEWS_PER_PAGE)) + 1;
-      const calculatedPage = Math.min(Math.max(1, estimatedPage), maxPage);
+      const calculatedPage = Math.min(Math.max(1, estimatedPage), maxPageRef.current);
 
       // Show up arrow if scrolled down at all
       setCanScrollUp(scrollTop > 1);
 
       // Show down arrow only if there are more than 3 reviews and not at the bottom
       // Add a small buffer (5px) to account for rounding errors
-      setCanScrollDown(reviews.length > 3 && scrollTop + containerHeight < scrollHeight - 5);
+      setCanScrollDown(reviewsLengthRef.current > 3 && scrollTop + containerHeight < scrollHeight - 5);
 
-      if (calculatedPage !== currentPage && !isTransitioning) {
+      if (calculatedPage !== currentPageRef.current && !isTransitioningRef.current) {
         setCurrentPage(calculatedPage);
       }
     };
@@ -564,7 +572,7 @@ export default function Reviews() {
         container.removeEventListener('scroll', throttledScrollHandler);
       };
     }
-  }, [currentPage, isTransitioning, maxPage, reviews.length, REVIEW_TOTAL_HEIGHT]);
+  }, [REVIEW_TOTAL_HEIGHT]);
 
   // Modal state for review details
   const [modalVisible, setModalVisible] = useState(false);
@@ -693,9 +701,6 @@ export default function Reviews() {
                 requiredMark={false}
                 validateTrigger="onChange"
                 autoComplete="on"
-                onFieldsChange={() => {
-                  if (!shouldValidate) setShouldValidate(true);
-                }}
               >
                 <Form.Item
                   label={t('Name')}
@@ -776,14 +781,14 @@ export default function Reviews() {
                     {submitting
                       ? t('ReviewSubmitting')
                       : cooldownRemaining > 0
-                      ? `${isEditing ? t('ReviewUpdate') : t('ReviewSubmit')} (${Math.floor(cooldownRemaining / 60)}:${(
-                          cooldownRemaining % 60
-                        )
-                          .toString()
-                          .padStart(2, '0')})`
-                      : isEditing
-                      ? t('ReviewUpdate')
-                      : t('ReviewSubmit')}
+                        ? `${isEditing ? t('ReviewUpdate') : t('ReviewSubmit')} (${Math.floor(cooldownRemaining / 60)}:${(
+                            cooldownRemaining % 60
+                          )
+                            .toString()
+                            .padStart(2, '0')})`
+                        : isEditing
+                          ? t('ReviewUpdate')
+                          : t('ReviewSubmit')}
                   </Button>
                 </Form.Item>
               </Form>
@@ -792,7 +797,9 @@ export default function Reviews() {
             {/* Reviews List - Right Column */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold">{t('ReviewAllReviews') + ' (' + reviews.length + ')'}</h2>
+                <h2 className="text-2xl font-semibold">
+                  {t('ReviewAllReviews') + ' (' + reviews.filter(r => !r.isPending).length + ')'}
+                </h2>
                 {reviews.length > 0 && (
                   <div className="flex items-center">
                     <IconStar size={20} className="text-yellow-500 mr-1" />
@@ -842,59 +849,53 @@ export default function Reviews() {
                       }
                     `}</style>
 
-                    {/* Render all reviews, not just current page */}
-                    {reviews.length === 0 ? (
-                      <div className="py-20 flex justify-center">
-                        <Empty description={t('ReviewNoReviews')} />
-                      </div>
-                    ) : (
-                      reviews.map(review => {
-                        const isPending = 'isPending' in review && review.isPending;
+                    {/* Render all reviews */}
+                    {reviews.map(review => {
+                      const isPending = 'isPending' in review && review.isPending;
 
-                        return (
-                          <Card
-                            key={review.id}
-                            className={`w-full transition-shadow cursor-pointer ${
-                              isPending ? 'shadow-md border-blue-400 border-2' : 'shadow-sm hover:shadow-md'
-                            }`}
-                            style={{
-                              height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
-                              scrollSnapAlign: 'start', // Snap align for smooth scrolling
-                            }}
-                            onClick={() => openReviewModal(review)}
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <Text strong className="text-lg">
-                                  {review.name}
-                                </Text>
-                                {isPending && (
-                                  <Tag color="blue" className="ml-2">
-                                    {t('PendingApproval')}
-                                  </Tag>
-                                )}
-                              </div>
-                              <Text type="secondary" className="text-sm">
-                                {formatDate(review.createdAt)}
+                      return (
+                        <Card
+                          key={review.id}
+                          className={`w-full transition-shadow cursor-pointer ${
+                            isPending ? 'shadow-md border-blue-400 border-2' : 'shadow-sm hover:shadow-md'
+                          }`}
+                          style={{
+                            height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
+                            scrollSnapAlign: 'start', // Snap align for smooth scrolling
+                          }}
+                          onClick={() => openReviewModal(review)}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <Text strong className="text-lg">
+                                {review.name}
                               </Text>
+                              {isPending && (
+                                <Tag color="blue" className="ml-2">
+                                  {t('PendingApproval')}
+                                </Tag>
+                              )}
                             </div>
-                            <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
-                            <p
-                              className={`${textColor} line-clamp-2 overflow-hidden`}
-                              style={{
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                              }}
-                            >
-                              {review.comment}
-                            </p>
-                          </Card>
-                        );
-                      })
-                    )}
+                            <Text type="secondary" className="text-sm">
+                              {formatDate(review.createdAt)}
+                            </Text>
+                          </div>
+                          <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
+                          <p
+                            className={`${textColor} line-clamp-2 overflow-hidden`}
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {review.comment}
+                          </p>
+                        </Card>
+                      );
+                    })}
                   </div>
 
                   {/* Down arrow for scrolling - always present but only visible when not at bottom */}

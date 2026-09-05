@@ -28,36 +28,3 @@ export async function createContactMessage(message: NewContactMessage): Promise<
 
   return result[0] as unknown as DbContactMessage;
 }
-
-/**
- * Get all contact messages
- */
-export async function getAllContactMessages(): Promise<DbContactMessage[]> {
-  const results = await sql`
-    SELECT * FROM contact_messages ORDER BY created_at DESC
-  `;
-
-  return results as unknown as DbContactMessage[];
-}
-
-/**
- * Get a contact message by ID
- */
-export async function getContactMessageById(id: string): Promise<DbContactMessage | null> {
-  const results = await sql`
-    SELECT * FROM contact_messages WHERE id = ${id}
-  `;
-
-  return results.length > 0 ? results[0] as unknown as DbContactMessage : null;
-}
-
-/**
- * Delete a contact message by ID
- */
-export async function deleteContactMessage(id: string): Promise<boolean> {
-  const result = await sql`
-    DELETE FROM contact_messages WHERE id = ${id} RETURNING id
-  `;
-
-  return result.length > 0;
-}
