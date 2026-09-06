@@ -8,7 +8,6 @@ import { twMerge } from 'tailwind-merge';
 import { t } from '../utils/i18n';
 import { businessHours, companyInfo, emailRegex, phoneRegex } from '../utils/constants';
 import { formatBusinessHours, getBusinessStatus, getPhoneNumber } from '../utils/functions';
-import { Page, useMenuContext } from '../contexts/menuProvider';
 import { submitContactForm } from '../actions/email';
 
 const { TextArea } = Input;
@@ -26,8 +25,6 @@ enum FieldError {
 }
 
 export default function Contact() {
-  const { activeTab } = useMenuContext();
-
   const [messageApi, contextHolder] = message.useMessage();
 
   const [form] = Form.useForm();
@@ -38,10 +35,8 @@ export default function Contact() {
 
   const nameRef = useRef<InputRef>(null);
   useEffect(() => {
-    if (activeTab !== Page.Contact) return;
-
     nameRef.current?.focus(); // Set focus on the name input when the page is displayed
-  }, [activeTab]);
+  }, []);
 
   // Update business status every minute
   useEffect(() => {
@@ -103,7 +98,7 @@ export default function Contact() {
         <div className="md:mx-4 px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
             <div>
-              <h2 className="text-2xl font-semibold mb-4">{t('GetInTouch')}</h2>
+              <h1 className="text-2xl font-semibold mb-4">{t('GetInTouch')}</h1>
               <Form
                 name="contactInfo"
                 form={form}

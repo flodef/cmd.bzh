@@ -1,8 +1,10 @@
+'use client';
+
 import { IconInfoCircle } from '@tabler/icons-react';
 import { Button, Card, Carousel, Tooltip } from 'antd';
 import Image from 'next/image';
+import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
-import { useMenuContext } from '../contexts/menuProvider';
 import { useWindowParam } from '../hooks/useWindowParam';
 import { t } from '../utils/i18n';
 import { bgColor, textColor } from '../utils/constants';
@@ -17,7 +19,6 @@ const cardContent = [
 ];
 
 export default function Home() {
-  const { onMenuChange } = useMenuContext();
   const { isDark, breakpoints } = useWindowParam();
   const { isSm: isMobile } = breakpoints;
 
@@ -55,7 +56,7 @@ export default function Home() {
       </section>
 
       <section className={twMerge(bgColor, 'px-4 py-12')}>
-        <h1 className="text-3xl font-bold text-center mb-8">{t('Services')}</h1>
+        <h2 className="text-3xl font-bold text-center mb-8">{t('Services')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {!isMobile ? (
             cardContent.map((item, index) => (
@@ -79,10 +80,12 @@ export default function Home() {
       </section>
 
       <section className="px-4 py-12 text-center">
-        <h1 className="text-3xl font-bold mb-4">{t('ReadyToExperience')}</h1>
-        <Button type="primary" size="large" onClick={() => onMenuChange('Contact')}>
-          {t('ContactUs')}
-        </Button>
+        <h2 className="text-3xl font-bold mb-4">{t('ReadyToExperience')}</h2>
+        <Link href="/contact">
+          <Button type="primary" size="large">
+            {t('ContactUs')}
+          </Button>
+        </Link>
       </section>
     </div>
   );

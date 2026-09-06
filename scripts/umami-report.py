@@ -756,12 +756,8 @@ def generate_report(csv_path, output_path):
     border-bottom: 1px dashed var(--text-muted);
     width: fit-content;
   }}
-  [data-tooltip]::after {{
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
+  .tooltip-popup {{
+    position: fixed;
     background: #1f2937;
     color: #fff;
     padding: 8px 12px;
@@ -769,16 +765,17 @@ def generate_report(csv_path, output_path):
     font-size: 13px;
     font-weight: 400;
     white-space: normal;
-    width: 280px;
+    width: max-content;
+    max-width: 280px;
     text-align: center;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
-    z-index: 100;
-    margin-bottom: 8px;
+    z-index: 9999;
     line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }}
-  [data-tooltip]:hover::after {{
+  .tooltip-popup.visible {{
     opacity: 1;
   }}
 
@@ -1190,6 +1187,32 @@ def generate_report(csv_path, output_path):
     'views': chart_views,
     'max': max_chart,
   })};
+
+  // --- Tooltip positioning (prevents edge overflow) ---
+  const tooltipEl = document.createElement('div');
+  tooltipEl.className = 'tooltip-popup';
+  document.body.appendChild(tooltipEl);
+
+  document.querySelectorAll('[data-tooltip]').forEach(el => {{
+    el.addEventListener('mouseenter', () => {{
+      const text = el.getAttribute('data-tooltip');
+      tooltipEl.textContent = text;
+      tooltipEl.classList.add('visible');
+      const rect = el.getBoundingClientRect();
+      const tipRect = tooltipEl.getBoundingClientRect();
+      let left = rect.left + rect.width / 2 - tipRect.width / 2;
+      // Clamp within viewport
+      left = Math.max(12, Math.min(left, window.innerWidth - tipRect.width - 12));
+      let top = rect.top - tipRect.height - 8;
+      // If not enough space above, show below
+      if (top < 12) top = rect.bottom + 8;
+      tooltipEl.style.left = left + 'px';
+      tooltipEl.style.top = top + 'px';
+    }});
+    el.addEventListener('mouseleave', () => {{
+      tooltipEl.classList.remove('visible');
+    }});
+  }});
 
   const dataStart = '{data_start.isoformat()}';
   const dataEnd = '{data_end.isoformat()}';

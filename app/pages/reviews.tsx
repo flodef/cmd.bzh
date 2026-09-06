@@ -17,7 +17,6 @@ import {
   Tag,
 } from 'antd';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { Page, useMenuContext } from '../contexts/menuProvider';
 import { emailRegex, STORAGE_KEYS, textColor } from '../utils/constants';
 import { t } from '../utils/i18n';
 import { submitNewReview, getReviews } from '../actions/reviews';
@@ -56,8 +55,6 @@ enum FieldError {
 }
 
 export default function Reviews() {
-  const { activeTab } = useMenuContext();
-
   const [messageApi, contextHolder] = message.useMessage();
 
   const [form] = Form.useForm();
@@ -215,10 +212,8 @@ export default function Reviews() {
   }, [fetchReviews, checkCooldown, initFormFromLocalStorage]);
 
   useEffect(() => {
-    if (activeTab !== Page.Reviews) return;
-    // Only refetch if needed
     nameRef.current?.focus();
-  }, [activeTab]);
+  }, []);
 
   useEffect(() => {
     // Check if form values have changed from the original pendingReview
@@ -632,7 +627,7 @@ export default function Reviews() {
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
             {/* Add Review Form - Left Column */}
             <div>
-              <h2 className="text-2xl font-semibold mb-4">{isEditing ? t('ReviewEditTitle') : t('ReviewFormTitle')}</h2>
+              <h1 className="text-2xl font-semibold mb-4">{isEditing ? t('ReviewEditTitle') : t('ReviewFormTitle')}</h1>
 
               <Form
                 name="reviewForm"

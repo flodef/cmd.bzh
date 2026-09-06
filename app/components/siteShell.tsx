@@ -2,22 +2,46 @@
 
 import { ConfigProvider, Tabs, theme } from 'antd';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import Footer from './components/footer';
-import { MenuButton } from './components/menuButton';
-import { generateMenuContent, menuItems, useMenuContext } from './contexts/menuProvider';
-import { useWindowParam } from './hooks/useWindowParam';
-import { CMDLogo } from './images/cmd';
-import Loading from './loading';
+import Footer from './footer';
+import { MenuButton } from './menuButton';
+import { useWindowParam } from '../hooks/useWindowParam';
+import { CMDLogo } from '../images/cmd';
+import Loading from '../loading';
+import { t } from '../utils/i18n';
+import { Page } from '../contexts/menuProvider';
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
-export default function Page() {
+const navItems: { key: Page; href: string; label: string }[] = [
+  { key: Page.Home, href: '/', label: t('Home') },
+  { key: Page.About, href: '/about', label: t('About') },
+  { key: Page.Contact, href: '/contact', label: t('Contact') },
+  { key: Page.Reviews, href: '/reviews', label: t('Reviews') },
+];
+
+function getActiveTab(pathname: string): Page {
+  const match = navItems.find(item => item.href === pathname);
+  return match?.key ?? Page.Home;
+}
+
+export function SiteShell({ children }: { children: React.ReactNode }) {
   const { isDark, isReady, breakpoints, width } = useWindowParam();
   const { isSm: isMobile, is2xs: isTinyMobile } = breakpoints;
-  const { onMenuChange, isMenuOpen, activeTab, title } = useMenuContext();
+  const pathname = usePathname();
+  const activeTab = getActiveTab(pathname);
+  const title = t(activeTab);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,12 +80,13 @@ export default function Page() {
             )}
           >
             <nav className="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-              <CMDLogo
-                className="flex-none self-start z-10 cursor-pointer w-24 h-24 sm:w-28 sm:h-28"
-                width={!isMobile ? 112 : 100}
-                height={!isMobile ? 112 : 100}
-                onClick={() => onMenuChange()}
-              />
+              <Link href="/" aria-label="CMD Breizh - Accueil">
+                <CMDLogo
+                  className="flex-none self-start z-10 cursor-pointer w-24 h-24 sm:w-28 sm:h-28"
+                  width={!isMobile ? 112 : 100}
+                  height={!isMobile ? 112 : 100}
+                />
+              </Link>
               <div className={twMerge('flex z-10', isMobile ? 'self-start w-full justify-end' : '')}>
                 <div
                   className={twMerge(
@@ -77,14 +102,16 @@ export default function Page() {
                       marginTop: isTinyMobile ? 120 : 0,
                     }}
                     activeKey={activeTab}
-                    items={menuItems}
-                    onChange={onMenuChange}
+                    items={navItems.map(item => ({
+                      key: item.key,
+                      label: <Link href={item.href}>{item.label}</Link>,
+                    }))}
                     size="large"
                     tabPlacement={isMobile ? 'end' : 'top'}
                   />
                 </div>
 
-                {isMobile && <MenuButton />}
+                {isMobile && <MenuButton isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
               </div>
               {isMobile && (
                 <div
@@ -115,7 +142,7 @@ export default function Page() {
                     : 'pt-36',
             )}
           >
-            <main className="grow content-center">{generateMenuContent(activeTab)}</main>
+            <main className="grow content-center">{children}</main>
             <Footer />
           </div>
         </div>

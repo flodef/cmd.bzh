@@ -11,7 +11,7 @@ export const companyInfo = {
   address: "11 rue de l'église, 29550 Saint-Nic, France",
   phone: '(+33) 06 18 49 92 69',
   email: process.env.NEXT_PUBLIC_DEV_EMAIL || 'contact@cmd.bzh',
-  url: process.env.NEXT_PUBLIC_BASE_URL || 'https://cmd.bzh',
+  url: process.env.NEXT_PUBLIC_BASE_URL || 'https://www.cmd.bzh',
   description:
     "Conciergerie professionnelle sur la presqu'île de Crozon (Saint-Nic, Plomodiern). Services de nettoyage, jardinage, check-in/out, gestion du linge pour vos locations saisonnières.",
   areaServed: [

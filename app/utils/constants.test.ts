@@ -23,7 +23,7 @@ describe('getAddressComponents', () => {
   });
 
   it('should handle address with multi-word city', () => {
-    const address = "123 Main Street, 75001 Paris, France";
+    const address = '123 Main Street, 75001 Paris, France';
     const result = getAddressComponents(address);
 
     expect(result.streetAddress).toBe('123 Main Street');

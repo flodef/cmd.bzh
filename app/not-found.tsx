@@ -1,5 +1,14 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
+
+export const metadata: Metadata = {
+  title: '404 - Page non trouvée | CMD Breizh',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 // inspired by https://codepen.io/uiswarup/pen/dyoyLOp
 export default function NotFound() {
@@ -13,6 +22,7 @@ export default function NotFound() {
       >
         <div className="row">
           <div className="col-sm-12 col-md-12 mt-5 mb-5">
+            <h1 className="sr-only">404 - Page non trouvée</h1>
             <svg width="100%" viewBox="0 0 636 324" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="OBJECTS">
                 <g id="Group">

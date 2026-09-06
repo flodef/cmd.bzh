@@ -1,8 +1,14 @@
 import { twMerge } from 'tailwind-merge';
-import { useMenuContext } from '../contexts/menuProvider';
 
-export const MenuButton = ({ className }: { className?: string }) => {
-  const { isMenuOpen, setIsMenuOpen } = useMenuContext();
+export const MenuButton = ({
+  className,
+  isMenuOpen,
+  setIsMenuOpen,
+}: {
+  className?: string;
+  isMenuOpen: boolean;
+  setIsMenuOpen: (isMenuOpen: boolean) => void;
+}) => {
   const handleClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };

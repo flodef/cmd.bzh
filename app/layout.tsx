@@ -1,7 +1,6 @@
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { MenuProvider } from './contexts/menuProvider';
 import { LoadingProvider } from './contexts/loadingProvider';
 import { Analytics } from '@vercel/analytics/react';
 import { companyInfo, businessHours, getAddressComponents } from './utils/constants';
@@ -24,6 +23,7 @@ const caveat = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(companyInfo.url),
   title: "Conciergerie Presqu'île de Crozon - CMD Breizh | Nettoyage, Jardinage, Gestion",
   description: companyInfo.description,
   applicationName: 'CMD Breizh',
@@ -58,16 +58,31 @@ export const metadata: Metadata = {
     siteName: companyInfo.shortName,
     locale: 'fr_FR',
     type: 'website',
+    images: [
+      {
+        url: '/Logo.png',
+        width: 512,
+        height: 512,
+        alt: "CMD Breizh - Conciergerie Presqu'île de Crozon",
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Conciergerie Presqu'île de Crozon - CMD Breizh",
+    description: companyInfo.description,
+    images: ['/Logo.png'],
   },
   robots: {
     index: true,
     follow: true,
   },
   icons: {
-    icon: 'https://www.cmd.bzh/Logo.png',
+    icon: '/Logo.png',
+    apple: '/Logo.png',
   },
   alternates: {
-    canonical: 'https://www.cmd.bzh',
+    canonical: companyInfo.url,
   },
   category: 'Conciergerie',
   classification: 'Location de biens immobiliers',
@@ -88,17 +103,25 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'LocalBusiness',
+              '@id': `${companyInfo.url}/#business`,
               name: companyInfo.fullName,
               alternateName: companyInfo.shortName,
               description: companyInfo.description,
+              url: companyInfo.url,
+              logo: `${companyInfo.url}/Logo.png`,
+              image: `${companyInfo.url}/Logo.png`,
               address: {
                 '@type': 'PostalAddress',
                 ...getAddressComponents(companyInfo.address),
               },
               telephone: companyInfo.phone,
               email: companyInfo.email,
-              url: companyInfo.url,
               areaServed: companyInfo.areaServed,
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: 48.19939569036789,
+                longitude: -4.284582138061523,
+              },
               openingHoursSpecification: {
                 '@type': 'OpeningHoursSpecification',
                 dayOfWeek: businessHours.openingDays.map(day => day.charAt(0).toUpperCase() + day.slice(1)),
@@ -106,17 +129,19 @@ export default function RootLayout({
                 closes: `${String(businessHours.closingHour).padStart(2, '0')}:00`,
               },
               priceRange: companyInfo.priceRange,
-              founder: companyInfo.founder,
+              founder: {
+                '@type': 'Person',
+                name: companyInfo.founder,
+              },
               foundingDate: companyInfo.foundingDate,
+              sameAs: ['https://www.cmd.bzh'],
             }),
           }}
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
         <AntdRegistry>
-          <LoadingProvider>
-            <MenuProvider>{children}</MenuProvider>
-          </LoadingProvider>
+          <LoadingProvider>{children}</LoadingProvider>
         </AntdRegistry>
         <Analytics />
       </body>

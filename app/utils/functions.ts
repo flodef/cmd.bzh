@@ -12,32 +12,30 @@ export type BusinessStatus = {
 
 export const getBusinessStatus = (): BusinessStatus => {
   const now = new Date();
-  const parisTime = new Date(
-    now.toLocaleString('en-US', { timeZone: businessHours.timezone })
-  );
-  
+  const parisTime = new Date(now.toLocaleString('en-US', { timeZone: businessHours.timezone }));
+
   const currentDay = parisTime.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
   const currentHour = parisTime.getHours();
   const currentMinute = parisTime.getMinutes();
   const currentTimeInMinutes = currentHour * 60 + currentMinute;
-  
+
   const openingTimeInMinutes = businessHours.openingHour * 60;
   const closingTimeInMinutes = businessHours.closingHour * 60;
-  
+
   // Check if today is a working day
   const isWorkingDay = businessHours.openingDays.includes(currentDay);
-  
+
   if (!isWorkingDay) {
     return {
       isOpen: false,
       message: 'Closed',
     };
   }
-  
+
   // Check if currently open
   if (currentTimeInMinutes >= openingTimeInMinutes && currentTimeInMinutes < closingTimeInMinutes) {
     const minutesUntilClose = closingTimeInMinutes - currentTimeInMinutes;
-    
+
     // If closing soon (within 60 minutes)
     if (minutesUntilClose <= 60) {
       return {
@@ -46,17 +44,17 @@ export const getBusinessStatus = (): BusinessStatus => {
         minutesUntilChange: minutesUntilClose,
       };
     }
-    
+
     return {
       isOpen: true,
       message: 'Open',
     };
   }
-  
+
   // Check if opening soon (within 60 minutes before opening)
   if (currentTimeInMinutes < openingTimeInMinutes) {
     const minutesUntilOpen = openingTimeInMinutes - currentTimeInMinutes;
-    
+
     if (minutesUntilOpen <= 60) {
       return {
         isOpen: false,
@@ -65,7 +63,7 @@ export const getBusinessStatus = (): BusinessStatus => {
       };
     }
   }
-  
+
   // Otherwise, closed
   return {
     isOpen: false,
@@ -77,17 +75,19 @@ export const formatBusinessHours = (): string => {
   const days = businessHours.openingDays;
   const opening = businessHours.openingHour;
   const closing = businessHours.closingHour;
-  
+
   // Format days
   let daysText: string;
   if (days.length === 7) {
     daysText = 'Everyday';
-  } else if (days.length === 5 && 
-             days.includes('monday') && 
-             days.includes('tuesday') && 
-             days.includes('wednesday') && 
-             days.includes('thursday') && 
-             days.includes('friday')) {
+  } else if (
+    days.length === 5 &&
+    days.includes('monday') &&
+    days.includes('tuesday') &&
+    days.includes('wednesday') &&
+    days.includes('thursday') &&
+    days.includes('friday')
+  ) {
     daysText = 'Weekdays';
   } else if (days.length === 2 && days.includes('saturday') && days.includes('sunday')) {
     daysText = 'Weekends';
@@ -102,6 +102,6 @@ export const formatBusinessHours = (): string => {
       daysText = capitalizedDays.slice(0, -1).join(', ') + ', and ' + capitalizedDays[capitalizedDays.length - 1];
     }
   }
-  
+
   return `${daysText}, ${opening}:00 - ${closing}:00`;
 };

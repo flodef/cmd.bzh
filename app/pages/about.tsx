@@ -1,8 +1,9 @@
+'use client';
+
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
-import { Page, useMenuContext } from '../contexts/menuProvider';
 import { t } from '../utils/i18n';
 import { bgColor, companyInfo, textColor } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
@@ -12,8 +13,6 @@ import dynamic from 'next/dynamic';
 const LeafletMap = dynamic(() => import('../components/LeafletMap'), { ssr: false });
 
 export default function About() {
-  const { activeTab } = useMenuContext();
-
   // Compute the number of seasons since the business started (September 2025)
   const now = new Date();
   const seasons = now.getFullYear() - 2025 + (now.getMonth() >= 8 ? 1 : 0); // Month 8 = September
@@ -45,16 +44,14 @@ export default function About() {
         <h1 className="text-3xl font-bold text-center mb-8">{t('OurLocation')}</h1>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">
-            {activeTab === Page.About && (
-              <LeafletMap
-                center={mapCenter}
-                zoom={10}
-                markerText={companyInfo.shortName}
-                logo="/Logo.png"
-                workingAreaCenter={workingAreaCenter}
-                workingAreaRadius={radius}
-              />
-            )}
+            <LeafletMap
+              center={mapCenter}
+              zoom={10}
+              markerText={companyInfo.shortName}
+              logo="/Logo.png"
+              workingAreaCenter={workingAreaCenter}
+              workingAreaRadius={radius}
+            />
           </div>
           <div className="w-full md:w-1/2 text-center">
             <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
@@ -85,7 +82,7 @@ export default function About() {
       </section>
 
       <section className={twMerge(bgColor, 'px-4 py-12')}>
-        <h1 className="text-3xl font-bold text-center mb-8">{t('EcoFriendlyCommitment')}</h1>
+        <h2 className="text-3xl font-bold text-center mb-8">{t('EcoFriendlyCommitment')}</h2>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <Image width={128} height={128} src="/EcoLabel.png" alt={t('EcoFriendlyLabel')} />
           <div className="max-w-2xl">
@@ -96,7 +93,7 @@ export default function About() {
       </section>
 
       <section className="px-4 py-12">
-        <h1 className="text-3xl font-bold text-center mb-8">{t('OurTeam')}</h1>
+        <h2 className="text-3xl font-bold text-center mb-8">{t('OurTeam')}</h2>
         <div className="grid grid-cols-1 gap-4 items-center">
           <div>
             <h2 className="text-2xl font-semibold text-center mb-2">{companyInfo.founder}</h2>
