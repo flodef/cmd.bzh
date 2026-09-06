@@ -9,25 +9,25 @@ const nextConfig = {
       {
         source: '/',
         has: [{ type: 'query', key: 'tab', value: 'About' }],
-        destination: '/about',
+        destination: '/about?',
         permanent: true,
       },
       {
         source: '/',
         has: [{ type: 'query', key: 'tab', value: 'Contact' }],
-        destination: '/contact',
+        destination: '/contact?',
         permanent: true,
       },
       {
         source: '/',
         has: [{ type: 'query', key: 'tab', value: 'Reviews' }],
-        destination: '/reviews',
+        destination: '/reviews?',
         permanent: true,
       },
       {
         source: '/',
         has: [{ type: 'query', key: 'tab', value: 'GDPR' }],
-        destination: '/gdpr',
+        destination: '/gdpr?',
         permanent: true,
       },
     ];

@@ -5,6 +5,6 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['**/*.test.{ts,tsx}'],
-    exclude: ['node_modules', 'dist', '.next'],
+    exclude: ['node_modules', 'dist', '.next', 'e2e', 'playwright-report', 'test-results'],
   },
 });

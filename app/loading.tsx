@@ -87,8 +87,8 @@ export function LoadingDot({ fullscreen = true, className }: { fullscreen?: bool
     >
       <div className="h-4 w-28 flex relative">
         <span className={twMerge(circleClassName, 'absolute top-0 left-0 mr-8 animate-grow')}></span>
-        <span className={twMerge(circleClassName, 'mr-[30px] animate-move')}></span>
-        <span className={twMerge(circleClassName, 'mr-[30px] animate-move')}></span>
+        <span className={twMerge(circleClassName, 'mr-7.5 animate-move')}></span>
+        <span className={twMerge(circleClassName, 'mr-7.5 animate-move')}></span>
         <span className={twMerge(circleClassName, 'absolute top-0 right-0 mr-0 animate-growReverse')}></span>
       </div>
     </div>
@@ -106,7 +106,7 @@ export function LoadingSpinner({ fullscreen = true, className }: { fullscreen?: 
       )}
       style={{ background: 'inherit' }}
     >
-      <svg className="max-w-[256px] max-h-[128px]" viewBox="0 0 256 128" xmlns="http://www.w3.org/2000/svg">
+      <svg className="max-w-[256px] max-h-32" viewBox="0 0 256 128" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="#5ebd3e" />

@@ -34,6 +34,7 @@ export default function Home() {
 
   return (
     <div className="w-full max-w-7xl mx-auto">
+      <h1 className="sr-only">{t('Home')} - CMD Breizh</h1>
       <section className=" px-4 py-12">
         <Carousel className={twMerge('w-full max-w-4xl mx-auto')} arrows autoplay>
           {Array(4)
