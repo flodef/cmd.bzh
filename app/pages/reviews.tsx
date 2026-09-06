@@ -18,8 +18,9 @@ import {
 } from 'antd';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { emailRegex, STORAGE_KEYS, textColor } from '../utils/constants';
+import { useReviewsCache } from '../contexts/reviewsCacheProvider';
 import { t } from '../utils/i18n';
-import { submitNewReview, getReviews } from '../actions/reviews';
+import { submitNewReview } from '../actions/reviews';
 import { getLocalStorageItem, setLocalStorageItem } from '../utils/localStorage';
 
 const { TextArea } = Input;
@@ -55,6 +56,7 @@ enum FieldError {
 }
 
 export default function Reviews() {
+  const { reviews: cachedReviews, fetchReviews: fetchCachedReviews } = useReviewsCache();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [form] = Form.useForm();
@@ -89,12 +91,12 @@ export default function Reviews() {
     }
   }, []);
 
-  // Fetch published reviews from the database
+  // Fetch published reviews from the database (cached at layout level)
   const fetchReviews = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch reviews from the server
-      const dbReviews = await getReviews();
+      // Fetch reviews from the cache (or server if cache is stale)
+      const dbReviews = await fetchCachedReviews();
 
       // Get the user's pending review from localStorage if it exists
       const storedReview = getLocalStorageItem<ReviewFormValues>(STORAGE_KEYS.PENDING_REVIEW);
@@ -622,8 +624,8 @@ export default function Reviews() {
         </Modal>
       )}
       {contextHolder}
-      <section className="py-12">
-        <div className="md:mx-4 px-4">
+      <div className="w-full max-w-7xl mx-auto">
+        <section className="px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
             {/* Add Review Form - Left Column */}
             <div>
@@ -856,8 +858,8 @@ export default function Reviews() {
               )}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </>
   );
 }

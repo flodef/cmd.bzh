@@ -1,5 +1,10 @@
 import { SiteShell } from '../components/siteShell';
+import { ReviewsCacheProvider } from '../contexts/reviewsCacheProvider';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
-  return <SiteShell>{children}</SiteShell>;
+  return (
+    <ReviewsCacheProvider>
+      <SiteShell>{children}</SiteShell>
+    </ReviewsCacheProvider>
+  );
 }
