@@ -1,22 +1,8 @@
 import { sql } from '../utils/db';
 import { randomUUID } from 'crypto';
+import { DbReview, NewReview } from './types';
 
-export interface DbReview {
-  id: string;
-  created_at: string;
-  name: string;
-  email: string;
-  comment: string;
-  rating: number; // DECIMAL(2,1) in database, represents values like 3.5
-  published: boolean;
-}
-
-export interface NewReview {
-  name: string;
-  email: string;
-  comment: string;
-  rating: number;
-}
+export type { DbReview, NewReview };
 
 /**
  * Create a new review with a generated UUID as both ID and validation token

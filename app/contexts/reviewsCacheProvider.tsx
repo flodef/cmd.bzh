@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
-import { DbReview } from '../models/review';
+import { DbReview } from '../models/types';
+import { getReviews } from '../actions/reviews';
 
 interface ReviewsCacheState {
   reviews: DbReview[];
@@ -31,9 +32,8 @@ export const ReviewsCacheProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError(null);
       try {
-        // Lazy import to avoid loading db.ts on pages that don't need it
-        const { getPublishedReviews } = await import('../models/review');
-        const result = await getPublishedReviews();
+        // Use the server action (runs on server where DATABASE_URL is available)
+        const result = await getReviews();
         setReviews(result);
         lastFetchRef.current = now;
         return result;
