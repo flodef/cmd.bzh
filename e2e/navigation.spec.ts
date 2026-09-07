@@ -11,26 +11,23 @@ test.describe('Navigation & routing', () => {
     await expect(page.getByRole('heading', { name: /services/i })).toBeVisible();
   });
 
-  test('navigate to /about via link', async ({ page }) => {
+  test('navigate to /about via tab', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: /about|propos/i }).click();
+    await page.getByRole('tab', { name: /about|propos/i }).click();
     await expect(page).toHaveURL(/\/about/);
     await expect(page).toHaveTitle(/À propos|About.*CMD Breizh/i);
   });
 
-  test('navigate to /contact via link', async ({ page }) => {
+  test('navigate to /contact via tab', async ({ page }) => {
     await page.goto('/');
-    await page
-      .getByRole('link', { name: /contact/i })
-      .first()
-      .click();
+    await page.getByRole('tab', { name: /contact/i }).click();
     await expect(page).toHaveURL(/\/contact/);
     await expect(page).toHaveTitle(/Contact|Contactez.*CMD Breizh/i);
   });
 
-  test('navigate to /reviews via link', async ({ page }) => {
+  test('navigate to /reviews via tab', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: /reviews|avis/i }).click();
+    await page.getByRole('tab', { name: /reviews|avis/i }).click();
     await expect(page).toHaveURL(/\/reviews/);
     await expect(page).toHaveTitle(/Avis|Reviews.*CMD Breizh/i);
   });

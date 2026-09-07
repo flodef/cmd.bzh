@@ -3,7 +3,7 @@
 import { ConfigProvider, Tabs, theme } from 'antd';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import Footer from './footer';
 import { MenuButton } from './menuButton';
@@ -33,8 +33,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const isTinyMobile = isReady ? breakpoints.is2xs : false;
 
   const pathname = usePathname();
+  const router = useRouter();
   const activeTab = getActiveTab(pathname);
   const title = t(activeTab);
+
+  const handleTabChange = (key: string) => {
+    const item = navItems.find(i => i.key === key);
+    if (item) router.push(item.href);
+  };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -103,9 +109,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                     marginTop: isTinyMobile ? 120 : 0,
                   }}
                   activeKey={activeTab}
+                  onChange={handleTabChange}
                   items={navItems.map(item => ({
                     key: item.key,
-                    label: <Link href={item.href}>{item.label}</Link>,
+                    label: item.label,
                   }))}
                   size="large"
                   tabPlacement={isMobile ? 'end' : 'top'}
