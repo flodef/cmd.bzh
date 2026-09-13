@@ -834,6 +834,7 @@ def generate_report(csv_path, output_path):
     align-items: center;
     height: 100%;
     position: relative;
+    cursor: pointer;
   }}
   .chart-bars {{
     display: flex;
@@ -847,7 +848,10 @@ def generate_report(csv_path, output_path):
     width: 6px;
     min-height: 2px;
     border-radius: 3px 3px 0 0;
-    transition: height 0.3s ease;
+    transition: height 0.3s ease, opacity 0.15s;
+  }}
+  .chart-bar-group:hover .chart-bar {{
+    opacity: 0.7;
   }}
   .chart-bar.visitors {{
     background: rgba(38, 128, 235, 0.8);
@@ -1603,13 +1607,26 @@ def generate_report(csv_path, output_path):
         showLabel = false;
       }}
       const labelHtml = showLabel ? '<div class="chart-label">' + formatDate(dt) + '</div>' : '';
-      html += '<div class="chart-bar-group" title="' + fullLabel + ' : ' + v + ' visiteurs, ' + w + ' vues">' +
+      html += '<div class="chart-bar-group" data-date="' + days[i] + '" title="' + fullLabel + ' : ' + v + ' visiteurs, ' + w + ' vues (cliquer pour filtrer)">' +
         '<div class="chart-bars">' +
         '<div class="chart-bar visitors" style="height:' + vH + '%"></div>' +
         '<div class="chart-bar views" style="height:' + wH + '%"></div>' +
         '</div>' + labelHtml + '</div>';
     }}
     chartArea.innerHTML = html;
+
+    // Click handler: filter to a single day
+    chartArea.querySelectorAll('.chart-bar-group').forEach(function(el) {{
+      el.addEventListener('click', function() {{
+        const ds = el.dataset.date;
+        startDisplay.dataset.value = ds;
+        endDisplay.dataset.value = ds;
+        startDisplay.textContent = formatDateFr(ds);
+        endDisplay.textContent = formatDateFr(ds);
+        setActivePreset('');
+        renderAll(ds, ds);
+      }});
+    }});
   }}
 
   function setActivePreset(name) {{
