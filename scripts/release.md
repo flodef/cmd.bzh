@@ -14,10 +14,10 @@
 2. Cliquer **Export**
 3. Sélectionner le site **CMD Breizh** + **Last 12 month**
 4. Attendre l'email de Umami (quelques minutes) avec le lien de téléchargement
-5. Télécharger le fichier `.csv.gz`
+5. Télécharger le fichier `.zip`
 6. Décompresser le fichier :
    ```bash
-   gunzip ~/Downloads/<fichier>.csv.gz
+   unzip ~/Downloads/<fichier>.zip -d ~/Downloads/<dossier>/
    ```
    Ou simplement double-cliquer pour le décompresser
 7. Récupérer le fichier `website_event.csv` (dans le dossier décompressé)
