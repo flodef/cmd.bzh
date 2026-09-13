@@ -1188,22 +1188,16 @@ def generate_report(csv_path, output_path):
     </div>
   </div>
 
-  <!-- Pages + Sources -->
+  <!-- Sources + Languages -->
   <div class="section-grid">
-    {table_section('Pages', pages_html, 'Pages les plus visitées par vos visiteurs', 'bar-pages')}
     {table_section('Sources', refs_html, 'Sites d\'où proviennent vos visiteurs (moteurs de recherche, liens, ou accès direct en tapant l\'URL', 'bar-refs')}
-  </div>
-
-  <!-- Browsers / OS -->
-  <div class="section-grid">
-    {table_section('Navigateurs', browsers_html, 'Navigateurs utilisés par vos visiteurs (Chrome, Firefox, Safari, etc.)', 'bar-browsers')}
-    {table_section('Systèmes d\'exploitation', os_html, 'Répartition des systèmes d\'exploitation utilisés par vos visiteurs (Windows, macOS, Android, iOS, Linux, etc.)', 'bar-os')}
-  </div>
-
-  <!-- Devices / Languages -->
-  <div class="section-grid">
-    {table_section('Appareils', devices_html, 'Type d\'appareil utilisé : mobile (smartphone), portable (ordinateur portable), ordinateur (fixe) ou tablette', 'bar-devices')}
     {table_section('Langues', langs_html, 'Langues configurées dans le navigateur de vos visiteurs (indique leur préférence linguistique, pas nécessairement leur nationalité)', 'bar-langs')}
+  </div>
+
+  <!-- OS / Devices -->
+  <div class="section-grid">
+    {table_section('Systèmes d\'exploitation', os_html, 'Répartition des systèmes d\'exploitation utilisés par vos visiteurs (Windows, macOS, Android, iOS, Linux, etc.)', 'bar-os')}
+    {table_section('Appareils', devices_html, 'Type d\'appareil utilisé : mobile (smartphone), portable (ordinateur portable), ordinateur (fixe) ou tablette', 'bar-devices')}
   </div>
 
   <!-- Countries / Regions / Cities + Traffic heatmap -->
@@ -1550,14 +1544,11 @@ def generate_report(csv_path, output_path):
     // Bar sections
     const totalVisitors = sessions.size;
 
-    renderSection('bar-pages', aggregateBy(filtered, function(r) {{ return r.u; }}), totalVisitors, '#2680eb');
-
     const refFiltered = filtered.filter(function(r) {{ return r.r !== 'cmd.bzh' && r.r !== 'www.cmd.bzh'; }});
     const refMap = aggregateBy(refFiltered, function(r) {{ return r.r || 'Accès direct'; }});
     const refTotal = Object.values(refMap).reduce(function(sum, vis) {{ return sum + vis.size; }}, 0);
     renderSection('bar-refs', refMap, refTotal, '#e8a838');
 
-    renderSection('bar-browsers', aggregateBy(filtered, function(r) {{ return r.b; }}), totalVisitors, '#8b5cf6');
     renderSection('bar-os', aggregateBy(filtered, function(r) {{ return r.o; }}), totalVisitors, '#10b981');
     renderSection('bar-devices', aggregateBy(filtered, function(r) {{ return r.dev; }}), totalVisitors, '#f59e0b');
     renderSection('bar-countries', aggregateBy(filtered, function(r) {{ return r.c; }}), totalVisitors, '#ef4444');
@@ -1656,15 +1647,34 @@ def generate_report(csv_path, output_path):
         end = dataEnd;
         break;
     }}
-    // Clamp to data range
+    // Clamp to data range boundaries (but don't reset to full range
+    // if the preset is entirely outside the data — show empty instead)
     if (start < dataStart) start = dataStart;
     if (end > dataEnd) end = dataEnd;
-    if (start > dataEnd) start = dataStart;
-    if (end < dataStart) end = dataEnd;
     startDisplay.dataset.value = start;
     endDisplay.dataset.value = end;
     renderAll(start, end);
   }}
+
+  // Hide presets that don't overlap with the data range
+  presets.forEach(btn => {{
+    const name = btn.dataset.preset;
+    if (name === 'all') return;
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10);
+    let pStart, pEnd = todayStr;
+    switch(name) {{
+      case 'today': pStart = todayStr; break;
+      case 'yesterday': {{ const y = new Date(today); y.setDate(y.getDate() - 1); pStart = y.toISOString().slice(0, 10); pEnd = pStart; break; }}
+      case '7d': {{ const d = new Date(today); d.setDate(d.getDate() - 6); pStart = d.toISOString().slice(0, 10); break; }}
+      case '30d': {{ const d = new Date(today); d.setDate(d.getDate() - 29); pStart = d.toISOString().slice(0, 10); break; }}
+      case '90d': {{ const d = new Date(today); d.setDate(d.getDate() - 89); pStart = d.toISOString().slice(0, 10); break; }}
+    }}
+    // If preset range is entirely outside data range, hide it
+    if (pStart > dataEnd || pEnd < dataStart) {{
+      btn.style.display = 'none';
+    }}
+  }});
 
   presets.forEach(btn => {{
     btn.addEventListener('click', () => {{
