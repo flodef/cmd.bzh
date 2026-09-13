@@ -1641,7 +1641,7 @@ def generate_report(csv_path, output_path):
     const views = [];
     let d = new Date(start);
     while (d <= end) {{
-      const ds = d.toISOString().slice(0, 10);
+      const ds = isoDate(d);
       const idx = data.days.indexOf(ds);
       days.push(ds);
       visitors.push(idx >= 0 ? data.visitors[idx] : 0);
@@ -1768,7 +1768,7 @@ def generate_report(csv_path, output_path):
 
   function applyPreset(name) {{
     const today = new Date();
-    const todayStr = today.toISOString().slice(0, 10);
+    const todayStr = isoDate(today);
     let start, end;
     end = todayStr;
     switch(name) {{
@@ -1777,20 +1777,20 @@ def generate_report(csv_path, output_path):
         break;
       case 'yesterday':
         const y = new Date(today); y.setDate(y.getDate() - 1);
-        start = y.toISOString().slice(0, 10);
+        start = isoDate(y);
         end = start;
         break;
       case '7d':
         const d7 = new Date(today); d7.setDate(d7.getDate() - 6);
-        start = d7.toISOString().slice(0, 10);
+        start = isoDate(d7);
         break;
       case '30d':
         const d30 = new Date(today); d30.setDate(d30.getDate() - 29);
-        start = d30.toISOString().slice(0, 10);
+        start = isoDate(d30);
         break;
       case '90d':
         const d90 = new Date(today); d90.setDate(d90.getDate() - 89);
-        start = d90.toISOString().slice(0, 10);
+        start = isoDate(d90);
         break;
       case 'all':
         start = dataStart;
@@ -1811,14 +1811,14 @@ def generate_report(csv_path, output_path):
     const name = btn.dataset.preset;
     if (name === 'all') return;
     const today = new Date();
-    const todayStr = today.toISOString().slice(0, 10);
+    const todayStr = isoDate(today);
     let pStart, pEnd = todayStr;
     switch(name) {{
       case 'today': pStart = todayStr; break;
-      case 'yesterday': {{ const y = new Date(today); y.setDate(y.getDate() - 1); pStart = y.toISOString().slice(0, 10); pEnd = pStart; break; }}
-      case '7d': {{ const d = new Date(today); d.setDate(d.getDate() - 6); pStart = d.toISOString().slice(0, 10); break; }}
-      case '30d': {{ const d = new Date(today); d.setDate(d.getDate() - 29); pStart = d.toISOString().slice(0, 10); break; }}
-      case '90d': {{ const d = new Date(today); d.setDate(d.getDate() - 89); pStart = d.toISOString().slice(0, 10); break; }}
+      case 'yesterday': {{ const y = new Date(today); y.setDate(y.getDate() - 1); pStart = isoDate(y); pEnd = pStart; break; }}
+      case '7d': {{ const d = new Date(today); d.setDate(d.getDate() - 6); pStart = isoDate(d); break; }}
+      case '30d': {{ const d = new Date(today); d.setDate(d.getDate() - 29); pStart = isoDate(d); break; }}
+      case '90d': {{ const d = new Date(today); d.setDate(d.getDate() - 89); pStart = isoDate(d); break; }}
     }}
     // If preset range is entirely outside data range, hide it
     if (pStart > dataEnd || pEnd < dataStart) {{
