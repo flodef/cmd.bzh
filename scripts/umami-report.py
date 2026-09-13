@@ -210,13 +210,14 @@ def bar_row(label, count, total, color='#2680eb'):
 </div>'''
 
 
-def table_section(title, rows_html, tooltip=''):
+def table_section(title, rows_html, tooltip='', section_id=''):
     tooltip_attr = f' data-tooltip="{esc(tooltip)}"' if tooltip else ''
+    id_attr = f' id="{section_id}"' if section_id else ''
     return f'''<div class="card section-card">
   <div class="section-header">
     <h2{tooltip_attr}>{title}</h2>
   </div>
-  <div class="bar-list">{rows_html}</div>
+  <div class="bar-list"{id_attr}>{rows_html}</div>
 </div>'''
 
 
@@ -453,6 +454,29 @@ def generate_report(csv_path, output_path):
 
     # --- Date range ---
     date_range_str = f'{data_start.isoformat()} → {data_end.isoformat()}'
+
+    # --- Pre-compute display names for client-side filtering ---
+    all_rows_json = json.dumps([
+        {
+            's': r['session_id'],
+            'v': r['visit_id'],
+            'd': r['_dt'].isoformat() if r['_dt'] else r['created_at'],
+            'u': r['url_path'],
+            'r': r['referrer_domain'] or '',
+            'b': browser_name(r['browser']),
+            'o': os_name(r['os']),
+            'dev': device_name(r['device']),
+            'c': country_name(r['country']) if r['country'] else '',
+            'reg': (
+                f'{region_name(r["region"])} ({country_name(region_country.get(r["region"], ""))})'
+                if r['region'] and region_country.get(r['region'])
+                else (region_name(r['region']) if r['region'] else '')
+            ),
+            'ci': r['city'] or '',
+            'l': language_name(r['language']) if r['language'] else '',
+        }
+        for r in rows
+    ])
 
     # --- Assemble HTML ---
     html_doc = f'''<!DOCTYPE html>
@@ -947,6 +971,25 @@ def generate_report(csv_path, output_path):
     color: var(--text-muted);
     text-align: right;
   }}
+  @media (max-width: 767px) {{
+    .bar-row {{
+      grid-template-columns: 1fr 36px 36px;
+      gap: 6px;
+      padding: 6px 8px;
+    }}
+    .bar-track {{
+      display: none;
+    }}
+    .bar-label {{
+      font-size: 13px;
+    }}
+    .bar-count {{
+      font-size: 13px;
+    }}
+    .bar-pct {{
+      font-size: 11px;
+    }}
+  }}
 
   /* Footer */
   .footer {{
@@ -1106,23 +1149,23 @@ def generate_report(csv_path, output_path):
   <div class="kpi-grid">
     <div class="kpi-card">
       <span class="kpi-label" data-tooltip="Nombre d'utilisateurs uniques ayant visité le site (identifiés par leur session de navigateur)">Visiteurs uniques</span>
-      <span class="kpi-value">{len(sessions)}</span>
+      <span class="kpi-value" id="kpi-sessions">{len(sessions)}</span>
     </div>
     <div class="kpi-card">
       <span class="kpi-label" data-tooltip="Nombre total de visites. Un visiteur peut faire plusieurs visites (sessions) au fil du temps.">Visites</span>
-      <span class="kpi-value">{len(visits)}</span>
+      <span class="kpi-value" id="kpi-visits">{len(visits)}</span>
     </div>
     <div class="kpi-card">
       <span class="kpi-label" data-tooltip="Nombre total de pages vues, soit chaque fois qu'une page a été chargée par un visiteur">Vues</span>
-      <span class="kpi-value">{total_views}</span>
+      <span class="kpi-value" id="kpi-views">{total_views}</span>
     </div>
     <div class="kpi-card">
       <span class="kpi-label" data-tooltip="Pourcentage de visites où le visiteur n'a consulté qu'une seule page avant de quitter le site. Un taux élevé peut indiquer que les visiteurs ne trouvent pas ce qu'ils cherchent.">Taux de rebond</span>
-      <span class="kpi-value">{bounce_rate}%</span>
+      <span class="kpi-value" id="kpi-bounce">{bounce_rate}%</span>
     </div>
     <div class="kpi-card">
       <span class="kpi-label" data-tooltip="Durée moyenne d'une visite, calculée comme le temps écoulé entre la première et la dernière action du visiteur sur le site">Durée moyenne de visite</span>
-      <span class="kpi-value">{format_duration(avg_duration)}</span>
+      <span class="kpi-value" id="kpi-duration">{format_duration(avg_duration)}</span>
     </div>
   </div>
 
@@ -1145,29 +1188,35 @@ def generate_report(csv_path, output_path):
     </div>
   </div>
 
-  <!-- Sources + Languages -->
+  <!-- Pages + Sources -->
   <div class="section-grid">
-    {table_section('Sources', refs_html, 'Sites d\'où proviennent vos visiteurs (moteurs de recherche, liens, ou accès direct en tapant l\'URL')}
-    {table_section('Langues', langs_html, 'Langues configurées dans le navigateur de vos visiteurs (indique leur préférence linguistique, pas nécessairement leur nationalité)')}
+    {table_section('Pages', pages_html, 'Pages les plus visitées par vos visiteurs', 'bar-pages')}
+    {table_section('Sources', refs_html, 'Sites d\'où proviennent vos visiteurs (moteurs de recherche, liens, ou accès direct en tapant l\'URL', 'bar-refs')}
   </div>
 
-  <!-- OS / Devices -->
+  <!-- Browsers / OS -->
   <div class="section-grid">
-    {table_section('Systèmes d\'exploitation', os_html, 'Répartition des systèmes d\'exploitation utilisés par vos visiteurs (Windows, macOS, Android, iOS, Linux, etc.)')}
-    {table_section('Appareils', devices_html, 'Type d\'appareil utilisé : mobile (smartphone), portable (ordinateur portable), ordinateur (fixe) ou tablette')}
+    {table_section('Navigateurs', browsers_html, 'Navigateurs utilisés par vos visiteurs (Chrome, Firefox, Safari, etc.)', 'bar-browsers')}
+    {table_section('Systèmes d\'exploitation', os_html, 'Répartition des systèmes d\'exploitation utilisés par vos visiteurs (Windows, macOS, Android, iOS, Linux, etc.)', 'bar-os')}
+  </div>
+
+  <!-- Devices / Languages -->
+  <div class="section-grid">
+    {table_section('Appareils', devices_html, 'Type d\'appareil utilisé : mobile (smartphone), portable (ordinateur portable), ordinateur (fixe) ou tablette', 'bar-devices')}
+    {table_section('Langues', langs_html, 'Langues configurées dans le navigateur de vos visiteurs (indique leur préférence linguistique, pas nécessairement leur nationalité)', 'bar-langs')}
   </div>
 
   <!-- Countries / Regions / Cities + Traffic heatmap -->
   <div class="section-grid">
-    {table_section('Pays', countries_html, 'Pays d\'origine de vos visiteurs, déterminé à partir de leur adresse IP')}
-    {table_section('Régions', regions_html, 'Régions d\'origine de vos visiteurs, déterminées à partir de leur adresse IP')}
-    {table_section('Villes', cities_html, 'Villes d\'origine de vos visiteurs, déterminées à partir de leur adresse IP')}
+    {table_section('Pays', countries_html, 'Pays d\'origine de vos visiteurs, déterminé à partir de leur adresse IP', 'bar-countries')}
+    {table_section('Régions', regions_html, 'Régions d\'origine de vos visiteurs, déterminées à partir de leur adresse IP', 'bar-regions')}
+    {table_section('Villes', cities_html, 'Villes d\'origine de vos visiteurs, déterminées à partir de leur adresse IP', 'bar-cities')}
     <div class="card heatmap-card">
       <div class="section-header" style="margin-bottom: 12px;">
         <h2 data-tooltip="Répartition du trafic par jour de la semaine et heure de la journée. Le cercle gris représente le maximum possible, et le cercle bleu grandit selon le nombre de visites.">Trafic par jour et heure</h2>
       </div>
       <div class="heatmap-container">
-        <div class="heatmap-grid">
+        <div class="heatmap-grid" id="heatmap-grid">
           {heatmap_grid}
         </div>
       </div>
@@ -1187,6 +1236,7 @@ def generate_report(csv_path, output_path):
     'views': chart_views,
     'max': max_chart,
   })};
+  const allRows = {all_rows_json};
 
   // --- Tooltip positioning (prevents edge overflow) ---
   const tooltipEl = document.createElement('div');
@@ -1317,7 +1367,7 @@ def generate_report(csv_path, output_path):
         startDisplay.dataset.value = calTempStart;
         endDisplay.textContent = formatDateFr(calTempEnd);
         endDisplay.dataset.value = calTempEnd;
-        renderChart(calTempStart, calTempEnd);
+        renderAll(calTempStart, calTempEnd);
         setActivePreset('');
         renderCalendar();
       }});
@@ -1358,7 +1408,7 @@ def generate_report(csv_path, output_path):
     startDisplay.dataset.value = calTempStart;
     endDisplay.textContent = formatDateFr(calTempEnd);
     endDisplay.dataset.value = calTempEnd;
-    renderChart(calTempStart, calTempEnd);
+    renderAll(calTempStart, calTempEnd);
     calPopup.classList.remove('open');
     setActivePreset('');
   }});
@@ -1368,6 +1418,156 @@ def generate_report(csv_path, output_path):
       calPopup.classList.remove('open');
     }}
   }});
+
+  function escapeHtml(s) {{
+    if (!s) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }}
+
+  function barRowJS(label, count, total, color) {{
+    const pct = total > 0 ? Math.round(count / total * 100) : 0;
+    return '<div class="bar-row">' +
+      '<div class="bar-label" title="' + escapeHtml(label) + '">' + escapeHtml(label) + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+      '<div class="bar-count">' + count + '</div>' +
+      '<div class="bar-pct">' + pct + '%</div>' +
+      '</div>';
+  }}
+
+  function renderSection(elId, items, total, color) {{
+    const sorted = Object.entries(items).sort((a, b) => b[1].size - a[1].size);
+    const html = sorted.slice(0, 10).map(function(entry) {{
+      return barRowJS(entry[0], entry[1].size, total, color);
+    }}).join('');
+    const el = document.getElementById(elId);
+    if (el) el.innerHTML = html || '<div style="color:var(--text-muted);padding:8px 12px;">Aucune donnée</div>';
+  }}
+
+  function formatDurationJS(seconds) {{
+    if (!seconds) return '0s';
+    seconds = Math.round(seconds);
+    if (seconds < 60) return seconds + 's';
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (minutes < 60) return minutes + 'm ' + secs + 's';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours + 'h ' + mins + 'm';
+  }}
+
+  function aggregateBy(rows, keyFn) {{
+    const map = {{}};
+    rows.forEach(function(r) {{
+      const key = keyFn(r);
+      if (!key) return;
+      if (!map[key]) map[key] = new Set();
+      map[key].add(r.s);
+    }});
+    return map;
+  }}
+
+  function renderHeatmap(filtered) {{
+    const trafficGrid = {{}};
+    filtered.forEach(function(r) {{
+      if (!r.d) return;
+      const dt = new Date(r.d);
+      const dow = (dt.getDay() + 6) % 7;
+      const hour = dt.getHours();
+      const key = dow + ',' + hour;
+      if (!trafficGrid[key]) trafficGrid[key] = new Set();
+      trafficGrid[key].add(r.s);
+    }});
+    const trafficCounts = {{}};
+    let maxTraffic = 1;
+    Object.entries(trafficGrid).forEach(function(entry) {{
+      trafficCounts[entry[0]] = entry[1].size;
+      if (entry[1].size > maxTraffic) maxTraffic = entry[1].size;
+    }});
+    const dayLabels = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    let html = '<div class="heatmap-dow-spacer"></div>';
+    for (let d = 0; d < 7; d++) {{
+      html += '<div class="heatmap-dow">' + dayLabels[d] + '</div>';
+    }}
+    for (let hour = 0; hour < 24; hour++) {{
+      html += '<div class="heatmap-hour">' + hour + 'h</div>';
+      for (let dow = 0; dow < 7; dow++) {{
+        const count = trafficCounts[dow + ',' + hour] || 0;
+        const intensity = maxTraffic > 0 && count > 0 ? count / maxTraffic : 0;
+        const scale = count > 0 ? Math.max(0.15, intensity) : 0;
+        html += '<div class="heatmap-cell-wrapper" title="' + dayLabels[dow] + ' ' + hour + 'h : ' + count + ' vue(s)">' +
+          '<div class="heatmap-bg-circle"></div>' +
+          '<div class="heatmap-fg-circle" style="--scale:' + scale + '"></div>' +
+          '</div>';
+      }}
+    }}
+    const el = document.getElementById('heatmap-grid');
+    if (el) el.innerHTML = html;
+  }}
+
+  function renderAll(startDate, endDate) {{
+    const start = new Date(startDate + 'T00:00:00');
+    const endNext = new Date(endDate + 'T00:00:00');
+    endNext.setDate(endNext.getDate() + 1);
+
+    const filtered = allRows.filter(function(r) {{
+      const dt = new Date(r.d);
+      return dt >= start && dt < endNext;
+    }});
+
+    // KPIs
+    const sessions = new Set(filtered.map(function(r) {{ return r.s; }}));
+    const visits = new Set(filtered.map(function(r) {{ return r.v; }}));
+    const totalViews = filtered.length;
+
+    const sessionViews = {{}};
+    filtered.forEach(function(r) {{ sessionViews[r.s] = (sessionViews[r.s] || 0) + 1; }});
+    const bounced = Object.values(sessionViews).filter(function(v) {{ return v === 1; }}).length;
+    const bounceRate = sessions.size > 0 ? Math.round(bounced / sessions.size * 100) : 0;
+
+    const visitTimes = {{}};
+    filtered.forEach(function(r) {{
+      if (!r.d) return;
+      if (!visitTimes[r.v]) visitTimes[r.v] = [];
+      visitTimes[r.v].push(new Date(r.d));
+    }});
+    const durations = [];
+    Object.values(visitTimes).forEach(function(times) {{
+      if (times.length > 1) {{
+        durations.push((Math.max.apply(null, times) - Math.min.apply(null, times)) / 1000);
+      }}
+    }});
+    const avgDuration = durations.length > 0 ? durations.reduce(function(a, b) {{ return a + b; }}, 0) / durations.length : 0;
+
+    document.getElementById('kpi-sessions').textContent = sessions.size;
+    document.getElementById('kpi-visits').textContent = visits.size;
+    document.getElementById('kpi-views').textContent = totalViews;
+    document.getElementById('kpi-bounce').textContent = bounceRate + '%';
+    document.getElementById('kpi-duration').textContent = formatDurationJS(avgDuration);
+
+    // Chart
+    renderChart(startDate, endDate);
+
+    // Bar sections
+    const totalVisitors = sessions.size;
+
+    renderSection('bar-pages', aggregateBy(filtered, function(r) {{ return r.u; }}), totalVisitors, '#2680eb');
+
+    const refFiltered = filtered.filter(function(r) {{ return r.r !== 'cmd.bzh' && r.r !== 'www.cmd.bzh'; }});
+    const refMap = aggregateBy(refFiltered, function(r) {{ return r.r || 'Accès direct'; }});
+    const refTotal = Object.values(refMap).reduce(function(sum, vis) {{ return sum + vis.size; }}, 0);
+    renderSection('bar-refs', refMap, refTotal, '#e8a838');
+
+    renderSection('bar-browsers', aggregateBy(filtered, function(r) {{ return r.b; }}), totalVisitors, '#8b5cf6');
+    renderSection('bar-os', aggregateBy(filtered, function(r) {{ return r.o; }}), totalVisitors, '#10b981');
+    renderSection('bar-devices', aggregateBy(filtered, function(r) {{ return r.dev; }}), totalVisitors, '#f59e0b');
+    renderSection('bar-countries', aggregateBy(filtered, function(r) {{ return r.c; }}), totalVisitors, '#ef4444');
+    renderSection('bar-regions', aggregateBy(filtered, function(r) {{ return r.reg; }}), totalVisitors, '#ec4899');
+    renderSection('bar-cities', aggregateBy(filtered, function(r) {{ return r.ci; }}), totalVisitors, '#6366f1');
+    renderSection('bar-langs', aggregateBy(filtered, function(r) {{ return r.l; }}), totalVisitors, '#14b8a6');
+
+    // Heatmap
+    renderHeatmap(filtered);
+  }}
 
   function renderChart(startDate, endDate) {{
     const start = new Date(startDate + 'T00:00:00');
@@ -1463,7 +1663,7 @@ def generate_report(csv_path, output_path):
     if (end < dataStart) end = dataEnd;
     startDisplay.dataset.value = start;
     endDisplay.dataset.value = end;
-    renderChart(start, end);
+    renderAll(start, end);
   }}
 
   presets.forEach(btn => {{
@@ -1478,7 +1678,7 @@ def generate_report(csv_path, output_path):
   // Initial render
   startDisplay.dataset.value = dataStart;
   endDisplay.dataset.value = dataEnd;
-  renderChart(dataStart, dataEnd);
+  renderAll(dataStart, dataEnd);
 }})();
 </script>
 </body>
