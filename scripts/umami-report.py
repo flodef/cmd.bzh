@@ -816,6 +816,60 @@ def generate_report(csv_path, output_path):
     flex-direction: column;
     gap: 24px;
   }}
+  .chart-nav {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 0;
+  }}
+  .chart-nav-btn {{
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.15s;
+  }}
+  .chart-nav-btn:hover {{
+    border-color: var(--primary);
+    color: var(--primary);
+  }}
+  .chart-nav-btn:disabled {{
+    opacity: 0.3;
+    cursor: not-allowed;
+  }}
+  .chart-nav-label {{
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 140px;
+    text-align: center;
+  }}
+  .chart-nav-close {{
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.15s;
+    margin-left: 8px;
+  }}
+  .chart-nav-close:hover {{
+    background: var(--bg);
+    color: var(--text);
+  }}
   .chart-area {{
     height: 400px;
     display: flex;
@@ -1176,7 +1230,13 @@ def generate_report(csv_path, output_path):
   <!-- Chart -->
   <div class="card chart-card">
     <div class="chart-container">
-      <div class="chart-area">
+      <div class="chart-nav" id="chart-nav" style="display:none;">
+        <button class="chart-nav-btn" id="chart-prev-day" title="Jour précédent">‹</button>
+        <span class="chart-nav-label" id="chart-nav-label"></span>
+        <button class="chart-nav-btn" id="chart-next-day" title="Jour suivant">›</button>
+        <button class="chart-nav-close" id="chart-close-day" title="Retour">✕</button>
+      </div>
+      <div class="chart-area" id="chart-area">
         {chart_bars}
       </div>
       <div class="chart-legend">
@@ -1264,8 +1324,17 @@ def generate_report(csv_path, output_path):
 
   const dataStart = '{data_start.isoformat()}';
   const dataEnd = '{data_end.isoformat()}';
-  const chartArea = document.querySelector('.chart-area');
+  const chartArea = document.getElementById('chart-area');
+  const chartNav = document.getElementById('chart-nav');
+  const chartNavLabel = document.getElementById('chart-nav-label');
+  const chartPrevDay = document.getElementById('chart-prev-day');
+  const chartNextDay = document.getElementById('chart-next-day');
+  const chartCloseDay = document.getElementById('chart-close-day');
   const presets = document.querySelectorAll('.preset-btn');
+
+  // Track state for day-view navigation
+  let dayViewDate = null;       // null = not in day view
+  let previousPreset = 'all';   // preset to return to when closing day view
 
   // Custom calendar state
   let calCurrentMonth = new Date(dataStart + 'T00:00:00');
@@ -1617,17 +1686,80 @@ def generate_report(csv_path, output_path):
 
     // Click handler: filter to a single day
     chartArea.querySelectorAll('.chart-bar-group').forEach(function(el) {{
-      el.addEventListener('click', function() {{
+      el.addEventListener('click', function(e) {{
+        e.stopPropagation();
         const ds = el.dataset.date;
-        startDisplay.dataset.value = ds;
-        endDisplay.dataset.value = ds;
-        startDisplay.textContent = formatDateFr(ds);
-        endDisplay.textContent = formatDateFr(ds);
-        setActivePreset('');
-        renderAll(ds, ds);
+        enterDayView(ds);
       }});
     }});
   }}
+
+  function enterDayView(ds) {{
+    // Remember which preset was active before entering day view
+    const activePreset = document.querySelector('.preset-btn.active');
+    previousPreset = activePreset ? activePreset.dataset.preset : 'all';
+    dayViewDate = ds;
+    startDisplay.dataset.value = ds;
+    endDisplay.dataset.value = ds;
+    startDisplay.textContent = formatDateFr(ds);
+    endDisplay.textContent = formatDateFr(ds);
+    setActivePreset('');
+    renderAll(ds, ds);
+    updateDayNav();
+  }}
+
+  function exitDayView() {{
+    if (!dayViewDate) return;
+    dayViewDate = null;
+    chartNav.style.display = 'none';
+    // Return to previous preset
+    setActivePreset(previousPreset);
+    applyPreset(previousPreset);
+    startDisplay.textContent = formatDateFr(startDisplay.dataset.value || dataStart);
+    endDisplay.textContent = formatDateFr(endDisplay.dataset.value || dataEnd);
+  }}
+
+  function shiftDay(offset) {{
+    if (!dayViewDate) return;
+    const d = new Date(dayViewDate + 'T00:00:00');
+    d.setDate(d.getDate() + offset);
+    const ds = d.toISOString().slice(0, 10);
+    // Clamp to data range
+    if (ds < dataStart || ds > dataEnd) return;
+    dayViewDate = ds;
+    startDisplay.dataset.value = ds;
+    endDisplay.dataset.value = ds;
+    startDisplay.textContent = formatDateFr(ds);
+    endDisplay.textContent = formatDateFr(ds);
+    renderAll(ds, ds);
+    updateDayNav();
+  }}
+
+  function updateDayNav() {{
+    if (!dayViewDate) {{
+      chartNav.style.display = 'none';
+      return;
+    }}
+    chartNav.style.display = 'flex';
+    const d = new Date(dayViewDate + 'T00:00:00');
+    const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    const dayLabels = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    chartNavLabel.textContent = dayLabels[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    // Enable/disable arrows at data boundaries
+    const prevDay = new Date(d); prevDay.setDate(prevDay.getDate() - 1);
+    const nextDay = new Date(d); nextDay.setDate(nextDay.getDate() + 1);
+    chartPrevDay.disabled = prevDay.toISOString().slice(0, 10) < dataStart;
+    chartNextDay.disabled = nextDay.toISOString().slice(0, 10) > dataEnd;
+  }}
+
+  chartPrevDay.addEventListener('click', function(e) {{ e.stopPropagation(); shiftDay(-1); }});
+  chartNextDay.addEventListener('click', function(e) {{ e.stopPropagation(); shiftDay(1); }});
+  chartCloseDay.addEventListener('click', function(e) {{ e.stopPropagation(); exitDayView(); }});
+
+  // Click on chart background (not on a bar) exits day view
+  chartArea.addEventListener('click', function() {{
+    if (dayViewDate) exitDayView();
+  }});
 
   function setActivePreset(name) {{
     presets.forEach(b => b.classList.toggle('active', b.dataset.preset === name));
