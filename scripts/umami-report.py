@@ -1723,7 +1723,7 @@ def generate_report(csv_path, output_path):
     if (!dayViewDate) return;
     const d = new Date(dayViewDate + 'T00:00:00');
     d.setDate(d.getDate() + offset);
-    const ds = d.toISOString().slice(0, 10);
+    const ds = isoDate(d);
     // Clamp to data range
     if (ds < dataStart || ds > dataEnd) return;
     dayViewDate = ds;
@@ -1748,16 +1748,17 @@ def generate_report(csv_path, output_path):
     // Enable/disable arrows at data boundaries
     const prevDay = new Date(d); prevDay.setDate(prevDay.getDate() - 1);
     const nextDay = new Date(d); nextDay.setDate(nextDay.getDate() + 1);
-    chartPrevDay.disabled = prevDay.toISOString().slice(0, 10) < dataStart;
-    chartNextDay.disabled = nextDay.toISOString().slice(0, 10) > dataEnd;
+    chartPrevDay.disabled = isoDate(prevDay) < dataStart;
+    chartNextDay.disabled = isoDate(nextDay) > dataEnd;
   }}
 
   chartPrevDay.addEventListener('click', function(e) {{ e.stopPropagation(); shiftDay(-1); }});
   chartNextDay.addEventListener('click', function(e) {{ e.stopPropagation(); shiftDay(1); }});
   chartCloseDay.addEventListener('click', function(e) {{ e.stopPropagation(); exitDayView(); }});
 
-  // Click on chart background (not on a bar) exits day view
-  chartArea.addEventListener('click', function() {{
+  // Click on chart card background (not on bars or nav buttons) exits day view
+  const chartCard = document.querySelector('.chart-card');
+  chartCard.addEventListener('click', function() {{
     if (dayViewDate) exitDayView();
   }});
 
