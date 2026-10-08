@@ -1,159 +1,254 @@
 'use client';
 
-import { ConfigProvider, Tabs, theme } from 'antd';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Footer from './footer';
 import { MenuButton } from './menuButton';
-import { useWindowParam } from '../hooks/useWindowParam';
 import { CMDLogo } from '../images/cmd';
 import { t } from '../utils/i18n';
-import { Page } from '../contexts/menuProvider';
+import { ToastProvider } from './ui/toast';
 
-const { defaultAlgorithm, darkAlgorithm } = theme;
+export const SECTION_IDS = ['home', 'about', 'reviews', 'contact'] as const;
+export type SectionId = (typeof SECTION_IDS)[number];
 
-const navItems: { key: Page; href: string; label: string }[] = [
-  { key: Page.Home, href: '/', label: t('Home') },
-  { key: Page.About, href: '/about', label: t('About') },
-  { key: Page.Contact, href: '/contact', label: t('Contact') },
-  { key: Page.Reviews, href: '/reviews', label: t('Reviews') },
+const navItems: { id: SectionId; label: string }[] = [
+  { id: 'home', label: t('Home') },
+  { id: 'about', label: t('About') },
+  { id: 'reviews', label: t('Reviews') },
+  { id: 'contact', label: t('Contact') },
 ];
 
-function getActiveTab(pathname: string): Page {
-  const match = navItems.find(item => item.href === pathname);
-  return match?.key ?? Page.Home;
+/** Sliding underline driven by the active nav link's measured position. */
+function useNavUnderline(active: SectionId | null) {
+  const navRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef(new Map<SectionId, HTMLAnchorElement>());
+  const [style, setStyle] = useState({ left: 0, width: 0, visible: false });
+
+  const measure = useCallback(() => {
+    const el = active ? linkRefs.current.get(active) : null;
+    if (!el) {
+      setStyle(s => ({ ...s, visible: false }));
+      return;
+    }
+    setStyle({ left: el.offsetLeft, width: el.offsetWidth, visible: true });
+  }, [active]);
+
+  useEffect(() => {
+    measure();
+    // Re-measure once webfonts are applied (they shift the links' widths)
+    document.fonts?.ready.then(measure).catch(() => {});
+    const observer = new ResizeObserver(measure);
+    if (navRef.current) observer.observe(navRef.current);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [measure]);
+
+  return { navRef, linkRefs, style };
+}
+
+/** Scrollspy: the active section is the last one whose top passed the marker line. */
+function useScrollSpy(enabled: boolean) {
+  const [active, setActiveState] = useState<SectionId | null>('home');
+  // While a nav click drives a programmatic scroll, the underline is locked on
+  // the clicked target — intermediate sections the marker crosses on the way
+  // don't animate it back and forth
+  const lockRef = useRef<SectionId | null>(null);
+  const settleRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const computeCurrent = () => {
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8) {
+      return SECTION_IDS[SECTION_IDS.length - 1];
+    }
+    const marker = window.scrollY + window.innerHeight * 0.4;
+    let current: SectionId = 'home';
+    for (const id of SECTION_IDS) {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top + window.scrollY <= marker) current = id;
+    }
+    return current;
+  };
+
+  useEffect(() => {
+    if (!enabled) {
+      setActiveState(null);
+      return;
+    }
+    let raf = 0;
+    const scheduleSettle = () => {
+      clearTimeout(settleRef.current);
+      // If scrolling stops without reaching the locked target (user
+      // interrupted the programmatic scroll), release the lock
+      settleRef.current = setTimeout(() => {
+        lockRef.current = null;
+        setActiveState(computeCurrent());
+      }, 250);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const current = computeCurrent();
+        if (lockRef.current) {
+          if (current === lockRef.current) {
+            lockRef.current = null;
+            setActiveState(current);
+          }
+          // else: still traveling — keep the underline on the clicked target
+          return;
+        }
+        setActiveState(current);
+      });
+      if (lockRef.current) scheduleSettle();
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(settleRef.current);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [enabled]);
+
+  // Called on nav click: snap the underline to the target and lock it while
+  // the smooth scroll plays out
+  const select = useCallback((id: SectionId) => {
+    lockRef.current = id;
+    setActiveState(id);
+    // If the click produces no scroll (already at the target), release quickly —
+    // scroll events reschedule this timer while the animation runs
+    clearTimeout(settleRef.current);
+    settleRef.current = setTimeout(() => {
+      lockRef.current = null;
+      setActiveState(computeCurrent());
+    }, 250);
+  }, []);
+
+  return [active, select] as const;
 }
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
-  const { isDark, isReady, breakpoints, width } = useWindowParam();
-  // Default to desktop values for SSR, hydrate with real values on client
-  const isMobile = isReady ? breakpoints.isSm : false;
-  const isTinyMobile = isReady ? breakpoints.is2xs : false;
-
   const pathname = usePathname();
-  const router = useRouter();
-  const activeTab = getActiveTab(pathname);
-  const title = t(activeTab);
-
-  const handleTabChange = (key: string) => {
-    const item = navItems.find(i => i.key === key);
-    if (item) router.push(item.href);
-  };
+  const isHome = pathname === '/';
+  const [active, select] = useScrollSpy(isHome);
+  const { navRef, linkRefs, style } = useNavUnderline(active);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Close mobile menu on route change
   useEffect(() => {
-    setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [pathname]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDark ? darkAlgorithm : defaultAlgorithm,
-        components: {
-          Card: {
-            headerFontSize: 20,
-            headerHeight: 80,
-          },
-          Form: {
-            labelFontSize: 16,
-          },
-          Carousel: {
-            arrowOffset: 0,
-            arrowSize: 24,
-          },
-        },
-      }}
-    >
-      <div className="flex flex-col min-h-screen overflow-x-hidden">
-        <header
-          className={twMerge(
-            'fixed top-0 left-0 right-0 z-10',
-            isScrolled ? 'bg-white/80 dark:bg-[#001529]/80 backdrop-blur-sm shadow-md' : 'bg-white dark:bg-[#001529]',
-          )}
-        >
-          <nav className="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <Link href="/" aria-label="CMD Breizh - Accueil">
-              <CMDLogo
-                className="flex-none self-start z-10 cursor-pointer w-24 h-24 sm:w-28 sm:h-28"
-                width={!isMobile ? 112 : 100}
-                height={!isMobile ? 112 : 100}
-              />
-            </Link>
-            <div className={twMerge('flex z-10', isMobile ? 'self-start w-full justify-end' : '')}>
-              <div
-                className={twMerge(
-                  isMobile ? 'transition transform' : 'visible max-h-28 flex items-center',
-                  isMenuOpen || !isMobile ? 'opacity-100 scale-y-100 h-52' : 'opacity-0 scale-y-0 h-0',
-                  isTinyMobile ? (isMenuOpen ? 'h-80' : 'h-40') : '',
-                )}
-              >
-                <Tabs
-                  style={{
-                    width: isMobile ? width - 210 : 'auto',
-                    marginLeft: isTinyMobile ? 80 - width : 0,
-                    marginTop: isTinyMobile ? 120 : 0,
-                  }}
-                  activeKey={activeTab}
-                  onChange={handleTabChange}
-                  items={navItems.map(item => ({
-                    key: item.key,
-                    label: item.label,
-                  }))}
-                  size="large"
-                  tabPlacement={isMobile ? 'end' : 'top'}
-                />
-              </div>
+  // Lock body scroll while the mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
-              {isMobile && <MenuButton isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
-            </div>
-            {isMobile && (
-              <div
-                className={twMerge(
-                  'absolute text-center w-full self-end',
-                  isTinyMobile ? 'top-32 left-0' : 'top-7 pl-26 pr-20',
-                  !isMenuOpen ? 'transition-all delay-300 opacity-100' : 'opacity-0',
-                )}
-              >
-                <h1 className="text-2xl font-bold text-center mb-8">{title}</h1>
-              </div>
+  const registerLink = (id: SectionId) => (el: HTMLAnchorElement | null) => {
+    if (el) linkRefs.current.set(id, el);
+    else linkRefs.current.delete(id);
+  };
+
+  return (
+    <ToastProvider>
+      <div className="flex flex-col min-h-screen overflow-x-clip">
+        <header className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-4">
+          <nav
+            className={twMerge(
+              'glass rounded-full max-w-3xl mx-auto pl-1.5 pr-2 py-1.5 flex items-center justify-between gap-2',
+              'transition-shadow duration-300',
+              isScrolled && 'shadow-xl',
             )}
+          >
+            <Link href="/#home" aria-label="CMD Breizh - Accueil" className="flex-none rounded-full">
+              <CMDLogo width={44} height={44} className="size-11 drop-shadow-sm" />
+            </Link>
+
+            {/* Desktop nav with sliding underline */}
+            <div className="relative hidden md:block" ref={navRef}>
+              <ul className="flex items-center">
+                {navItems.map(item => (
+                  <li key={item.id}>
+                    <Link
+                      ref={registerLink(item.id)}
+                      href={`/#${item.id}`}
+                      onClick={() => isHome && select(item.id)}
+                      className={twMerge(
+                        'relative block px-4 py-2 text-sm font-medium transition-colors duration-300',
+                        active === item.id
+                          ? 'text-brand dark:text-sky'
+                          : 'text-bark/70 dark:text-cream/70 hover:text-bark dark:hover:text-cream',
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <span
+                aria-hidden="true"
+                className="absolute bottom-0.5 h-0.5 rounded-full bg-brand dark:bg-sky transition-all duration-300 ease-out"
+                style={{
+                  left: style.left,
+                  width: style.width,
+                  opacity: style.visible ? 1 : 0,
+                }}
+              />
+            </div>
+
+            <div className="md:hidden flex-none">
+              <MenuButton isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+            </div>
           </nav>
         </header>
+
+        {/* Mobile fullscreen glass menu */}
         <div
           className={twMerge(
-            'flex flex-col min-h-screen transition transform',
-            !isMenuOpen
-              ? isTinyMobile
-                ? 'pt-40'
-                : isMobile
-                  ? 'pt-33'
-                  : 'pt-36'
-              : isTinyMobile
-                ? 'pt-80'
-                : isMobile
-                  ? 'pt-60'
-                  : 'pt-36',
+            'md:hidden fixed inset-0 z-40 transition-all duration-300',
+            isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
           )}
         >
-          <main className="grow content-center">{children}</main>
-          <Footer />
+          <div className="absolute inset-0 bg-sky/60 dark:bg-black/60 backdrop-blur-2xl" />
+          <ul className="relative h-full flex flex-col items-center justify-center gap-6">
+            {navItems.map((item, i) => (
+              <li
+                key={item.id}
+                className="transition-all duration-500 ease-out"
+                style={{
+                  opacity: isMenuOpen ? 1 : 0,
+                  transform: isMenuOpen ? 'none' : 'translateY(16px)',
+                  transitionDelay: isMenuOpen ? `${80 + i * 60}ms` : '0ms',
+                }}
+              >
+                <Link
+                  href={`/#${item.id}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={twMerge(
+                    'text-3xl font-semibold',
+                    active === item.id ? 'text-brand dark:text-sky' : 'text-bark dark:text-cream',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        <main className="grow">{children}</main>
+        <Footer />
       </div>
-    </ConfigProvider>
+    </ToastProvider>
   );
 }

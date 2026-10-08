@@ -1,15 +1,33 @@
-'use server';
+import { NextResponse } from 'next/server';
+import { createReview, updateReviewContent, NewReview, getPublishedReviews } from '../../models/review';
+import { sendEmail } from '../../utils/emailService';
+import { companyInfo } from '../../utils/constants';
+import { checkRateLimit, getClientIp } from '../../utils/rateLimit';
 
-import { createReview, updateReviewContent, NewReview, getPublishedReviews, DbReview } from '../models/review';
-import { sendEmail } from '../utils/emailService';
-import { companyInfo } from '../utils/constants';
+/** GET /api/reviews — all published reviews */
+export async function GET() {
+  try {
+    return NextResponse.json(await getPublishedReviews());
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return NextResponse.json([], { status: 200 });
+  }
+}
 
 /**
- * Server action to submit a new review or update an existing one
- * This creates an unpublished review in the database and sends a validation email
+ * POST /api/reviews — submit a new review or update an existing one.
+ * Creates an unpublished review in the database and sends a validation email.
  */
-export async function submitNewReview(reviewData: NewReview & { id?: string }) {
+export async function POST(request: Request) {
   try {
+    // Rate limiting: 10 requests per minute per IP
+    const clientIp = getClientIp(request);
+    if (checkRateLimit(clientIp, 10, 60000)) {
+      return NextResponse.json({ success: false, message: 'Too many requests' }, { status: 429 });
+    }
+
+    const reviewData = (await request.json()) as NewReview & { id?: string };
+
     // Ensure rating is treated as a decimal
     const review = {
       ...reviewData,
@@ -45,28 +63,19 @@ export async function submitNewReview(reviewData: NewReview & { id?: string }) {
       });
     }
 
-    return {
+    return NextResponse.json({
       success: true,
       message: 'Avis soumis avec succès',
       reviewId: savedReview.id,
-    };
+    });
   } catch (error) {
     console.error('Review submission error:', error);
-    return {
-      success: false,
-      message: "Erreur lors de la soumission de l'avis",
-    };
-  }
-}
-
-/**
- * Server action to get all published reviews
- */
-export async function getReviews(): Promise<DbReview[]> {
-  try {
-    return await getPublishedReviews();
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-    return [];
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Erreur lors de la soumission de l'avis",
+      },
+      { status: 500 },
+    );
   }
 }

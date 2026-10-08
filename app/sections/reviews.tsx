@@ -1,35 +1,29 @@
 'use client';
 
 import { IconChevronDown, IconChevronUp, IconMail, IconSend, IconStar, IconUser } from '@tabler/icons-react';
-import {
-  Button,
-  Card,
-  Empty,
-  Form,
-  FormProps,
-  Input,
-  InputRef,
-  message,
-  Modal,
-  Rate,
-  Spin,
-  Typography,
-  Tag,
-} from 'antd';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { emailRegex, STORAGE_KEYS, textColor } from '../utils/constants';
+import { Button } from '../components/ui/button';
+import { Card } from '../components/ui/card';
+import { Field, Form, useForm } from '../components/ui/form';
+import { Input, TextArea } from '../components/ui/input';
+import { Modal } from '../components/ui/modal';
+import { Rate } from '../components/ui/rate';
+import { Reveal } from '../components/ui/reveal';
+import { Spin } from '../components/ui/spin';
+import { Tag } from '../components/ui/tag';
+import { useToast } from '../components/ui/toast';
+import { emailRegex, STORAGE_KEYS } from '../utils/constants';
 import { useReviewsCache } from '../contexts/reviewsCacheProvider';
 import { t } from '../utils/i18n';
-import { submitNewReview } from '../actions/reviews';
+import { sendReview } from '../utils/reviewService';
 import { getLocalStorageItem, setLocalStorageItem } from '../utils/localStorage';
-
-const { TextArea } = Input;
-const { Text } = Typography;
 
 const REVIEWS_PER_PAGE = 3;
 
 // Cooldown period in milliseconds (15 minutes)
 const SUBMIT_COOLDOWN = 15 * 60 * 1000;
+
+const bodyText = 'text-bark/80 dark:text-cream/80';
 
 interface Review {
   id: string;
@@ -56,11 +50,11 @@ enum FieldError {
 }
 
 export default function Reviews() {
-  const { reviews: cachedReviews, fetchReviews: fetchCachedReviews } = useReviewsCache();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { fetchReviews: fetchCachedReviews } = useReviewsCache();
+  const toast = useToast();
 
-  const [form] = Form.useForm();
-  const values = Form.useWatch([], form);
+  const [form] = useForm<Record<string, unknown>>({ name: '', email: '', comment: '', rating: 5 });
+  const values = form.values;
 
   const [submitting, setSubmitting] = useState(false);
   const [formChanged, setFormChanged] = useState<boolean>(false);
@@ -75,8 +69,6 @@ export default function Reviews() {
   const [isEditing, setIsEditing] = useState(false);
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
   const cooldownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const nameRef = useRef<InputRef>(null);
 
   // Function to check and update cooldown status
   const checkCooldown = useCallback(() => {
@@ -143,11 +135,11 @@ export default function Reviews() {
       checkCooldown();
     } catch (error) {
       console.error('Error fetching reviews:', error);
-      messageApi.error(t('ReviewsFetchError'));
+      toast.error(t('ReviewsFetchError'));
     } finally {
       setLoading(false);
     }
-  }, [messageApi, checkCooldown]);
+  }, [fetchCachedReviews, toast, checkCooldown]);
 
   // Handle status hash fragment for review validation success/failure
   useEffect(() => {
@@ -158,27 +150,31 @@ export default function Reviews() {
       const status = params.get('status');
       const message = params.get('message');
 
+      if (!status) return;
+
       if (status === 'approved') {
-        messageApi.success(t('ReviewApproved'));
+        toast.success(t('ReviewApproved'));
       } else if (status === 'rejected') {
-        messageApi.info(t('ReviewRejected'));
+        toast.info(t('ReviewRejected'));
       } else if (status === 'notfound') {
-        messageApi.error(t('ReviewNotFound'));
+        toast.error(t('ReviewNotFound'));
       } else if (status === 'error') {
         if (message === 'publication') {
-          messageApi.error(t('ReviewPublicationError'));
+          toast.error(t('ReviewPublicationError'));
         } else if (message === 'deletion') {
-          messageApi.error(t('ReviewDeletionError'));
+          toast.error(t('ReviewDeletionError'));
         } else {
-          messageApi.error(t('ReviewGenericError'));
+          toast.error(t('ReviewGenericError'));
         }
       }
 
+      // Scroll to the reviews section so the user sees the result
+      document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+
       // Remove hash to prevent showing the message on refresh
-      // Keep the tab parameter if it exists
       window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
     }
-  }, [messageApi]);
+  }, [toast]);
 
   // Initialize form with values from localStorage
   const initFormFromLocalStorage = useCallback(() => {
@@ -214,13 +210,9 @@ export default function Reviews() {
   }, [fetchReviews, checkCooldown, initFormFromLocalStorage]);
 
   useEffect(() => {
-    nameRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
     // Check if form values have changed from the original pendingReview
     if (pendingReview && isEditing) {
-      const currentValues = form.getFieldsValue();
+      const currentValues = form.getFieldsValue() as unknown as ReviewFormValues;
       const hasChanged =
         currentValues.name !== pendingReview.name ||
         currentValues.email !== pendingReview.email ||
@@ -258,8 +250,9 @@ export default function Reviews() {
   };
 
   // Handle submitting a review
-  const onFinish: FormProps<ReviewFormValues>['onFinish'] = async values => {
+  const onFinish = async (rawValues: Record<string, unknown>) => {
     if (submitting) return;
+    const values = rawValues as unknown as ReviewFormValues;
 
     // Check cooldown for all submissions
     const lastSubmitTime = getLocalStorageItem<number>(STORAGE_KEYS.LAST_SUBMIT_TIME, 0);
@@ -270,7 +263,7 @@ export default function Reviews() {
       if (elapsed < SUBMIT_COOLDOWN) {
         const remainingMinutes = Math.floor((SUBMIT_COOLDOWN - elapsed) / 60000);
         const remainingSeconds = Math.floor(((SUBMIT_COOLDOWN - elapsed) % 60000) / 1000);
-        messageApi.error(
+        toast.error(
           t('ReviewCooldownActive', { minutes: String(remainingMinutes), seconds: String(remainingSeconds) }),
         );
         return;
@@ -319,14 +312,14 @@ export default function Reviews() {
             const filteredReviews = reviews.filter(r => !(r.isPending && r.id === updatedReviewForList.id));
             setReviews([updatedReviewForList, ...filteredReviews]);
 
-            messageApi.success(t('ReviewUpdatedDirect'));
+            toast.success(t('ReviewUpdatedDirect'));
           } else {
             throw new Error(result.message || 'Unknown error');
           }
         } else {
           // Comment changed, needs re-approval
           // Pass the existing review ID to update it rather than creating a new one
-          const result = await submitNewReview({
+          const result = await sendReview({
             ...values,
             id: pendingReview.id, // Include the existing review ID
           });
@@ -362,14 +355,14 @@ export default function Reviews() {
             const filteredReviews = reviews.filter(r => !(r.isPending && r.id === updatedReviewForList.id));
             setReviews([updatedReviewForList, ...filteredReviews]);
 
-            messageApi.success(t('ReviewCommentChanged'));
+            toast.success(t('ReviewCommentChanged'));
           } else {
             throw new Error(result.message || 'Unknown error');
           }
         }
       } else {
         // New review submission
-        const result = await submitNewReview(values);
+        const result = await sendReview(values);
 
         if (result.success) {
           // Store the review in localStorage with ID from the server
@@ -401,22 +394,22 @@ export default function Reviews() {
           // Add the new review at the top of the list
           setReviews([newReviewForList, ...reviews]);
 
-          messageApi.success(t('ReviewSuccess'));
+          toast.success(t('ReviewSuccess'));
         } else {
           throw new Error(result.message || 'Unknown error');
         }
       }
     } catch (error) {
       console.error('Error handling review:', error);
-      messageApi.error(t('ReviewError'));
+      toast.error(t('ReviewError'));
     } finally {
       setSubmitting(false);
     }
   };
 
-  const onFinishFailed: FormProps<ReviewFormValues>['onFinishFailed'] = errorInfo => {
+  const onFinishFailed = (errorInfo: unknown) => {
     console.error('Failed:', errorInfo);
-    messageApi.error(t('ReviewError'));
+    toast.error(t('ReviewError'));
   };
 
   const getErrorMessage = (fieldName: string, fieldError?: FieldError, info?: string | number) => {
@@ -452,7 +445,7 @@ export default function Reviews() {
   const reviewsContainerRef = useRef<HTMLDivElement>(null);
 
   // Fixed height constants
-  const REVIEW_HEIGHT = 140; // Reduced height of each card in pixels
+  const REVIEW_HEIGHT = 150; // Reduced height of each card in pixels
   const REVIEW_SPACING = 24; // Height of spacing between cards (margin-bottom)
   const REVIEW_TOTAL_HEIGHT = REVIEW_HEIGHT + REVIEW_SPACING; // Combined height of card + spacing
 
@@ -602,199 +595,171 @@ export default function Reviews() {
   };
 
   return (
-    <>
+    <section id="reviews" className="scroll-mt-24 w-full max-w-7xl mx-auto">
       {/* Review detail modal */}
       {selectedReview && (
         <Modal
           title={
             <div className="flex justify-between items-center">
-              <span className="font-semibold">{selectedReview.name}</span>
-              <span className="text-sm text-gray-500 mr-8">{formatDate(selectedReview.createdAt)}</span>
+              <span className="font-semibold text-bark dark:text-cream">{selectedReview.name}</span>
+              <span className="text-sm text-bark/50 dark:text-cream/50 mr-8">
+                {formatDate(selectedReview.createdAt)}
+              </span>
             </div>
           }
           open={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          footer={null}
-          centered
+          onClose={() => setModalVisible(false)}
         >
           <div className="mb-3">
             <Rate disabled allowHalf value={selectedReview.rating} />
           </div>
-          <div className={`${textColor} mt-4`}>{selectedReview.comment}</div>
+          <div className={`${bodyText} mt-4`}>{selectedReview.comment}</div>
         </Modal>
       )}
-      {contextHolder}
-      <div className="w-full max-w-7xl mx-auto">
-        <section className="px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
-            {/* Add Review Form - Left Column */}
-            <div>
-              <h1 className="text-2xl font-semibold mb-4">{isEditing ? t('ReviewEditTitle') : t('ReviewFormTitle')}</h1>
+      <Reveal className="px-4 py-20">
+        <div
+          className={loading || reviews.length > 0 ? 'grid grid-cols-1 md:grid-cols-2 md:gap-16' : 'max-w-2xl mx-auto'}
+        >
+          {/* Add Review Form - Left Column */}
+          <div className="glass-soft glass-hover rounded-3xl p-6 sm:p-8">
+            <h2 className="text-2xl font-semibold mb-6 text-bark dark:text-cream">
+              {isEditing ? t('ReviewEditTitle') : t('ReviewFormTitle')}
+            </h2>
 
-              <Form
-                name="reviewForm"
-                form={form}
-                layout={'horizontal'}
-                size="large"
-                disabled={submitting}
-                scrollToFirstError={{ behavior: 'smooth', block: 'start' }}
-                style={{ maxWidth: 600 }}
-                labelCol={{ xs: 6, lg: 5 }}
-                wrapperCol={{ xs: 18, sm: 12, md: 18, lg: 14, xl: 12 }}
-                initialValues={{ name: '', email: '', comment: '', rating: 5 }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                requiredMark={false}
-                validateTrigger="onChange"
-                autoComplete="on"
+            <Form form={form} onFinish={onFinish} onFinishFailed={onFinishFailed} disabled={submitting}>
+              <Field
+                label={t('Name')}
+                name="name"
+                hasFeedback
+                rules={[
+                  { required: true, message: getErrorMessage('Name', FieldError.Required) },
+                  { min: 5, message: getErrorMessage('Name', FieldError.Min, 5) },
+                  { max: 50, message: getErrorMessage('Name', FieldError.Max, 50) },
+                  { pattern: /^[a-zA-Z\s]+$/, message: getErrorMessage('Name') },
+                ]}
               >
-                <Form.Item
-                  label={t('Name')}
-                  name="name"
-                  hasFeedback
-                  validateFirst
-                  rules={[
-                    { required: true, message: getErrorMessage('Name', FieldError.Required) },
-                    { min: 5, message: getErrorMessage('Name', FieldError.Min, 5) },
-                    { max: 50, message: getErrorMessage('Name', FieldError.Max, 50) },
-                    { pattern: /^[a-zA-Z\s]+$/, message: getErrorMessage('Name') },
-                  ]}
-                >
-                  <Input ref={nameRef} prefix={<IconUser />} placeholder={t('Your') + ' ' + t('Name')} />
-                </Form.Item>
+                <Input prefix={<IconUser />} placeholder={t('Your') + ' ' + t('Name')} />
+              </Field>
 
-                <Form.Item
-                  label={t('Email')}
-                  name="email"
-                  hasFeedback
-                  validateFirst
-                  rules={[
-                    { required: true, message: getErrorMessage('Email', FieldError.Required) },
-                    {
-                      min: 10,
-                      message: getErrorMessage('Email', FieldError.Min, 10),
-                    },
-                    {
-                      max: 50,
-                      message: getErrorMessage('Email', FieldError.Max, 50),
-                    },
-                    {
-                      pattern: emailRegex,
-                      message: getErrorMessage('Email'),
-                    },
-                  ]}
-                >
-                  <Input prefix={<IconMail />} placeholder={t('Your') + ' ' + t('Email')} />
-                </Form.Item>
+              <Field
+                label={t('Email')}
+                name="email"
+                hasFeedback
+                rules={[
+                  { required: true, message: getErrorMessage('Email', FieldError.Required) },
+                  {
+                    min: 10,
+                    message: getErrorMessage('Email', FieldError.Min, 10),
+                  },
+                  {
+                    max: 50,
+                    message: getErrorMessage('Email', FieldError.Max, 50),
+                  },
+                  {
+                    pattern: emailRegex,
+                    message: getErrorMessage('Email'),
+                  },
+                ]}
+              >
+                <Input prefix={<IconMail />} placeholder={t('Your') + ' ' + t('Email')} />
+              </Field>
 
-                <Form.Item
-                  label={t('ReviewRating')}
-                  name="rating"
-                  rules={[{ required: true, message: getErrorMessage('ReviewRating', FieldError.Required) }]}
-                >
-                  <Rate allowHalf allowClear />
-                </Form.Item>
+              <Field
+                label={t('ReviewRating')}
+                name="rating"
+                rules={[{ required: true, message: getErrorMessage('ReviewRating', FieldError.Required) }]}
+              >
+                <Rate allowHalf allowClear />
+              </Field>
 
-                <Form.Item
-                  label={t('Comment')}
+              <Field
+                label={t('Comment')}
+                name="comment"
+                hasFeedback
+                rules={[
+                  { required: true, message: getErrorMessage('Message', FieldError.Required) },
+                  { min: 20, message: getErrorMessage('Message', FieldError.Min, 20) },
+                ]}
+              >
+                <TextArea
+                  id="comment"
                   name="comment"
-                  hasFeedback
-                  validateFirst
-                  wrapperCol={{ xs: 18, sm: 20 }}
-                  rules={[
-                    { required: true, message: getErrorMessage('Message', FieldError.Required) },
-                    { min: 20, message: getErrorMessage('Message', FieldError.Min, 20) },
-                  ]}
+                  showCount
+                  minRows={3}
+                  maxLength={500}
+                  placeholder={t('Your') + ' ' + t('Message')}
+                />
+              </Field>
+
+              <div className="flex justify-end pt-2">
+                <Button
+                  variant="primary"
+                  type="submit"
+                  loading={submitting}
+                  disabled={cooldownRemaining > 0 || (isEditing && !formChanged)}
+                  icon={<IconSend />}
+                  iconPosition="start"
                 >
-                  <TextArea
-                    id="comment"
-                    name="comment"
-                    showCount
-                    autoSize={{ minRows: 2 }}
-                    maxLength={500}
-                    placeholder={t('Your') + ' ' + t('Message')}
-                  />
-                </Form.Item>
+                  {submitting
+                    ? t('ReviewSubmitting')
+                    : cooldownRemaining > 0
+                      ? `${isEditing ? t('ReviewUpdate') : t('ReviewSubmit')} (${Math.floor(cooldownRemaining / 60)}:${(
+                          cooldownRemaining % 60
+                        )
+                          .toString()
+                          .padStart(2, '0')})`
+                      : isEditing
+                        ? t('ReviewUpdate')
+                        : t('ReviewSubmit')}
+                </Button>
+              </div>
+            </Form>
+          </div>
 
-                <Form.Item className="flex justify-end" style={{ paddingTop: 16 }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={submitting}
-                    disabled={cooldownRemaining > 0 || (isEditing && !formChanged)}
-                    icon={<IconSend style={{ display: 'flex' }} />}
-                  >
-                    {submitting
-                      ? t('ReviewSubmitting')
-                      : cooldownRemaining > 0
-                        ? `${isEditing ? t('ReviewUpdate') : t('ReviewSubmit')} (${Math.floor(cooldownRemaining / 60)}:${(
-                            cooldownRemaining % 60
-                          )
-                            .toString()
-                            .padStart(2, '0')})`
-                        : isEditing
-                          ? t('ReviewUpdate')
-                          : t('ReviewSubmit')}
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-
-            {/* Reviews List - Right Column */}
-            <div>
+          {/* Reviews List - Right Column (hidden entirely when empty) */}
+          {(loading || reviews.length > 0) && (
+            <div className="glass-soft glass-hover rounded-3xl p-6 sm:p-8 mt-8 md:mt-0">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-2xl font-semibold text-bark dark:text-cream">
                   {t('ReviewAllReviews') + ' (' + reviews.filter(r => !r.isPending).length + ')'}
                 </h2>
                 {reviews.length > 0 && (
                   <div className="flex items-center">
                     <IconStar size={20} className="text-yellow-500 mr-1" />
-                    <span className="font-semibold">{getAverageRating()}</span>
-                    <span className="text-gray-500 text-sm ml-1">/ 5</span>
+                    <span className="font-semibold text-bark dark:text-cream">{getAverageRating()}</span>
+                    <span className="text-bark/50 dark:text-cream/50 text-sm ml-1">/ 5</span>
                   </div>
                 )}
               </div>
 
               {loading ? (
                 <div className="flex justify-center py-8">
-                  <Spin size="large" />
-                </div>
-              ) : reviews.length === 0 ? (
-                <div className="flex justify-center py-8">
-                  <Empty description={t('ReviewNoReviews')} />
+                  <Spin size={32} />
                 </div>
               ) : (
                 <div>
                   {/* Up arrow for scrolling - always present but only visible when scrolled down */}
                   <div className="flex justify-center">
                     <Button
-                      type="text"
-                      icon={<IconChevronUp size={28} style={{ display: 'flex' }} />}
+                      variant="text"
+                      icon={<IconChevronUp size={28} />}
                       onClick={handleScrollUp}
                       disabled={isTransitioning}
                       style={{ opacity: canScrollUp ? 1 : 0, transition: 'opacity 0.3s' }}
+                      aria-label="Scroll up"
                     />
                   </div>
 
                   {/* Reviews cards in scrollable container with hidden scrollbar */}
                   <div
                     ref={reviewsContainerRef}
-                    className="space-y-6 overflow-y-auto relative"
+                    className="space-y-6 overflow-y-auto relative no-scrollbar"
                     style={{
                       height: `${REVIEW_HEIGHT * 3 + REVIEW_SPACING * 2}px`, // Exact height for 3 reviews with spacing between them
-                      scrollbarWidth: 'none', // Hide scrollbar for Firefox
-                      msOverflowStyle: 'none', // Hide scrollbar for IE/Edge
                       scrollBehavior: 'smooth', // Add native smooth scrolling
                       scrollSnapType: 'y mandatory', // Snap to reviews when scrolling
                     }}
                   >
-                    {/* CSS to hide scrollbar for Chrome/Safari */}
-                    <style jsx>{`
-                      div::-webkit-scrollbar {
-                        display: none;
-                      }
-                    `}</style>
-
                     {/* Render all reviews */}
                     {reviews.map(review => {
                       const isPending = 'isPending' in review && review.isPending;
@@ -802,9 +767,8 @@ export default function Reviews() {
                       return (
                         <Card
                           key={review.id}
-                          className={`w-full transition-shadow cursor-pointer ${
-                            isPending ? 'shadow-md border-blue-400 border-2' : 'shadow-sm hover:shadow-md'
-                          }`}
+                          hoverable
+                          className={`w-full cursor-pointer ${isPending ? 'border-brand border-2' : ''}`}
                           style={{
                             height: `${REVIEW_HEIGHT}px`, // Fixed height for each review card
                             scrollSnapAlign: 'start', // Snap align for smooth scrolling
@@ -813,32 +777,15 @@ export default function Reviews() {
                         >
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <Text strong className="text-lg">
-                                {review.name}
-                              </Text>
-                              {isPending && (
-                                <Tag color="blue" className="ml-2">
-                                  {t('PendingApproval')}
-                                </Tag>
-                              )}
+                              <span className="font-semibold text-lg text-bark dark:text-cream">{review.name}</span>
+                              {isPending && <Tag className="ml-2">{t('PendingApproval')}</Tag>}
                             </div>
-                            <Text type="secondary" className="text-sm">
+                            <span className="text-sm text-bark/50 dark:text-cream/50">
                               {formatDate(review.createdAt)}
-                            </Text>
+                            </span>
                           </div>
-                          <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" />
-                          <p
-                            className={`${textColor} line-clamp-2 overflow-hidden`}
-                            style={{
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {review.comment}
-                          </p>
+                          <Rate disabled allowHalf defaultValue={review.rating} className="mb-2" size={18} />
+                          <p className={`${bodyText} line-clamp-2 overflow-hidden`}>{review.comment}</p>
                         </Card>
                       );
                     })}
@@ -847,19 +794,20 @@ export default function Reviews() {
                   {/* Down arrow for scrolling - always present but only visible when not at bottom */}
                   <div className="flex justify-center mt-2">
                     <Button
-                      type="text"
-                      icon={<IconChevronDown size={28} style={{ display: 'flex' }} />}
+                      variant="text"
+                      icon={<IconChevronDown size={28} />}
                       onClick={handleScrollDown}
                       disabled={isTransitioning}
                       style={{ opacity: canScrollDown ? 1 : 0, transition: 'opacity 0.3s' }}
+                      aria-label="Scroll down"
                     />
                   </div>
                 </div>
               )}
             </div>
-          </div>
-        </section>
-      </div>
-    </>
+          )}
+        </div>
+      </Reveal>
+    </section>
   );
 }

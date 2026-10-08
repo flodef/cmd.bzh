@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { companyInfo } from '../../utils/constants';
-import GDPR from '../../pages/GDPR';
+import GDPR from '../../sections/GDPR';
 
 export const metadata: Metadata = {
   title: 'Politique de confidentialité | CMD Breizh',

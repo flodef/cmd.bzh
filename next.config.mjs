@@ -4,32 +4,13 @@ const nextConfig = {
     root: process.cwd(),
   },
   outputFileTracingRoot: process.cwd(),
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
   async redirects() {
     return [
-      {
-        source: '/',
-        has: [{ type: 'query', key: 'tab', value: 'About' }],
-        destination: '/about?',
-        permanent: true,
-      },
-      {
-        source: '/',
-        has: [{ type: 'query', key: 'tab', value: 'Contact' }],
-        destination: '/contact?',
-        permanent: true,
-      },
-      {
-        source: '/',
-        has: [{ type: 'query', key: 'tab', value: 'Reviews' }],
-        destination: '/reviews?',
-        permanent: true,
-      },
-      {
-        source: '/',
-        has: [{ type: 'query', key: 'tab', value: 'GDPR' }],
-        destination: '/gdpr?',
-        permanent: true,
-      },
+      // Legacy routes → single-page anchors
+      { source: '/about', destination: '/#about', permanent: true },
+      { source: '/contact', destination: '/#contact', permanent: true },
+      { source: '/reviews', destination: '/#reviews', permanent: true },
     ];
   },
 };

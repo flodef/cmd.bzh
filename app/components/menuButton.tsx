@@ -13,12 +13,13 @@ export const MenuButton = ({
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-black dark:bg-white transition ease transform`;
+  const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-bark dark:bg-cream transition ease transform`;
 
   return (
     <button
+      aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
       className={twMerge(
-        'flex flex-col h-12 w-12 border-0 border-black dark:border-white rounded justify-center items-center group ml-0',
+        'flex flex-col h-11 w-11 rounded-full justify-center items-center group cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors',
         className,
       )}
       onClick={handleClick}

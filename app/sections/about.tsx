@@ -3,14 +3,17 @@
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { twMerge } from 'tailwind-merge';
-import { t } from '../utils/i18n';
-import { bgColor, companyInfo, textColor } from '../utils/constants';
-import { getPhoneNumber } from '../utils/functions';
 import dynamic from 'next/dynamic';
+import { twMerge } from 'tailwind-merge';
+import { Reveal } from '../components/ui/reveal';
+import { t } from '../utils/i18n';
+import { companyInfo } from '../utils/constants';
+import { getPhoneNumber } from '../utils/functions';
 
 // Dynamically import LeafletMap to avoid SSR issues
 const LeafletMap = dynamic(() => import('../components/LeafletMap'), { ssr: false });
+
+const bodyText = 'text-bark/80 dark:text-cream/80';
 
 export default function About() {
   // Compute the number of seasons since the business started (September 2025)
@@ -39,11 +42,13 @@ export default function About() {
   const radius = Math.max(latDiff, lngDiff) / 2 + 0.02; // Add buffer
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <section className="px-4 py-12">
-        <h1 className="text-3xl font-bold text-center mb-8">{t('OurLocation')}</h1>
+    <section id="about" className="scroll-mt-24 w-full max-w-7xl mx-auto">
+      <Reveal className="px-4 py-20">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-bark dark:text-cream">
+          {t('OurLocation')}
+        </h2>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <div className="w-full md:w-1/2 h-80 bg-gray-300 rounded-lg overflow-hidden">
+          <div className="w-full md:w-1/2 h-80 glass-soft rounded-3xl overflow-hidden">
             <LeafletMap
               center={mapCenter}
               zoom={10}
@@ -53,25 +58,25 @@ export default function About() {
               workingAreaRadius={radius}
             />
           </div>
-          <div className="w-full md:w-1/2 text-center">
-            <h3 className="text-xl font-semibold mb-2">{companyInfo.fullName}</h3>
-            <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
+          <div className="w-full md:w-1/2 glass-soft glass-hover rounded-3xl p-8 text-center">
+            <h3 className="text-xl font-semibold mb-2 text-bark dark:text-cream">{companyInfo.fullName}</h3>
+            <div className={twMerge(bodyText, 'mb-2 flex items-center justify-center')}>
               <IconMapPin className="mr-2" size={18} />
               {companyInfo.address}
             </div>
-            <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
+            <div className={twMerge(bodyText, 'mb-2 flex items-center justify-center')}>
               <IconPhone className="mr-2" size={18} />
               <Link href={`tel:${getPhoneNumber(companyInfo.phone)}`}>{companyInfo.phone}</Link>
             </div>
-            <div className={twMerge(textColor, 'mb-2 flex items-center justify-center')}>
+            <div className={twMerge(bodyText, 'mb-2 flex items-center justify-center')}>
               <IconMail className="mr-2" size={18} />
               <Link href={`mailto:${companyInfo.email}`}>{companyInfo.email}</Link>
             </div>
-            <hr style={{ marginTop: 16, marginBottom: 16 }} />
-            <h3 className="text-xl font-semibold mb-2">{t('WorkingArea')}</h3>
+            <hr className="my-4 border-bark/10 dark:border-white/10" />
+            <h3 className="text-xl font-semibold mb-2 text-bark dark:text-cream">{t('WorkingArea')}</h3>
             <ul className="ml-4 mb-2 flex flex-wrap">
               {workingAreas.map((area, index) => (
-                <li key={index} className="mb-2 w-1/2">
+                <li key={index} className={`mb-2 w-1/2 ${bodyText}`}>
                   {area.name}
                 </li>
               ))}
@@ -79,43 +84,38 @@ export default function About() {
             <p className="mb-2 hidden">{t('AndMoreCities')}</p>
           </div>
         </div>
-      </section>
+      </Reveal>
 
-      <section className={twMerge(bgColor, 'px-4 py-12')}>
-        <h2 className="text-3xl font-bold text-center mb-8">{t('EcoFriendlyCommitment')}</h2>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+      <Reveal className="px-4 py-20">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-bark dark:text-cream">
+          {t('EcoFriendlyCommitment')}
+        </h2>
+        <div className="glass-soft glass-hover rounded-3xl p-8 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8">
           <Image width={128} height={128} src="/EcoLabel.png" alt={t('EcoFriendlyLabel')} />
           <div className="max-w-2xl">
-            <p className={twMerge(textColor, 'mb-4')}>{t('EcoFriendlyCommitmentDescription')}</p>
-            <p className={textColor}>{t('EcoFriendlyCommitmentDescription2')}</p>
+            <p className={twMerge(bodyText, 'mb-4')}>{t('EcoFriendlyCommitmentDescription')}</p>
+            <p className={bodyText}>{t('EcoFriendlyCommitmentDescription2')}</p>
           </div>
         </div>
-      </section>
+      </Reveal>
 
-      <section className="px-4 py-12">
-        <h2 className="text-3xl font-bold text-center mb-8">{t('OurTeam')}</h2>
+      <Reveal className="px-4 py-20">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-bark dark:text-cream">{t('OurTeam')}</h2>
         <div className="grid grid-cols-1 gap-4 items-center">
           <div>
-            <h2 className="text-2xl font-semibold text-center mb-2">{companyInfo.founder}</h2>
-            <p className={twMerge(textColor, 'mb-4 text-center')}>{t('Founder')}</p>
-            {/* <Image
-                width={256}
-                height={256}
-                src="/placeholder.svg?height=400&width=400&text=Manager+Photo"
-                alt="Manager"
-                className="rounded-full mx-auto mb-4 self-center"
-              /> */}
+            <h3 className="text-2xl font-semibold text-center mb-2 text-bark dark:text-cream">{companyInfo.founder}</h3>
+            <p className={twMerge(bodyText, 'mb-4 text-center')}>{t('Founder')}</p>
           </div>
           <div className="flex flex-col gap-4">
-            <div className="relative flex flex-col gap-4 font-caveat bg-blue-500/10 dark:bg-blue-900/20 border-l-4 border-blue-500/30 dark:border-blue-400/50 p-6 rounded-lg text-2xl">
-              <span className="absolute -top-5 -left-8 text-9xl opacity-25 dark:opacity-35">&ldquo;</span>
-              <p className={textColor}>{t('OurStoryDescription', storyParams).split('/n')[0]}</p>
+            <div className="relative flex flex-col gap-4 font-caveat glass-soft glass-hover border-l-4 border-brand/40 p-8 rounded-3xl text-2xl">
+              <span className="absolute -top-5 -left-2 text-9xl text-brand/25">&ldquo;</span>
+              <p className={bodyText}>{t('OurStoryDescription', storyParams).split('/n')[0]}</p>
               <ul>
                 {t('OurStoryDescription', storyParams)
                   .split('/n')
                   .filter(description => description.startsWith('•'))
                   .map((description, index) => (
-                    <li key={index} className={`${textColor} pl-4`}>
+                    <li key={index} className={`${bodyText} pl-4`}>
                       {description}
                     </li>
                   ))}
@@ -125,15 +125,15 @@ export default function About() {
                 .slice(1)
                 .filter(description => !description.startsWith('•'))
                 .map((description, index) => (
-                  <p key={index} className={textColor}>
+                  <p key={index} className={bodyText}>
                     {description}
                   </p>
                 ))}
-              <span className="absolute -bottom-20 right-5 text-9xl opacity-25 dark:opacity-35">&rdquo;</span>
+              <span className="absolute -bottom-20 right-5 text-9xl text-brand/25">&rdquo;</span>
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </Reveal>
+    </section>
   );
 }

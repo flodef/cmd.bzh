@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Navigation & routing', () => {
+test.describe('Navigation & anchors', () => {
   test('home page loads with correct title', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/Conciergerie.*Crozon.*CMD Breizh/i);
@@ -11,39 +11,48 @@ test.describe('Navigation & routing', () => {
     await expect(page.getByRole('heading', { name: /services/i })).toBeVisible();
   });
 
-  test('navigate to /about via tab', async ({ page }) => {
+  test('navigate to #about via nav link', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('tab', { name: /about|propos/i }).click();
-    await expect(page).toHaveURL(/\/about/);
-    await expect(page).toHaveTitle(/À propos|About.*CMD Breizh/i);
+    await page
+      .getByRole('link', { name: /about|propos/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/#about/);
+    await expect(page.locator('#about')).toBeInViewport();
   });
 
-  test('navigate to /contact via tab', async ({ page }) => {
+  test('navigate to #contact via nav link', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('tab', { name: /contact/i }).click();
-    await expect(page).toHaveURL(/\/contact/);
-    await expect(page).toHaveTitle(/Contact|Contactez.*CMD Breizh/i);
+    await page
+      .getByRole('link', { name: /^contact$/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/#contact/);
+    await expect(page.locator('#contact')).toBeInViewport();
   });
 
-  test('navigate to /reviews via tab', async ({ page }) => {
+  test('navigate to #reviews via nav link', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('tab', { name: /reviews|avis/i }).click();
-    await expect(page).toHaveURL(/\/reviews/);
-    await expect(page).toHaveTitle(/Avis|Reviews.*CMD Breizh/i);
+    await page
+      .getByRole('link', { name: /reviews|avis/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/#reviews/);
+    await expect(page.locator('#reviews')).toBeInViewport();
   });
 
-  test('contact page has form heading', async ({ page }) => {
-    await page.goto('/contact');
-    await expect(page.locator('h1').first()).toBeVisible();
+  test('contact section has form heading', async ({ page }) => {
+    await page.goto('/#contact');
+    await expect(page.locator('#contact h2').first()).toBeVisible();
   });
 
-  test('reviews page has heading', async ({ page }) => {
-    await page.goto('/reviews');
-    await expect(page.locator('h1').first()).toBeVisible();
+  test('reviews section has heading', async ({ page }) => {
+    await page.goto('/#reviews');
+    await expect(page.locator('#reviews h2').first()).toBeVisible();
   });
 
-  test('about page has location section', async ({ page }) => {
-    await page.goto('/about');
+  test('about section has location heading', async ({ page }) => {
+    await page.goto('/#about');
     await expect(page.getByRole('heading', { name: /location|localisation/i })).toBeVisible();
   });
 
@@ -58,8 +67,11 @@ test.describe('Navigation & routing', () => {
   });
 
   test('logo links back to home', async ({ page }) => {
-    await page.goto('/about');
-    await page.getByRole('link', { name: /CMD Breizh.*Accueil|CMD Breizh.*Home/i }).click();
-    await expect(page).toHaveURL(/\/$/);
+    await page.goto('/gdpr');
+    await page
+      .getByRole('link', { name: /accueil|CMD Breizh/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/#?home|\/$/);
   });
 });

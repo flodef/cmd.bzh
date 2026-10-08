@@ -1,16 +1,12 @@
 'use client';
 
-import { useWindowParam } from '../hooks/useWindowParam';
 import { t } from '../utils/i18n';
 import { companyInfo, creatorInfo } from '../utils/constants';
 
 export default function GDPR() {
-  const { breakpoints } = useWindowParam();
-  const { isSm: isMobile } = breakpoints;
-
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8">
-      <h1 className={`text-3xl font-bold text-center mb-8 ${isMobile ? 'sr-only' : ''}`}>{t('GDPR')}</h1>
+    <div className="w-full max-w-7xl mx-auto px-4 pt-28 pb-8">
+      <h1 className="text-3xl font-bold text-center mb-8 text-bark dark:text-cream">{t('GDPR')}</h1>
 
       <div className="space-y-8 max-w-3xl mx-auto">
         {/* Preamble */}

@@ -14,12 +14,10 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@ant-design/nextjs-registry": "latest",
     "@neondatabase/serverless": "latest",
     "@tabler/icons-react": "latest",
     "@types/nodemailer": "latest",
     "@vercel/analytics": "latest",
-    "antd": "latest",
     "leaflet": "latest",
     "next": "latest",
     "nodemailer": "latest",
@@ -45,7 +43,7 @@
     "husky": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "typescript": "latest",
+    "typescript": "6",
     "vitest": "latest"
   },
   "prettier": {

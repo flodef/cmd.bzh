@@ -1,7 +1,5 @@
-import { AntdRegistry } from '@ant-design/nextjs-registry';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { LoadingProvider } from './contexts/loadingProvider';
 import { Analytics } from '@vercel/analytics/react';
 import { companyInfo, businessHours, getAddressComponents } from './utils/constants';
 import './globals.css';
@@ -94,11 +92,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" data-scroll-behavior="smooth">
       <head>
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="8b01b6b5-5654-44d9-896b-6b4a52226756" />
+        <script
+          defer
+          suppressHydrationWarning
+          src="https://cloud.umami.is/script.js"
+          data-website-id="8b01b6b5-5654-44d9-896b-6b4a52226756"
+        />
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
@@ -140,9 +144,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
-        <AntdRegistry>
-          <LoadingProvider>{children}</LoadingProvider>
-        </AntdRegistry>
+        {children}
         <Analytics />
       </body>
     </html>
