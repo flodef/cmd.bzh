@@ -5,7 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 
 // Fix for default marker icon in react-leaflet
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
@@ -38,7 +38,7 @@ function OpenPopup({ markerRef }: { markerRef: React.RefObject<L.Marker | null> 
 }
 
 // Create approximate GeoJSON data for working area circle
-function createWorkingAreaGeoJSON(center?: [number, number], radius?: number) {
+function createWorkingAreaGeoJSON(center?: [number, number], radius?: number, name?: string) {
   if (!center || !radius) return null;
 
   const [lat, lng] = center;
@@ -59,7 +59,7 @@ function createWorkingAreaGeoJSON(center?: [number, number], radius?: number) {
       {
         type: 'Feature' as const,
         properties: {
-          name: t('WorkingArea'),
+          name,
         },
         geometry: {
           type: 'Polygon' as const,
@@ -78,7 +78,8 @@ function WorkingAreaChoropleth({
   workingAreaCenter?: [number, number];
   workingAreaRadius?: number;
 }) {
-  const geojsonData = createWorkingAreaGeoJSON(workingAreaCenter, workingAreaRadius);
+  const t = useT();
+  const geojsonData = createWorkingAreaGeoJSON(workingAreaCenter, workingAreaRadius, t('WorkingArea'));
 
   // Style function for the choropleth
   const style = () => ({

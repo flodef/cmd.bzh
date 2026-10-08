@@ -6,7 +6,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { twMerge } from 'tailwind-merge';
 import { Reveal } from '../components/ui/reveal';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { companyInfo } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 
@@ -16,6 +16,7 @@ const LeafletMap = dynamic(() => import('../components/LeafletMap'), { ssr: fals
 const bodyText = 'text-bark/80 dark:text-cream/80';
 
 export default function About() {
+  const t = useT();
   // Compute the number of seasons since the business started (September 2025)
   const now = new Date();
   const seasons = now.getFullYear() - 2025 + (now.getMonth() >= 8 ? 1 : 0); // Month 8 = September

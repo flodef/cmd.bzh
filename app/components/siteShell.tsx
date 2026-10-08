@@ -7,18 +7,11 @@ import { twMerge } from 'tailwind-merge';
 import Footer from './footer';
 import { MenuButton } from './menuButton';
 import { CMDLogo } from '../images/cmd';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { ToastProvider } from './ui/toast';
 
 export const SECTION_IDS = ['home', 'about', 'reviews', 'contact'] as const;
 export type SectionId = (typeof SECTION_IDS)[number];
-
-const navItems: { id: SectionId; label: string }[] = [
-  { id: 'home', label: t('Home') },
-  { id: 'about', label: t('About') },
-  { id: 'reviews', label: t('Reviews') },
-  { id: 'contact', label: t('Contact') },
-];
 
 /** Sliding underline driven by the active nav link's measured position. */
 function useNavUnderline(active: SectionId | null) {
@@ -131,10 +124,18 @@ function useScrollSpy(enabled: boolean) {
 }
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
+  const t = useT();
   const pathname = usePathname();
   const isHome = pathname === '/';
   const [active, select] = useScrollSpy(isHome);
   const { navRef, linkRefs, style } = useNavUnderline(active);
+
+  const navItems: { id: SectionId; label: string }[] = [
+    { id: 'home', label: t('Home') },
+    { id: 'about', label: t('About') },
+    { id: 'reviews', label: t('Reviews') },
+    { id: 'contact', label: t('Contact') },
+  ];
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);

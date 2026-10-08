@@ -1,9 +1,10 @@
 'use client';
 
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { companyInfo, creatorInfo } from '../utils/constants';
 
 export default function GDPR() {
+  const t = useT();
   return (
     <div className="w-full max-w-7xl mx-auto px-4 pt-28 pb-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-bark dark:text-cream">{t('GDPR')}</h1>

@@ -7,19 +7,19 @@ import { Card } from '../components/ui/card';
 import { Carousel } from '../components/ui/carousel';
 import { Reveal } from '../components/ui/reveal';
 import { Tooltip } from '../components/ui/tooltip';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { companyInfo } from '../utils/constants';
 
-const cardContent = [
-  { title: t('Cleaning'), description: t('CleaningDescription') },
-  { title: t('Gardening'), description: t('GardeningDescription') },
-  { title: t('CheckInOut'), description: t('CheckInOutDescription') },
-  { title: t('ClothesHandling'), description: t('ClothesHandlingDescription') },
-  { title: t('WelcomeBasket'), description: t('WelcomeBasketDescription') },
-  { title: t('MultiService'), description: t('MultiServiceDescription') },
-];
-
 export default function Home() {
+  const t = useT();
+  const cardContent = [
+    { title: t('Cleaning'), description: t('CleaningDescription') },
+    { title: t('Gardening'), description: t('GardeningDescription') },
+    { title: t('CheckInOut'), description: t('CheckInOutDescription') },
+    { title: t('ClothesHandling'), description: t('ClothesHandlingDescription') },
+    { title: t('WelcomeBasket'), description: t('WelcomeBasketDescription') },
+    { title: t('MultiService'), description: t('MultiServiceDescription') },
+  ];
   return (
     <section id="home" className="scroll-mt-24 w-full">
       {/* Hero */}

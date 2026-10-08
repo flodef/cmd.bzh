@@ -9,7 +9,7 @@ import { Field, FieldList, Form, useForm } from '../components/ui/form';
 import { Input, TextArea } from '../components/ui/input';
 import { Reveal } from '../components/ui/reveal';
 import { useToast } from '../components/ui/toast';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { businessHours, companyInfo, emailRegex, phoneRegex } from '../utils/constants';
 import { formatBusinessHours, getBusinessStatus, getPhoneNumber } from '../utils/functions';
 
@@ -26,6 +26,7 @@ enum FieldError {
 }
 
 export default function Contact() {
+  const t = useT();
   const toast = useToast();
 
   const [form] = useForm<Record<string, unknown>>({ Nom: '', Contacts: [{ contact: '' }], Message: '' });

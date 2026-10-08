@@ -1,11 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { companyInfo } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
 
 export default function Footer() {
+  const t = useT();
   return (
     <footer className="bg-sand/85 backdrop-blur-xl text-white pt-8 mt-8 border-t border-white/20">
       <div className="w-full max-w-7xl mx-auto flex flex-col gap-4 px-4">

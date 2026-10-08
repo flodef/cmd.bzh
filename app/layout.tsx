@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/react';
+import { LanguageProvider } from './contexts/languageProvider';
 import { companyInfo, businessHours, getAddressComponents } from './utils/constants';
 import './globals.css';
 
@@ -144,7 +145,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}>
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
         <Analytics />
       </body>
     </html>

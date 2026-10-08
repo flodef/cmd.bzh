@@ -14,7 +14,7 @@ import { Tag } from '../components/ui/tag';
 import { useToast } from '../components/ui/toast';
 import { emailRegex, STORAGE_KEYS } from '../utils/constants';
 import { useReviewsCache } from '../contexts/reviewsCacheProvider';
-import { t } from '../utils/i18n';
+import { useT } from '../contexts/languageProvider';
 import { sendReview } from '../utils/reviewService';
 import { getLocalStorageItem, setLocalStorageItem } from '../utils/localStorage';
 
@@ -50,6 +50,7 @@ enum FieldError {
 }
 
 export default function Reviews() {
+  const t = useT();
   const { fetchReviews: fetchCachedReviews } = useReviewsCache();
   const toast = useToast();
 

@@ -8,7 +8,7 @@ test.describe('Navigation & anchors', () => {
 
   test('home page has services section', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /services/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: /services/i })).toBeVisible();
   });
 
   test('navigate to #about via nav link', async ({ page }) => {
