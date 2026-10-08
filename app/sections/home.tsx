@@ -31,7 +31,7 @@ export default function Home() {
         </Reveal>
         <Reveal delay={120}>
           <p className="mt-6 max-w-2xl text-lg sm:text-xl text-bark/70 dark:text-cream/70 text-balance">
-            {companyInfo.description}
+            {t('Description')}
           </p>
         </Reveal>
         <Reveal delay={240} className="mt-10 flex flex-wrap items-center justify-center gap-4">
