@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useT } from '../contexts/languageProvider';
+import { CocoonrLogo } from '../images/cocoonr';
 import { companyInfo } from '../utils/constants';
 import { getPhoneNumber } from '../utils/functions';
 import { IconMail, IconMapPin, IconPhone } from '@tabler/icons-react';
@@ -42,7 +42,7 @@ export default function Footer() {
             {t('Partner')}
             <Link className="flex items-center" href="https://cocoonr.fr/" target="_blank">
               <span className="ml-2 inline-flex items-center rounded bg-white/90 px-1.5 py-0.5">
-                <Image src="/cocoonr.webp" alt="Cocoonr" width={626} height={96} className="h-5 w-auto" />
+                <CocoonrLogo className="h-5 w-auto" role="img" aria-label="Cocoonr" />
               </span>
             </Link>
           </div>
